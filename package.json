@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "cd travel-ops-oups && npm run dev",
     "build": "cd travel-ops-oups && npm run build",
-    "lint": "cd travel-ops-oups && npm run lint"
+    "lint": "cd travel-ops-oups && npm run lint",
+    "test": "cd travel-ops-oups && npm run test"
   }
 }
