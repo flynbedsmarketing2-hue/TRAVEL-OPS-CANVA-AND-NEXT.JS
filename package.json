@@ -1,0 +1,11 @@
+{
+  "name": "travel-ops-canvas-next-wrapper",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["travel-ops-oups"],
+  "scripts": {
+    "dev": "cd travel-ops-oups && npm run dev",
+    "build": "cd travel-ops-oups && npm run build",
+    "lint": "cd travel-ops-oups && npm run lint"
+  }
+}
