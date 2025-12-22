@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaxCategory {
+  SINGLE
+  DOUBLE
+  TRIPLE
+  CHD_PLUS6
+  CHD_MINUS6
+  INF
+}
+
+enum CostType {
+  ROOM
+  VISA
+  TRANSFER
+  EXCURSION
+  TICKET
+  SERVICE_FEE
+  OTHER
+}
+
+enum ApplyRule {
+  PER_PAX
+  PER_ROOM
+  PER_NIGHT
+  PER_STAY
+  PER_GROUP
+}
+
+enum ExchangeRateSource {
+  AUTO
+  MANUAL
+}
+
+enum ScenarioState {
+  DRAFT
+  PUBLISHED
+}
+
+model PricingScenario {
+  id             String                 @id @default(cuid())
+  name           String
+  destination    String
+  notes          String?
+  nights         Int
+  startDate      DateTime?
+  endDate        DateTime?
+  currency       String                 @default("QAR")
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  state          ScenarioState          @default(DRAFT)
+  variantOfId    String?
+  variantName    String?
+  paxBreakdown   PricingPaxBreakdown?
+  exchangeRates  PricingExchangeRate[]
+  costLines      PricingCostLine[]
+  margin         PricingMargin?
+  commission     PricingCommission?
+  exports        PricingExport[]
+  variantOf      PricingScenario?       @relation("ScenarioVariants", fields: [variantOfId], references: [id])
+  variants       PricingScenario[]      @relation("ScenarioVariants")
+}
+
+model PricingPaxBreakdown {
+  id             String          @id @default(cuid())
+  scenarioId     String          @unique
+  single         Int             @default(0)
+  double         Int             @default(0)
+  triple         Int             @default(0)
+  chdPlus6       Int             @default(0)
+  chdMinus6      Int             @default(0)
+  infant         Int             @default(0)
+  roomAllocation Json?
+  scenario       PricingScenario @relation(fields: [scenarioId], references: [id])
+}
+
+model PricingExchangeRate {
+  id          String             @id @default(cuid())
+  scenarioId  String
+  source      ExchangeRateSource
+  rate        Float
+  manual      Boolean            @default(false)
+  timestamp   DateTime           @default(now())
+  scenario    PricingScenario    @relation(fields: [scenarioId], references: [id])
+}
+
+model PricingCostLine {
+  id           String          @id @default(cuid())
+  scenarioId   String
+  label        String
+  type         CostType
+  applyRule    ApplyRule
+  amount       Float
+  quantity     Int              @default(1)
+  optional     Boolean          @default(false)
+  appliesTo    PaxCategory[]
+  excludes     Boolean          @default(false)
+  scenario     PricingScenario  @relation(fields: [scenarioId], references: [id])
+}
+
+model PricingMargin {
+  id             String          @id @default(cuid())
+  scenarioId     String          @unique
+  single         Int             @default(40000)
+  double         Int             @default(40000)
+  triple         Int             @default(40000)
+  chdPlus6       Int             @default(20000)
+  chdMinus6      Int             @default(15000)
+  infant         Int             @default(10000)
+  scenario       PricingScenario @relation(fields: [scenarioId], references: [id])
+}
+
+model PricingCommission {
+  id                String          @id @default(cuid())
+  scenarioId        String          @unique
+  tier1             Int             @default(1000)
+  tier2             Int             @default(1500)
+  tier3             Int             @default(2000)
+  tier4             Int             @default(2500)
+  includeInfants    Boolean         @default(false)
+  includeInSales    Boolean         @default(true)
+  scenario          PricingScenario @relation(fields: [scenarioId], references: [id])
+}
+
+model PricingExport {
+  id          String          @id @default(cuid())
+  scenarioId  String
+  format      String
+  payload     Json
+  createdAt   DateTime        @default(now())
+  scenario    PricingScenario @relation(fields: [scenarioId], references: [id])
+}
