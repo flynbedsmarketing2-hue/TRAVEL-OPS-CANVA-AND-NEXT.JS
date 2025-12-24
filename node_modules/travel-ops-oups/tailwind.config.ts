@@ -9,11 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#1d4ed8",
-        "background-light": "#f6f7f8",
-        "background-dark": "#101922",
-        "surface-light": "#ffffff",
+        primary: "#6b7bff",
+        "primary-strong": "#5566f6",
+        accent: "#f6c35c",
+        "background-light": "#eef2ff",
+        "background-dark": "#0f172a",
+        "surface-light": "#f7f9ff",
         "surface-dark": "#0f172a",
+        "border-soft": "#dfe6ff",
       },
       fontFamily: {
         sans: ["var(--font-plus-jakarta)", "system-ui", "sans-serif"],

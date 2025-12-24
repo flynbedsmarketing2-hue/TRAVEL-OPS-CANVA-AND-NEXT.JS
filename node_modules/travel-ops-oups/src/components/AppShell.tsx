@@ -54,7 +54,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <button
           type="button"
           aria-label="Fermer le menu"
-          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+          className="fixed inset-0 z-30 bg-slate-900/15 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       ) : null}

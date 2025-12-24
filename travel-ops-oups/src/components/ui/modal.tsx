@@ -28,14 +28,14 @@ export function Modal({ open, onClose, title, children, className }: Props) {
       <button
         type="button"
         aria-label="Fermer la modale"
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-slate-900/10 backdrop-blur"
         onClick={() => onClose()}
       />
       <div
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-black/15 dark:border-slate-800 dark:bg-slate-950/95",
+          "relative z-10 w-full max-w-2xl overflow-hidden rounded-3xl border border-white/70 bg-[linear-gradient(145deg,#f9fbff,#e9eeff)] shadow-[16px_16px_36px_rgba(182,193,224,0.45),-14px_-14px_32px_rgba(255,255,255,0.92)] dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-[12px_12px_32px_rgba(0,0,0,0.5),-12px_-12px_30px_rgba(40,40,80,0.35)]",
           className
         )}
       >
