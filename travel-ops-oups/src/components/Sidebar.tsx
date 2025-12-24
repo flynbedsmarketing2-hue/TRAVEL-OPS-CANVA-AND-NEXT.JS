@@ -9,17 +9,19 @@ import { cn } from "./ui/cn";
 type Props = {
   open?: boolean;
   onClose?: () => void;
+  collapsed?: boolean;
 };
 
-export default function Sidebar({ open = false, onClose }: Props) {
+export default function Sidebar({ open = false, onClose, collapsed = false }: Props) {
   const pathname = usePathname();
   const items = navItems;
 
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 w-[280px] border-r border-white/70 bg-[linear-gradient(155deg,#f9fbff,#e9eeff)] shadow-[16px_0_36px_rgba(182,193,224,0.35)] backdrop-blur-xl transition-transform dark:border-slate-800/70 dark:bg-slate-950/60 lg:static lg:translate-x-0",
-        open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        "fixed inset-y-0 left-0 z-40 w-[280px] border-r border-white/70 bg-[linear-gradient(155deg,#f9fbff,#e9eeff)] shadow-[16px_0_36px_rgba(182,193,224,0.35)] backdrop-blur-xl transition-transform dark:border-slate-800/70 dark:bg-slate-950/60 lg:static",
+        open ? "translate-x-0" : "-translate-x-full",
+        collapsed ? "lg:-translate-x-full" : "lg:translate-x-0"
       )}
     >
       <div className="flex h-16 items-center gap-2 px-5">
