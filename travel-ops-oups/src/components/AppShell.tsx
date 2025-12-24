@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import { useBookingStore } from "../stores/useBookingStore";
+import { useCrmStore } from "../stores/useCrmStore";
 import { usePackageStore } from "../stores/usePackageStore";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -11,10 +12,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const loadPackages = usePackageStore((state) => state.loadFromServer);
   const loadBookings = useBookingStore((state) => state.loadFromServer);
+  const loadCrm = useCrmStore((state) => state.loadFromServer);
 
   useEffect(() => {
     void loadPackages();
     void loadBookings();
+    void loadCrm();
 
     const node = containerRef.current;
     if (!node) return;
@@ -33,7 +36,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     const observer = new MutationObserver(syncInertState);
     observer.observe(node, { attributes: true, attributeFilter: ["aria-hidden", "data-aria-hidden"] });
     return () => observer.disconnect();
-  }, [loadBookings, loadPackages]);
+  }, [loadBookings, loadPackages, loadCrm]);
 
   return (
     <div ref={containerRef} className="flex min-h-screen">

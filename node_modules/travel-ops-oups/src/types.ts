@@ -161,3 +161,22 @@ export interface Booking {
   payment: BookingPayment;
   createdAt: string;
 }
+
+export type LeadStage = "new" | "contacted" | "proposal" | "won" | "lost";
+export type LeadSource = "website" | "referral" | "email" | "event" | "partner" | "phone" | "other";
+
+export interface Lead {
+  id: string;
+  name: string;
+  company: string;
+  email?: string;
+  phone?: string;
+  owner?: string;
+  stage: LeadStage;
+  source: LeadSource;
+  nextContact?: string;
+  lastContact?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}

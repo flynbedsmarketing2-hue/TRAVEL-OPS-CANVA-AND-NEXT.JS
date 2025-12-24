@@ -17,6 +17,8 @@ import { cn } from "../../components/ui/cn";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { buttonClassName } from "../../components/ui/button";
 import { useBookingStore } from "../../stores/useBookingStore";
+import { useCrmStore, leadStages } from "../../stores/useCrmStore";
+import type { LeadStage } from "../../types";
 import { usePackageStore } from "../../stores/usePackageStore";
 
 const isSoon = (iso: string | undefined, days = 7) => {
@@ -86,6 +88,19 @@ export default function DashboardPage() {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
 
+  const leads = useCrmStore((state) => state.leads);
+  const stageTotals = leadStages.reduce<Record<LeadStage, number>>((acc, stage) => {
+    acc[stage.value] = 0;
+    return acc;
+  }, {} as Record<LeadStage, number>);
+  leads.forEach((lead) => {
+    stageTotals[lead.stage] = (stageTotals[lead.stage] ?? 0) + 1;
+  });
+  const overdueFollowups = leads.filter(
+    (lead) => lead.nextContact && new Date(lead.nextContact).getTime() < Date.now()
+  ).length;
+  const newLeads = stageTotals["new"] ?? 0;
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -110,6 +125,43 @@ export default function DashboardPage() {
           <KpiCard label="Reservations" value={bookings.length} icon={<ShoppingBag className="h-5 w-5" />} />
           <KpiCard label="Stock total (pax)" value={totalStock} icon={<TrendingUp className="h-5 w-5" />} />
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Bell className="h-4 w-4" />
+              </span>
+              CRM rapide
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-slate-200/70 bg-slate-50/60 p-3 text-center dark:border-slate-800 dark:bg-slate-950/40">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Nouveaux leads</p>
+                <p className="text-2xl font-semibold">{newLeads}</p>
+              </div>
+              <div className="rounded-xl border border-slate-200/70 bg-slate-50/60 p-3 text-center dark:border-slate-800 dark:bg-slate-950/40">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Total CRM</p>
+                <p className="text-2xl font-semibold">{leads.length}</p>
+              </div>
+              <div className="rounded-xl border border-slate-200/70 bg-slate-50/60 p-3 text-center dark:border-slate-800 dark:bg-slate-950/40">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Relances en retard</p>
+                <p className="text-2xl font-semibold">{overdueFollowups}</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {leadStages.map((stage) => (
+                <span
+                  key={stage.value}
+                  className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-slate-800 dark:text-slate-200"
+                >
+                  {stage.label}: {stageTotals[stage.value]}
+                </span>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid gap-4 lg:grid-cols-3">
           <Card>

@@ -5,6 +5,7 @@ import {
   Plane,
   ShoppingCart,
   Telescope,
+  Users,
 } from "lucide-react";
 
 export type NavItem = {
@@ -18,6 +19,11 @@ export const navItems: NavItem[] = [
     label: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    label: "CRM",
+    href: "/crm/leads",
+    icon: Users,
   },
   {
     label: "Packages",
