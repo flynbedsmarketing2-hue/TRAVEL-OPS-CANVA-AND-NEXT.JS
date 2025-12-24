@@ -11,7 +11,6 @@ import { useTaskStore } from "../stores/useTaskStore";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const loadPackages = usePackageStore((state) => state.loadFromServer);
   const loadBookings = useBookingStore((state) => state.loadFromServer);
@@ -50,7 +49,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        collapsed={sidebarCollapsed}
       />
       {sidebarOpen ? (
         <button
@@ -62,14 +60,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar
-          sidebarCollapsed={sidebarCollapsed}
-          onOpenSidebar={() => setSidebarOpen(true)}
-          onToggleSidebar={() => {
-            setSidebarCollapsed((prev) => !prev);
-            setSidebarOpen(false);
-          }}
-        />
+        <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
         <main id="main-content" role="main" className="flex-1 px-4 py-6 lg:px-6">
           <div className="mx-auto w-full max-w-7xl 2xl:max-w-none">{children}</div>
         </main>
