@@ -4,24 +4,34 @@
 
 :root {
   color-scheme: light;
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-2: #f7f9ff;
+  --border: #e5e9f3;
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #5d87ff;
+  --primary-strong: #3856e5;
+  --accent: #49beff;
+  --radius-card: 16px;
+  --radius-hero: 20px;
+  --radius-input: 12px;
 }
 
 body {
   @apply text-slate-900 antialiased dark:text-slate-100;
-  background-color: #e9eefb;
+  background: var(--bg);
   background-image:
-    radial-gradient(circle at 20% 8%, rgba(107, 123, 255, 0.32), transparent 240px),
-    radial-gradient(circle at 78% 4%, rgba(246, 195, 92, 0.24), transparent 230px),
-    linear-gradient(180deg, #f7f9ff 0%, #e9eefb 36%, #eef2ff 100%);
+    radial-gradient(circle at 18% 8%, rgba(93, 135, 255, 0.18), transparent 200px),
+    radial-gradient(circle at 82% 12%, rgba(73, 190, 255, 0.12), transparent 200px);
   background-repeat: no-repeat;
-  background-size: cover;
 }
 
 html.dark body {
-  background-color: #0b1020;
+  background: #0a0f1f;
   background-image:
-    radial-gradient(circle at 18% 12%, rgba(92, 120, 255, 0.28), transparent 220px),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.5), transparent 280px);
+    radial-gradient(circle at 18% 8%, rgba(93, 135, 255, 0.18), transparent 180px),
+    radial-gradient(circle at 78% 12%, rgba(73, 190, 255, 0.12), transparent 200px);
 }
 
 a {
@@ -29,21 +39,21 @@ a {
 }
 
 .card {
-  @apply rounded-2xl border border-white/70 bg-[linear-gradient(145deg,#f9fbff,#e9eeff)] shadow-[14px_14px_32px_rgba(182,193,224,0.45),-12px_-12px_26px_rgba(255,255,255,0.9)] backdrop-blur;
+  @apply rounded-[var(--radius-card)] border border-[var(--border)] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)];
 }
 
 html.dark .card {
-  @apply border-slate-800/70 bg-slate-900/80 shadow-[10px_10px_32px_rgba(0,0,0,0.45),-10px_-10px_28px_rgba(40,40,80,0.35)];
+  @apply border-slate-800/70 bg-slate-900 shadow-[0_16px_36px_rgba(0,0,0,0.45)];
 }
 
 .section-shell {
-  @apply space-y-4 rounded-2xl border border-white/70 bg-[linear-gradient(160deg,#f9fbff,#e8edfb)] p-5 shadow-[12px_12px_28px_rgba(180,190,224,0.38),-12px_-12px_28px_rgba(255,255,255,0.9)] backdrop-blur;
+  @apply space-y-4 rounded-[var(--radius-card)] border border-[var(--border)] bg-white p-5 shadow-[0_14px_32px_rgba(15,23,42,0.08)];
 }
 
 html.dark .section-shell {
-  @apply border-slate-800/70 bg-slate-900/80 shadow-[10px_10px_28px_rgba(0,0,0,0.5),-10px_-10px_28px_rgba(40,40,80,0.35)];
+  @apply border-slate-800/70 bg-slate-900 shadow-[0_18px_38px_rgba(0,0,0,0.5)];
 }
 
 ::selection {
-  background: rgba(91, 107, 255, 0.25);
+  background: rgba(93, 135, 255, 0.25);
 }

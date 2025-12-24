@@ -1,12 +1,13 @@
 'use client';
 
 import { useMemo, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Inbox, Plus } from "lucide-react";
 import PageHeader from "../../../components/PageHeader";
 import RowActionsMenu from "../../../components/RowActionsMenu";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Input } from "../../../components/ui/input";
+import { EmptyState } from "../../../components/ui/EmptyState";
+import { FilterBar } from "../../../components/ui/FilterBar";
 import { Table, TBody, TD, THead, TH, TR } from "../../../components/ui/table";
 import { useCrmStore, leadSources, leadStages } from "../../../stores/useCrmStore";
 import type { Lead, LeadSource, LeadStage } from "../../../types";
@@ -221,55 +222,45 @@ export default function LeadsPage() {
         }
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          <label className="text-sm font-semibold text-slate-700">
-            Search
-            <div className="relative mt-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                className="pl-10"
-                placeholder="Name, company, owner..."
-              />
-            </div>
-          </label>
-          <label className="text-sm font-semibold text-slate-700">
-            Stage
+      <FilterBar
+        value={search}
+        onChange={setSearch}
+        searchPlaceholder="Search leads..."
+        filters={
+          <>
             <select
               value={stageFilter}
               onChange={(event) => setStageFilter(event.target.value as LeadStage | "")}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="h-11 rounded-[12px] border border-[var(--border)] bg-white px-3 text-sm text-slate-700 shadow-[0_6px_14px_rgba(15,23,42,0.05)]"
             >
-              <option value="">All</option>
+              <option value="">All stages</option>
               {leadStages.map((stageOption) => (
                 <option key={stageOption.value} value={stageOption.value}>
                   {stageOption.label}
                 </option>
               ))}
             </select>
-          </label>
-          <label className="text-sm font-semibold text-slate-700">
-            Source
             <select
               value={sourceFilter}
               onChange={(event) => setSourceFilter(event.target.value as LeadSource | "")}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="h-11 rounded-[12px] border border-[var(--border)] bg-white px-3 text-sm text-slate-700 shadow-[0_6px_14px_rgba(15,23,42,0.05)]"
             >
-              <option value="">All</option>
+              <option value="">All sources</option>
               {leadSources.map((sourceOption) => (
                 <option key={sourceOption.value} value={sourceOption.value}>
                   {sourceOption.label}
                 </option>
               ))}
             </select>
-          </label>
-        </CardContent>
-      </Card>
+          </>
+        }
+        actions={
+          <Button variant="primary" onClick={() => openModal()}>
+            <Plus className="h-4 w-4" />
+            Add lead
+          </Button>
+        }
+      />
 
       <Card>
         <CardHeader>
@@ -277,7 +268,13 @@ export default function LeadsPage() {
         </CardHeader>
         <CardContent className="overflow-x-auto">
           {filteredLeads.length === 0 ? (
-            <div className="py-8 text-center text-sm text-slate-500">No matching leads.</div>
+            <EmptyState
+              icon={<Inbox className="h-8 w-8" />}
+              title="No leads yet"
+              description="Start building your pipeline by adding your first lead or importing a CSV."
+              primaryAction={{ label: "Add lead", onClick: () => openModal() }}
+              secondaryAction={{ label: "Import", onClick: () => window.alert("Import flow coming soon") }}
+            />
           ) : (
             <Table>
               <THead>
@@ -287,7 +284,7 @@ export default function LeadsPage() {
                   <TH>Stage</TH>
                   <TH>Source</TH>
                   <TH>Owner</TH>
-                  <TH>Next contact</TH>
+                  <TH>Updated</TH>
                   <TH className="text-right">Actions</TH>
                 </TR>
               </THead>
@@ -302,7 +299,7 @@ export default function LeadsPage() {
                       <p className="text-sm text-slate-700 dark:text-slate-200">{lead.company}</p>
                     </TD>
                     <TD>
-                      <span className="inline-flex items-center rounded-full border border-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-700 dark:border-slate-800">
+                      <span className="inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-xs font-semibold text-slate-700 dark:border-slate-800">
                         {leadStages.find((item) => item.value === lead.stage)?.label ?? lead.stage}
                       </span>
                     </TD>
@@ -316,7 +313,7 @@ export default function LeadsPage() {
                     </TD>
                     <TD>
                       <p className="text-sm text-slate-700 dark:text-slate-200">
-                        {lead.nextContact ? new Date(lead.nextContact).toLocaleDateString() : "-"}
+                        {lead.updatedAt ? new Date(lead.updatedAt).toLocaleDateString() : "—"}
                       </p>
                     </TD>
                     <TD className="text-right">

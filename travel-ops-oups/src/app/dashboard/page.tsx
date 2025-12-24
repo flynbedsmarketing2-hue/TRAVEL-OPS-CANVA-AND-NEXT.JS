@@ -1,6 +1,5 @@
 'use client';
 
-import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -14,9 +13,10 @@ import {
   ShoppingBag,
   TrendingUp,
 } from "lucide-react";
-import TodayOverview from "../../components/home/TodayOverview";
+import PageHeader from "../../components/PageHeader";
 import { cn } from "../../components/ui/cn";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { StatCard } from "../../components/ui/StatCard";
 import { buttonClassName } from "../../components/ui/button";
 import { useBookingStore } from "../../stores/useBookingStore";
 import { useCrmStore, leadStages } from "../../stores/useCrmStore";
@@ -156,15 +156,35 @@ export default function DashboardPage() {
   const contentThisWeekPreview = contentThisWeek.slice(0, 3);
 
   return (
-    <div className="space-y-8">
-      <TodayOverview />
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Dashboard"
+        title="Today overview"
+        subtitle="Compact snapshot of sales, ops, and marketing."
+        actions={
+          <>
+            <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
+              New package
+            </Link>
+            <Link href="/sales" className={buttonClassName({ variant: "outline" })}>
+              Sales
+            </Link>
+          </>
+        }
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard label="Published packages" value={published} icon={<PlaneTakeoff className="h-5 w-5" />} />
-          <KpiCard label="Draft packages" value={draft} icon={<Package2 className="h-5 w-5" />} />
-          <KpiCard label="Bookings" value={bookings.length} icon={<ShoppingBag className="h-5 w-5" />} />
-          <KpiCard label="Total stock (pax)" value={totalStock} icon={<TrendingUp className="h-5 w-5" />} />
-        </div>
+        <StatCard
+          label="Published packages"
+          value={published}
+          sublabel="Live offers"
+          icon={<PlaneTakeoff className="h-5 w-5" />}
+          tone="primary"
+        />
+        <StatCard label="Draft packages" value={draft} icon={<Package2 className="h-5 w-5" />} />
+        <StatCard label="Bookings" value={bookings.length} icon={<ShoppingBag className="h-5 w-5" />} />
+        <StatCard label="Total stock (pax)" value={totalStock} icon={<TrendingUp className="h-5 w-5" />} />
+      </div>
 
         <Card>
           <CardHeader>
@@ -425,18 +445,3 @@ export default function DashboardPage() {
   );
 }
 
-function KpiCard({ label, value, icon }: { label: string; value: number | string; icon: ReactNode }) {
-  return (
-    <Card className="overflow-hidden">
-      <CardContent className="flex items-center justify-between p-5">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">{label}</p>
-          <p className="mt-2 font-heading text-3xl font-semibold text-slate-900 dark:text-slate-100">{value}</p>
-        </div>
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          {icon}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}

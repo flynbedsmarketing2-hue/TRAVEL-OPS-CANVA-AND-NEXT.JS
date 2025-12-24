@@ -9,18 +9,18 @@ type Props = {
 
 export default function PageHeader({ eyebrow, title, subtitle, actions }: Props) {
   return (
-    <div className="flex flex-wrap items-start justify-between gap-3 rounded-2xl bg-white/40 p-3 shadow-[8px_8px_18px_rgba(182,193,224,0.2),-8px_-8px_18px_rgba(255,255,255,0.7)] backdrop-blur">
+    <div className="flex flex-wrap items-start justify-between gap-3 rounded-[16px] border border-[var(--border)] bg-white/80 px-4 py-3 shadow-[0_10px_24px_rgba(15,23,42,0.06)] backdrop-blur dark:border-slate-800 dark:bg-slate-900/70">
       <div className="space-y-1">
         {eyebrow ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="font-heading text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        <h1 className="text-[24px] font-semibold leading-7 text-slate-900 dark:text-slate-100">
           {title}
         </h1>
         {subtitle ? (
-          <p className="max-w-3xl text-sm leading-snug text-slate-600 dark:text-slate-300">
+          <p className="max-w-3xl text-sm leading-5 text-slate-600 dark:text-slate-300">
             {subtitle}
           </p>
         ) : null}
