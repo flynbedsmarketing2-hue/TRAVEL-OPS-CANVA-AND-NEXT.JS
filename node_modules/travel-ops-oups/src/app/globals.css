@@ -8,25 +8,16 @@
 
 html.dark {
   color-scheme: dark;
-  background: radial-gradient(circle at 20% 20%, rgba(43, 140, 238, 0.1), transparent 35%),
-    radial-gradient(circle at 80% 0%, rgba(43, 140, 238, 0.08), transparent 30%),
-    radial-gradient(circle at 70% 60%, rgba(15, 23, 42, 0.12), transparent 40%),
-    #0b1320;
+  background: linear-gradient(180deg, rgba(43, 140, 238, 0.12), rgba(15, 23, 42, 0.08) 260px, #0b1320 260px);
 }
 
 body {
-  background: radial-gradient(circle at 20% 20%, rgba(43, 140, 238, 0.08), transparent 35%),
-    radial-gradient(circle at 80% 0%, rgba(43, 140, 238, 0.06), transparent 30%),
-    radial-gradient(circle at 70% 60%, rgba(15, 23, 42, 0.06), transparent 40%),
-    #f6f7f8;
+  background: linear-gradient(180deg, rgba(43, 140, 238, 0.08), rgba(15, 23, 42, 0.02) 240px, #f6f7f8 240px);
   @apply text-slate-900 antialiased dark:bg-background-dark dark:text-slate-100;
 }
 
 html.dark body {
-  background: radial-gradient(circle at 20% 20%, rgba(43, 140, 238, 0.12), transparent 35%),
-    radial-gradient(circle at 80% 0%, rgba(43, 140, 238, 0.1), transparent 30%),
-    radial-gradient(circle at 70% 60%, rgba(15, 23, 42, 0.18), transparent 40%),
-    #0b1320;
+  background: linear-gradient(180deg, rgba(43, 140, 238, 0.14), rgba(15, 23, 42, 0.12) 240px, #0b1320 240px);
 }
 
 a {
@@ -34,11 +25,11 @@ a {
 }
 
 .card {
-  @apply rounded-xl border border-slate-200/60 bg-white/90 shadow-sm shadow-slate-900/5 dark:border-slate-800/70 dark:bg-slate-950/70;
+  @apply rounded-xl border border-slate-200/70 bg-white/95 shadow-[0_8px_30px_rgba(15,23,42,0.06)] backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/70;
 }
 
 .section-shell {
-  @apply space-y-4 rounded-2xl border border-slate-200/60 bg-white/90 p-4 shadow-[0_4px_12px_rgba(15,23,42,0.08)] backdrop-blur dark:border-slate-800/70 dark:bg-slate-950/50 dark:shadow-none;
+  @apply space-y-4 rounded-xl border border-slate-200/70 bg-white/95 p-4 shadow-[0_6px_24px_rgba(15,23,42,0.08)] backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/70;
 }
 
 ::selection {

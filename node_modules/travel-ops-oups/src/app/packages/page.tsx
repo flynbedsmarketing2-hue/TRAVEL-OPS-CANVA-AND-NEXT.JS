@@ -4,7 +4,7 @@
 
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
-import { Copy, Download, Plus, Search, Trash2, Upload } from "lucide-react";
+import { Download, Plus, Search, Upload } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { Button, buttonClassName } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -12,6 +12,7 @@ import { cn } from "../../components/ui/cn";
 import { Input } from "../../components/ui/input";
 import { usePackageStore } from "../../stores/usePackageStore";
 import type { TravelPackage } from "../../types";
+import RowActionsMenu from "../../components/RowActionsMenu";
 
 type StatusFilter = "all" | "published" | "draft";
 type SortKey = "recent" | "priceAsc" | "priceDesc" | "stockDesc";
@@ -271,34 +272,30 @@ export default function PackagesPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center justify-between">
                       <Link href={`/packages/${pkg.id}`} className={buttonClassName({ variant: "outline", size: "sm" })}>
                         Ouvrir
                       </Link>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const copyOps = window.confirm("Dupliquer avec les ops existants ? (OK = copier, Annuler = regenerer)");
-                          duplicatePackage(pkg.id, { copyOps });
-                        }}
-                      >
-                        <Copy className="h-4 w-4" />
-                        Dupliquer
-                      </Button>
-
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => {
-                          if (!window.confirm("Supprimer ce package ?")) return;
-                          deletePackage(pkg.id);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Supprimer
-                      </Button>
+                      <RowActionsMenu
+                        actions={[
+                          { label: "Ouvrir", href: `/packages/${pkg.id}` },
+                          {
+                            label: "Dupliquer",
+                            onClick: () => {
+                              const copyOps = window.confirm("Dupliquer avec les ops existants ? (OK = copier, Annuler = regenerer)");
+                              duplicatePackage(pkg.id, { copyOps });
+                            },
+                          },
+                          {
+                            label: "Supprimer",
+                            tone: "danger",
+                            onClick: () => {
+                              if (!window.confirm("Supprimer ce package ?")) return;
+                              deletePackage(pkg.id);
+                            },
+                          },
+                        ]}
+                      />
                     </div>
                   </CardContent>
                 </Card>

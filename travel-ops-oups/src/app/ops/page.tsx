@@ -12,6 +12,7 @@ import { Table, TBody, TD, THead, TH, TR } from "../../components/ui/table";
 import { daysUntil, groupAlerts } from "../../lib/ops";
 import { usePackageStore } from "../../stores/usePackageStore";
 import type { OpsGroup, OpsStatus, TravelPackage } from "../../types";
+import RowActionsMenu from "../../components/RowActionsMenu";
 
 type StatusFilter = "all" | OpsStatus;
 type JxFilter = "all" | 7 | 15 | 30;
@@ -249,33 +250,24 @@ export default function OpsPage() {
                         )}
                       </TD>
                       <TD className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Link
-                            href={`/ops/${pkg.id}/${group.id}`}
-                            className={buttonClassName({ variant: "outline", size: "sm" })}
-                          >
-                            Ouvrir
-                          </Link>
-                          {canValidate ? (
-                            group.status === "validated" ? (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => updateOpsGroupStatus(pkg.id, group.id, "pending_validation")}
-                              >
-                                Rouvrir
-                              </Button>
-                            ) : (
-                              <Button
-                                variant="primary"
-                                size="sm"
-                                onClick={() => updateOpsGroupStatus(pkg.id, group.id, "validated")}
-                              >
-                                Valider
-                              </Button>
-                            )
-                          ) : null}
-                        </div>
+                        <RowActionsMenu
+                          actions={[
+                            { label: "Ouvrir", href: `/ops/${pkg.id}/${group.id}` },
+                            ...(canValidate
+                              ? [
+                                  group.status === "validated"
+                                    ? {
+                                        label: "Rouvrir",
+                                        onClick: () => updateOpsGroupStatus(pkg.id, group.id, "pending_validation"),
+                                      }
+                                    : {
+                                        label: "Valider",
+                                        onClick: () => updateOpsGroupStatus(pkg.id, group.id, "validated"),
+                                      },
+                                ]
+                              : []),
+                          ]}
+                        />
                       </TD>
                     </TR>
                   );

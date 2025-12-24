@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from "react";
-import { ClipboardList, FileText, Pencil, PlusCircle, ReceiptText, Trash2 } from "lucide-react";
+import { ClipboardList, PlusCircle } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import BookingWizardModal, { type BookingDraft } from "../../components/BookingWizardModal";
 import { Button } from "../../components/ui/button";
@@ -12,6 +12,7 @@ import { useBookingStore } from "../../stores/useBookingStore";
 import { usePackageStore } from "../../stores/usePackageStore";
 import type { Booking, TravelPackage } from "../../types";
 import { computeTotals, formatMoney, paymentStatus } from "../../lib/booking";
+import RowActionsMenu from "../../components/RowActionsMenu";
 
 type JsPdfLike = {
   internal: {
@@ -372,24 +373,14 @@ export default function SalesPage() {
                           <span className="text-sm text-slate-600 dark:text-slate-300">{booking.reservedUntil || "-"}</span>
                         </TD>
                         <TD className="text-right">
-                          <div className="flex flex-wrap justify-end gap-2">
-                            <Button variant="outline" size="sm" onClick={() => openEdit(booking)}>
-                              <Pencil className="h-4 w-4" />
-                              Editer
-                            </Button>
-                            <Button variant="danger" size="sm" onClick={() => deleteOne(booking.id)}>
-                              <Trash2 className="h-4 w-4" />
-                              Supprimer
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => exportBookingPdf(booking, "confirmation")}>
-                              <FileText className="h-4 w-4" />
-                              Confirmation
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => exportBookingPdf(booking, "invoice")}>
-                              <ReceiptText className="h-4 w-4" />
-                              Invoice
-                            </Button>
-                          </div>
+                          <RowActionsMenu
+                            actions={[
+                              { label: "Editer", onClick: () => openEdit(booking) },
+                              { label: "Confirmation", onClick: () => exportBookingPdf(booking, "confirmation") },
+                              { label: "Invoice", onClick: () => exportBookingPdf(booking, "invoice") },
+                              { label: "Supprimer", tone: "danger", onClick: () => deleteOne(booking.id) },
+                            ]}
+                          />
                         </TD>
                       </TR>
                     );

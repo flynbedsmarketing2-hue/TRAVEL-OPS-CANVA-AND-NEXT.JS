@@ -53,7 +53,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
         <main id="main-content" role="main" className="flex-1 px-4 py-6 lg:px-6">
-          <div className="mx-auto w-full max-w-6xl">{children}</div>
+          <div className="mx-auto w-full max-w-7xl 2xl:max-w-none">{children}</div>
         </main>
       </div>
     </div>
