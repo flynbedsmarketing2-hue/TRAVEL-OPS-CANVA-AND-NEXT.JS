@@ -6,6 +6,35 @@ import type { FlightSegment, OpsProject, TravelPackage } from "../types";
 import { mockPackages } from "../lib/mockData";
 import { generateId, makePersistStorage } from "./storeUtils";
 
+const PACKAGES_ENDPOINT = "/api/shared/packages";
+
+const persistPackagesToServer = (packages: TravelPackage[]) => {
+  if (typeof window === "undefined") return;
+  void fetch(PACKAGES_ENDPOINT, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ packages }),
+  }).catch((reason) => {
+    console.error("Unable to sync packages with shared backend", reason);
+  });
+};
+
+const loadPackagesFromServer = async (): Promise<TravelPackage[] | null> => {
+  if (typeof window === "undefined") return null;
+  try {
+    const response = await fetch(PACKAGES_ENDPOINT);
+    if (!response.ok) {
+      console.error("Shared packages backend unavailable", response.statusText);
+      return null;
+    }
+    const data = (await response.json()) as TravelPackage[];
+    return data;
+  } catch (error) {
+    console.error("Failed to load packages from shared backend", error);
+    return null;
+  }
+};
+
 type PackageStore = {
   packages: TravelPackage[];
   addPackage: (pkg: Omit<TravelPackage, "id" | "opsProject">) => TravelPackage;
@@ -56,6 +85,7 @@ type PackageStore = {
   removeTimelineItem: (packageId: string, groupId: string, itemIndex: number) => void;
 
   reset: () => void;
+  loadFromServer: () => Promise<void>;
 };
 
 const storage = makePersistStorage();
@@ -186,270 +216,307 @@ const seedPackages: TravelPackage[] = mockPackages.map((pkg) => ({
 
 export const usePackageStore = create<PackageStore>()(
   persist(
-    (set, get) => ({
-      packages: seedPackages,
+    (set, get) => {
+      const syncPackages = () => persistPackagesToServer(get().packages);
 
-      addPackage: (pkg) => {
-        const newPackage: TravelPackage = { ...pkg, id: generateId() };
-        const withOps: TravelPackage = {
-          ...newPackage,
-          opsProject: buildOpsProject(newPackage),
-        };
-        set({ packages: [withOps, ...get().packages] });
-        return withOps;
-      },
+      return {
+        packages: seedPackages,
 
-      updatePackage: (id, updater) => {
-        let updatedPackage: TravelPackage | null = null;
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== id) return pkg;
-            updatedPackage = { ...pkg, ...updater };
-            if (updater.flights) {
-              const structureChanged = hasFlightStructureChanged(
-                pkg.flights.flights,
-                updatedPackage.flights.flights
-              );
-              if (structureChanged) {
-                updatedPackage.opsProject = mergeOpsProject(pkg.opsProject, updatedPackage);
+        addPackage: (pkg) => {
+          const newPackage: TravelPackage = { ...pkg, id: generateId() };
+          const withOps: TravelPackage = {
+            ...newPackage,
+            opsProject: buildOpsProject(newPackage),
+          };
+          set({ packages: [withOps, ...get().packages] });
+          syncPackages();
+          return withOps;
+        },
+
+        updatePackage: (id, updater) => {
+          let updatedPackage: TravelPackage | null = null;
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== id) return pkg;
+              updatedPackage = { ...pkg, ...updater };
+              if (updater.flights) {
+                const structureChanged = hasFlightStructureChanged(
+                  pkg.flights.flights,
+                  updatedPackage.flights.flights
+                );
+                if (structureChanged) {
+                  updatedPackage.opsProject = mergeOpsProject(pkg.opsProject, updatedPackage);
+                }
               }
-            }
-            return updatedPackage;
-          }),
-        });
-        return updatedPackage;
-      },
-
-      deletePackage: (id) =>
-        set({ packages: get().packages.filter((pkg) => pkg.id !== id) }),
-
-      duplicatePackage: (id, options) => {
-        const original = get().packages.find((pkg) => pkg.id === id);
-        if (!original) return null;
-
-        const duplicated: TravelPackage = {
-          ...original,
-          id: generateId(),
-          status: "draft",
-          general: {
-            ...original.general,
-            productCode: `${original.general.productCode}-COPY`,
-            productName: `${original.general.productName} (Copy)`,
-          },
-        };
-
-        const copyOps = Boolean(options?.copyOps);
-        const opsProject: OpsProject = copyOps
-          ? original.opsProject
-            ? {
-                ...original.opsProject,
-                id: generateId(),
-                packageId: duplicated.id,
-                groups: original.opsProject.groups.map((g) => ({
-                  ...g,
-                  id: generateId(),
-                  suppliers: g.suppliers ?? [],
-                  costs: g.costs ?? [],
-                  timeline: g.timeline ?? [],
-                })),
-              }
-            : buildOpsProject(duplicated)
-          : buildOpsProject(duplicated);
-
-        const withOps: TravelPackage = { ...duplicated, opsProject };
-        set({ packages: [withOps, ...get().packages] });
-        return withOps;
-      },
-
-      importPackages: (imported, mode) => {
-        if (!Array.isArray(imported)) return 0;
-        const existingIds = new Set(get().packages.map((p) => p.id));
-
-        const normalized = imported
-          .filter(Boolean)
-          .map((p) => normalizeImportedPackage(p))
-          .map((p) => {
-            if (!existingIds.has(p.id)) return p;
-            const newId = generateId();
-            return {
-              ...p,
-              id: newId,
-              opsProject: p.opsProject
-                ? { ...p.opsProject, packageId: newId }
-                : buildOpsProject({ ...p, id: newId }),
-            };
+              return updatedPackage;
+            }),
           });
+          syncPackages();
+          return updatedPackage;
+        },
 
-        set({
-          packages: mode === "replace" ? normalized : [...normalized, ...get().packages],
-        });
+        deletePackage: (id) => {
+          set({ packages: get().packages.filter((pkg) => pkg.id !== id) });
+          syncPackages();
+        },
 
-        return normalized.length;
-      },
+        duplicatePackage: (id, options) => {
+          const original = get().packages.find((pkg) => pkg.id === id);
+          if (!original) return null;
 
-      exportPackages: () => get().packages,
+          const duplicated: TravelPackage = {
+            ...original,
+            id: generateId(),
+            status: "draft",
+            general: {
+              ...original.general,
+              productCode: `${original.general.productCode}-COPY`,
+              productName: `${original.general.productName} (Copy)`,
+            },
+          };
 
-      setPackageStatus: (id, status) =>
-        set({
-          packages: get().packages.map((pkg) => (pkg.id === id ? { ...pkg, status } : pkg)),
-        }),
+          const copyOps = Boolean(options?.copyOps);
+          const opsProject: OpsProject = copyOps
+            ? original.opsProject
+              ? {
+                  ...original.opsProject,
+                  id: generateId(),
+                  packageId: duplicated.id,
+                  groups: original.opsProject.groups.map((g) => ({
+                    ...g,
+                    id: generateId(),
+                    suppliers: g.suppliers ?? [],
+                    costs: g.costs ?? [],
+                    timeline: g.timeline ?? [],
+                  })),
+                }
+              : buildOpsProject(duplicated)
+            : buildOpsProject(duplicated);
 
-      updateOpsGroupStatus: (packageId, groupId, status) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            const updatedGroups = pkg.opsProject.groups.map((group) => {
-              if (group.id !== groupId) return group;
+          const withOps: TravelPackage = { ...duplicated, opsProject };
+          set({ packages: [withOps, ...get().packages] });
+          syncPackages();
+          return withOps;
+        },
+
+        importPackages: (imported, mode) => {
+          if (!Array.isArray(imported)) return 0;
+          const existingIds = new Set(get().packages.map((p) => p.id));
+
+          const normalized = imported
+            .filter(Boolean)
+            .map((p) => normalizeImportedPackage(p))
+            .map((p) => {
+              if (!existingIds.has(p.id)) return p;
+              const newId = generateId();
               return {
-                ...group,
-                status,
-                validationDate: status === "validated" ? new Date().toISOString() : undefined,
+                ...p,
+                id: newId,
+                opsProject: p.opsProject
+                  ? { ...p.opsProject, packageId: newId }
+                  : buildOpsProject({ ...p, id: newId }),
               };
             });
-            return { ...pkg, opsProject: { ...pkg.opsProject, groups: updatedGroups } };
-          }),
-        }),
 
-      addSupplier: (packageId, groupId, supplier) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            return {
-              ...pkg,
-              opsProject: {
-                ...pkg.opsProject,
-                groups: pkg.opsProject.groups.map((group) =>
-                  group.id === groupId ? { ...group, suppliers: [...group.suppliers, supplier] } : group
-                ),
-              },
-            };
-          }),
-        }),
+          set({
+            packages: mode === "replace" ? normalized : [...normalized, ...get().packages],
+          });
+          syncPackages();
+          return normalized.length;
+        },
 
-      removeSupplier: (packageId, groupId, supplierIndex) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            return {
-              ...pkg,
-              opsProject: {
-                ...pkg.opsProject,
-                groups: pkg.opsProject.groups.map((group) =>
-                  group.id === groupId
-                    ? { ...group, suppliers: group.suppliers.filter((_, idx) => idx !== supplierIndex) }
-                    : group
-                ),
-              },
-            };
-          }),
-        }),
+        exportPackages: () => get().packages,
 
-      addCostStep: (packageId, groupId, step) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            return {
-              ...pkg,
-              opsProject: {
-                ...pkg.opsProject,
-                groups: pkg.opsProject.groups.map((group) =>
-                  group.id === groupId ? { ...group, costs: [...group.costs, step] } : group
-                ),
-              },
-            };
-          }),
-        }),
+        setPackageStatus: (id, status) => {
+          set({ packages: get().packages.map((pkg) => (pkg.id === id ? { ...pkg, status } : pkg)) });
+          syncPackages();
+        },
 
-      updateCostStep: (packageId, groupId, costIndex, updater) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            return {
-              ...pkg,
-              opsProject: {
-                ...pkg.opsProject,
-                groups: pkg.opsProject.groups.map((group) => {
-                  if (group.id !== groupId) return group;
-                  const costs = group.costs.map((c, idx) => (idx === costIndex ? { ...c, ...updater } : c));
-                  return { ...group, costs };
-                }),
-              },
-            };
-          }),
-        }),
+        updateOpsGroupStatus: (packageId, groupId, status) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              const updatedGroups = pkg.opsProject.groups.map((group) => {
+                if (group.id !== groupId) return group;
+                return {
+                  ...group,
+                  status,
+                  validationDate: status === "validated" ? new Date().toISOString() : undefined,
+                };
+              });
+              return { ...pkg, opsProject: { ...pkg.opsProject, groups: updatedGroups } };
+            }),
+          });
+          syncPackages();
+        },
 
-      removeCostStep: (packageId, groupId, costIndex) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            return {
-              ...pkg,
-              opsProject: {
-                ...pkg.opsProject,
-                groups: pkg.opsProject.groups.map((group) =>
-                  group.id === groupId ? { ...group, costs: group.costs.filter((_, idx) => idx !== costIndex) } : group
-                ),
-              },
-            };
-          }),
-        }),
+        addSupplier: (packageId, groupId, supplier) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              return {
+                ...pkg,
+                opsProject: {
+                  ...pkg.opsProject,
+                  groups: pkg.opsProject.groups.map((group) =>
+                    group.id === groupId ? { ...group, suppliers: [...group.suppliers, supplier] } : group
+                  ),
+                },
+              };
+            }),
+          });
+          syncPackages();
+        },
 
-      addTimelineItem: (packageId, groupId, item) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            return {
-              ...pkg,
-              opsProject: {
-                ...pkg.opsProject,
-                groups: pkg.opsProject.groups.map((group) =>
-                  group.id === groupId ? { ...group, timeline: [...group.timeline, item] } : group
-                ),
-              },
-            };
-          }),
-        }),
+        removeSupplier: (packageId, groupId, supplierIndex) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              return {
+                ...pkg,
+                opsProject: {
+                  ...pkg.opsProject,
+                  groups: pkg.opsProject.groups.map((group) =>
+                    group.id === groupId
+                      ? { ...group, suppliers: group.suppliers.filter((_, idx) => idx !== supplierIndex) }
+                      : group
+                  ),
+                },
+              };
+            }),
+          });
+          syncPackages();
+        },
 
-      updateTimelineItem: (packageId, groupId, itemIndex, updater) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            return {
-              ...pkg,
-              opsProject: {
-                ...pkg.opsProject,
-                groups: pkg.opsProject.groups.map((group) => {
-                  if (group.id !== groupId) return group;
-                  const timeline = group.timeline.map((t, idx) =>
-                    idx === itemIndex ? { ...t, ...updater } : t
-                  );
-                  return { ...group, timeline };
-                }),
-              },
-            };
-          }),
-        }),
+        addCostStep: (packageId, groupId, step) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              return {
+                ...pkg,
+                opsProject: {
+                  ...pkg.opsProject,
+                  groups: pkg.opsProject.groups.map((group) =>
+                    group.id === groupId ? { ...group, costs: [...group.costs, step] } : group
+                  ),
+                },
+              };
+            }),
+          });
+          syncPackages();
+        },
 
-      removeTimelineItem: (packageId, groupId, itemIndex) =>
-        set({
-          packages: get().packages.map((pkg) => {
-            if (pkg.id !== packageId || !pkg.opsProject) return pkg;
-            return {
-              ...pkg,
-              opsProject: {
-                ...pkg.opsProject,
-                groups: pkg.opsProject.groups.map((group) =>
-                  group.id === groupId
-                    ? { ...group, timeline: group.timeline.filter((_, idx) => idx !== itemIndex) }
-                    : group
-                ),
-              },
-            };
-          }),
-        }),
+        updateCostStep: (packageId, groupId, costIndex, updater) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              return {
+                ...pkg,
+                opsProject: {
+                  ...pkg.opsProject,
+                  groups: pkg.opsProject.groups.map((group) => {
+                    if (group.id !== groupId) return group;
+                    const costs = group.costs.map((c, idx) => (idx === costIndex ? { ...c, ...updater } : c));
+                    return { ...group, costs };
+                  }),
+                },
+              };
+            }),
+          });
+          syncPackages();
+        },
 
-      reset: () => set({ packages: [] }),
-    }),
+        removeCostStep: (packageId, groupId, costIndex) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              return {
+                ...pkg,
+                opsProject: {
+                  ...pkg.opsProject,
+                  groups: pkg.opsProject.groups.map((group) =>
+                    group.id === groupId ? { ...group, costs: group.costs.filter((_, idx) => idx !== costIndex) } : group
+                  ),
+                },
+              };
+            }),
+          });
+          syncPackages();
+        },
+
+        addTimelineItem: (packageId, groupId, item) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              return {
+                ...pkg,
+                opsProject: {
+                  ...pkg.opsProject,
+                  groups: pkg.opsProject.groups.map((group) =>
+                    group.id === groupId ? { ...group, timeline: [...group.timeline, item] } : group
+                  ),
+                },
+              };
+            }),
+          });
+          syncPackages();
+        },
+
+        updateTimelineItem: (packageId, groupId, itemIndex, updater) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              return {
+                ...pkg,
+                opsProject: {
+                  ...pkg.opsProject,
+                  groups: pkg.opsProject.groups.map((group) => {
+                    if (group.id !== groupId) return group;
+                    const timeline = group.timeline.map((t, idx) =>
+                      idx === itemIndex ? { ...t, ...updater } : t
+                    );
+                    return { ...group, timeline };
+                  }),
+                },
+              };
+            }),
+          });
+          syncPackages();
+        },
+
+        removeTimelineItem: (packageId, groupId, itemIndex) => {
+          set({
+            packages: get().packages.map((pkg) => {
+              if (pkg.id !== packageId || !pkg.opsProject) return pkg;
+              return {
+                ...pkg,
+                opsProject: {
+                  ...pkg.opsProject,
+                  groups: pkg.opsProject.groups.map((group) =>
+                    group.id === groupId
+                      ? { ...group, timeline: group.timeline.filter((_, idx) => idx !== itemIndex) }
+                      : group
+                  ),
+                },
+              };
+            }),
+          });
+          syncPackages();
+        },
+
+        reset: () => {
+          set({ packages: [] });
+          syncPackages();
+        },
+
+        loadFromServer: async () => {
+          const sharedPackages = await loadPackagesFromServer();
+          if (sharedPackages) {
+            set({ packages: sharedPackages });
+          }
+        },
+      };
+    },
     {
       name: "travelops-packages-store",
       storage,
