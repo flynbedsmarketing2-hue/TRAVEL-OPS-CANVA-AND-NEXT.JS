@@ -84,8 +84,8 @@ export default function Header() {
             type="button"
             onClick={toggleTheme}
             className="inline-flex items-center gap-2 rounded-2xl border border-white/70 bg-[linear-gradient(145deg,#f9fbff,#e9eeff)] px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-[6px_6px_14px_rgba(182,193,224,0.32),-6px_-6px_14px_rgba(255,255,255,0.9)] transition hover:text-primary dark:border-slate-800 dark:bg-slate-950/50 dark:text-slate-200 dark:hover:bg-slate-900/60"
-            aria-label="Basculer le theme"
-            title="Basculer le theme"
+            aria-label="Toggle theme"
+            title="Toggle theme"
           >
             {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </button>
@@ -94,7 +94,7 @@ export default function Header() {
             href="/dashboard"
             className="flex items-center gap-2 rounded-full bg-gradient-to-br from-[#7c8bff] via-[#6ba7ff] to-[#5ed0ff] px-5 py-2.5 text-sm font-semibold text-white shadow-[10px_10px_22px_rgba(118,136,200,0.32),-8px_-8px_18px_rgba(255,255,255,0.9)] transition hover:brightness-[1.02]"
           >
-            Ouvrir
+            Open
           </Link>
         </div>
       </div>

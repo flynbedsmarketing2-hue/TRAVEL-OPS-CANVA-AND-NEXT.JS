@@ -154,7 +154,7 @@ export default function PackagesPage() {
                     window.alert("JSON invalide: tableau attendu.");
                     return;
                   }
-                  const mode = window.confirm("Remplacer les packages existants ? (OK = replace, Annuler = merge)")
+                  const mode = window.confirm("Replace existing packages? (OK = replace, Cancel = merge)")
                     ? "replace"
                     : "merge";
                   const count = importPackages(imported, mode);
@@ -274,23 +274,23 @@ export default function PackagesPage() {
 
                     <div className="flex items-center justify-between">
                       <Link href={`/packages/${pkg.id}`} className={buttonClassName({ variant: "outline", size: "sm" })}>
-                        Ouvrir
+                        Open
                       </Link>
                       <RowActionsMenu
                         actions={[
-                          { label: "Ouvrir", href: `/packages/${pkg.id}` },
+                          { label: "Open", href: `/packages/${pkg.id}` },
                           {
-                            label: "Dupliquer",
+                            label: "Duplicate",
                             onClick: () => {
-                              const copyOps = window.confirm("Dupliquer avec les ops existants ? (OK = copier, Annuler = regenerer)");
+                              const copyOps = window.confirm("Duplicate with existing ops? (OK = copy, Cancel = regenerate)");
                               duplicatePackage(pkg.id, { copyOps });
                             },
                           },
                           {
-                            label: "Supprimer",
+                            label: "Delete",
                             tone: "danger",
                             onClick: () => {
-                              if (!window.confirm("Supprimer ce package ?")) return;
+                              if (!window.confirm("Delete this package?")) return;
                               deletePackage(pkg.id);
                             },
                           },

@@ -18,12 +18,13 @@ export default function Topbar({ onOpenSidebar }: Props) {
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
-            size="icon"
+            size="md"
             onClick={onOpenSidebar}
-            className="lg:hidden"
-            aria-label="Ouvrir le menu"
+            className="flex items-center gap-2 rounded-full bg-white/40 px-3 py-2 text-slate-700 shadow-sm shadow-slate-900/10 transition hover:bg-white hover:text-primary focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/50 lg:hidden"
+            aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
+            <span className="text-sm font-semibold">Menu</span>
           </Button>
           <Link
             href="/"
@@ -38,15 +39,15 @@ export default function Topbar({ onOpenSidebar }: Props) {
             variant="secondary"
             size="icon"
             onClick={toggleTheme}
-            aria-label="Basculer le theme"
-            title="Basculer le theme"
+            aria-label="Toggle theme"
+            title="Toggle theme"
             className="rounded-2xl text-slate-900 hover:text-primary"
           >
             {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </Button>
 
           <Link href="/dashboard" className="inline-flex">
-            <Button>Explorer</Button>
+            <Button>Explore</Button>
           </Link>
         </div>
       </div>

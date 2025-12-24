@@ -53,7 +53,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       {sidebarOpen ? (
         <button
           type="button"
-          aria-label="Fermer le menu"
+          aria-label="Close menu"
           className="fixed inset-0 z-30 bg-slate-900/15 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />

@@ -27,7 +27,7 @@ export function Modal({ open, onClose, title, children, className }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <button
         type="button"
-        aria-label="Fermer la modale"
+        aria-label="Close modal"
         className="absolute inset-0 bg-slate-900/10 backdrop-blur"
         onClick={() => onClose()}
       />

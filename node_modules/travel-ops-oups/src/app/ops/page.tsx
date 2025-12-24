@@ -252,7 +252,7 @@ export default function OpsPage() {
                       <TD className="text-right">
                         <RowActionsMenu
                           actions={[
-                            { label: "Ouvrir", href: `/ops/${pkg.id}/${group.id}` },
+                            { label: "Open", href: `/ops/${pkg.id}/${group.id}` },
                             ...(canValidate
                               ? [
                                   group.status === "validated"

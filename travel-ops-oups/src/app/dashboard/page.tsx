@@ -14,7 +14,7 @@ import {
   ShoppingBag,
   TrendingUp,
 } from "lucide-react";
-import PageHeader from "../../components/PageHeader";
+import TodayOverview from "../../components/home/TodayOverview";
 import { cn } from "../../components/ui/cn";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { buttonClassName } from "../../components/ui/button";
@@ -157,23 +157,9 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow="Dashboard"
-        title="Welcome"
-        subtitle="Quick overview of packages, sales, and ops."
-        actions={
-          <>
-            <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
-              New package
-            </Link>
-            <Link href="/sales" className={buttonClassName({ variant: "outline" })}>
-              Sales
-            </Link>
-          </>
-        }
-      />
+      <TodayOverview />
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard label="Published packages" value={published} icon={<PlaneTakeoff className="h-5 w-5" />} />
           <KpiCard label="Draft packages" value={draft} icon={<Package2 className="h-5 w-5" />} />
           <KpiCard label="Bookings" value={bookings.length} icon={<ShoppingBag className="h-5 w-5" />} />
