@@ -4,7 +4,7 @@ export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "dan
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 export const buttonBase =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-offset-background-dark";
+  "inline-flex items-center justify-center gap-1 rounded-md font-semibold transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-offset-background-dark";
 
 export const buttonVariants: Record<ButtonVariant, string> = {
   primary: "bg-primary text-white shadow-sm shadow-black/5 hover:bg-primary/90 active:bg-primary/85",
@@ -19,10 +19,10 @@ export const buttonVariants: Record<ButtonVariant, string> = {
 };
 
 export const buttonSizes: Record<ButtonSize, string> = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-10 px-4 text-sm",
-  lg: "h-11 px-5 text-sm",
-  icon: "h-10 w-10",
+  sm: "h-8 px-3 text-xs",
+  md: "h-9 px-3 text-sm",
+  lg: "h-10 px-4 text-sm",
+  icon: "h-9 w-9",
 };
 
 export function buttonClassName(options?: { variant?: ButtonVariant; size?: ButtonSize; className?: string }) {
