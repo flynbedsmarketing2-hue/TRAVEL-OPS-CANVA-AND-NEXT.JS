@@ -6,18 +6,21 @@
   color-scheme: light;
 }
 
-html.dark {
-  color-scheme: dark;
-  background: linear-gradient(180deg, rgba(43, 140, 238, 0.12), rgba(15, 23, 42, 0.08) 260px, #0b1320 260px);
-}
-
 body {
-  background: linear-gradient(180deg, rgba(43, 140, 238, 0.08), rgba(15, 23, 42, 0.02) 240px, #f6f7f8 240px);
-  @apply text-slate-900 antialiased dark:bg-background-dark dark:text-slate-100;
+  @apply text-slate-900 antialiased dark:text-slate-100;
+  background-color: #f5f6fb;
+  background-image:
+    radial-gradient(circle at top center, rgba(59, 130, 246, 0.15), transparent 55px),
+    linear-gradient(180deg, rgba(59, 130, 246, 0.05), transparent 220px);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 html.dark body {
-  background: linear-gradient(180deg, rgba(43, 140, 238, 0.14), rgba(15, 23, 42, 0.12) 240px, #0b1320 240px);
+  background-color: #020617;
+  background-image:
+    radial-gradient(circle at top center, rgba(59, 130, 246, 0.18), transparent 55px),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.24), transparent 220px);
 }
 
 a {

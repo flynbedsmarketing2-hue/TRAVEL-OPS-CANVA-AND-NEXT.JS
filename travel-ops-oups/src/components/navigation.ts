@@ -2,6 +2,8 @@ import type { ComponentType } from "react";
 import {
   Briefcase,
   LayoutDashboard,
+  ListChecks,
+  Megaphone,
   Plane,
   ShoppingCart,
   Telescope,
@@ -24,6 +26,16 @@ export const navItems: NavItem[] = [
     label: "CRM",
     href: "/crm/leads",
     icon: Users,
+  },
+  {
+    label: "Tasks",
+    href: "/tasks",
+    icon: ListChecks,
+  },
+  {
+    label: "Marketing",
+    href: "/marketing/campaigns",
+    icon: Megaphone,
   },
   {
     label: "Packages",

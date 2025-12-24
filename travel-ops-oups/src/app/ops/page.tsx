@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CheckCircle2, Clock, Search, ShieldCheck, Telescope } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
-import { Button, buttonClassName } from "../../components/ui/button";
+import { buttonClassName } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { cn } from "../../components/ui/cn";
 import { Input } from "../../components/ui/input";

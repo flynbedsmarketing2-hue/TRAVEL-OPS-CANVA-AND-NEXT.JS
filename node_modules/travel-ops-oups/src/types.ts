@@ -180,3 +180,51 @@ export interface Lead {
   createdAt: string;
   updatedAt: string;
 }
+
+export type TaskStatus = "todo" | "in_progress" | "blocked" | "done";
+export type TaskPriority = "low" | "medium" | "high" | "urgent";
+
+export interface TaskLink {
+  type: "lead" | "booking" | "package" | "opsGroup";
+  id: string;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  owner: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueDate?: string;
+  link?: TaskLink;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CampaignChannel = "email" | "events" | "social" | "organic" | "partner";
+export interface Campaign {
+  id: string;
+  name: string;
+  channel: CampaignChannel;
+  budgetPlanned: number;
+  startDate: string;
+  endDate?: string;
+  linkedPackageIds: string[];
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ContentStatus = "idea" | "in_production" | "scheduled" | "posted";
+export interface ContentItem {
+  id: string;
+  title: string;
+  platform: string;
+  status: ContentStatus;
+  publishDate?: string;
+  linkedCampaignId?: string;
+  linkedPackageId?: string;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { useMemo, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import PageHeader from "../../../components/PageHeader";
 import RowActionsMenu from "../../../components/RowActionsMenu";
-import { Button, buttonClassName } from "../../../components/ui/button";
+import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Table, TBody, TD, THead, TH, TR } from "../../../components/ui/table";
@@ -27,6 +26,14 @@ const defaultFormState: LeadFormState = {
   notes: "",
 };
 
+const omitLeadMetadata = (lead: Lead): LeadFormState => {
+  const { id, createdAt, updatedAt, ...rest } = lead;
+  void id;
+  void createdAt;
+  void updatedAt;
+  return rest;
+};
+
 type LeadModalProps = {
   open: boolean;
   lead?: Lead | null;
@@ -35,16 +42,8 @@ type LeadModalProps = {
 };
 
 function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
-  const [form, setForm] = useState<LeadFormState>(defaultFormState);
-
-  useEffect(() => {
-    if (lead) {
-      const { id, createdAt, updatedAt, ...rest } = lead;
-      setForm({ ...rest });
-    } else {
-      setForm({ ...defaultFormState });
-    }
-  }, [lead, open]);
+  const initialForm = lead ? omitLeadMetadata(lead) : { ...defaultFormState };
+  const [form, setForm] = useState<LeadFormState>(initialForm);
 
   if (!open) return null;
 
@@ -58,19 +57,19 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
       <div className="w-full max-w-xl rounded-2xl border border-slate-200/60 bg-white/95 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-950/80">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            {lead ? "Modifier un lead" : "Ajouter un lead"}
+            {lead ? "Edit lead" : "Add lead"}
           </h2>
           <button
             type="button"
             onClick={onClose}
             className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
           >
-            Fermer
+            Close
           </button>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Nom
+            Name
             <input
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
@@ -78,7 +77,7 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
             />
           </label>
           <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Entreprise
+            Company
             <input
               value={form.company}
               onChange={(event) => setForm({ ...form, company: event.target.value })}
@@ -94,7 +93,7 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
             />
           </label>
           <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Téléphone
+            Phone
             <input
               value={form.phone}
               onChange={(event) => setForm({ ...form, phone: event.target.value })}
@@ -102,7 +101,7 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
             />
           </label>
           <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Responsable
+            Owner
             <input
               value={form.owner}
               onChange={(event) => setForm({ ...form, owner: event.target.value })}
@@ -110,7 +109,7 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
             />
           </label>
           <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Prochaine relance
+            Next contact
             <input
               type="date"
               value={form.nextContact ?? ""}
@@ -159,10 +158,10 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
         </label>
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose}>
-            Annuler
+            Cancel
           </Button>
           <Button variant="primary" onClick={handleSubmit}>
-            Enregistrer
+            Save lead
           </Button>
         </div>
       </div>
@@ -213,29 +212,29 @@ export default function LeadsPage() {
       <PageHeader
         eyebrow="CRM"
         title="Leads"
-        subtitle="Suivi des opportunités et relations commerciales."
+        subtitle="Manage company relationships and pipeline."
         actions={
           <Button variant="primary" onClick={() => openModal()}>
             <Plus className="h-4 w-4" />
-            Ajouter un lead
+            Add lead
           </Button>
         }
       />
 
       <Card>
         <CardHeader>
-          <CardTitle>Filtres</CardTitle>
+          <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
           <label className="text-sm font-semibold text-slate-700">
-            Recherche
+            Search
             <div className="relative mt-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 className="pl-10"
-                placeholder="Nom, société, responsable..."
+                placeholder="Name, company, owner..."
               />
             </div>
           </label>
@@ -246,7 +245,7 @@ export default function LeadsPage() {
               onChange={(event) => setStageFilter(event.target.value as LeadStage | "")}
               className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
             >
-              <option value="">Tous</option>
+              <option value="">All</option>
               {leadStages.map((stageOption) => (
                 <option key={stageOption.value} value={stageOption.value}>
                   {stageOption.label}
@@ -261,7 +260,7 @@ export default function LeadsPage() {
               onChange={(event) => setSourceFilter(event.target.value as LeadSource | "")}
               className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
             >
-              <option value="">Toutes</option>
+              <option value="">All</option>
               {leadSources.map((sourceOption) => (
                 <option key={sourceOption.value} value={sourceOption.value}>
                   {sourceOption.label}
@@ -278,17 +277,17 @@ export default function LeadsPage() {
         </CardHeader>
         <CardContent className="overflow-x-auto">
           {filteredLeads.length === 0 ? (
-            <div className="py-8 text-center text-sm text-slate-500">Aucun lead correspondant.</div>
+            <div className="py-8 text-center text-sm text-slate-500">No matching leads.</div>
           ) : (
             <Table>
               <THead>
                 <TR>
-                  <TH>Nom</TH>
-                  <TH>Entreprise</TH>
+                  <TH>Name</TH>
+                  <TH>Company</TH>
                   <TH>Stage</TH>
                   <TH>Source</TH>
-                  <TH>Responsable</TH>
-                  <TH>Prochaine relance</TH>
+                  <TH>Owner</TH>
+                  <TH>Next contact</TH>
                   <TH className="text-right">Actions</TH>
                 </TR>
               </THead>
@@ -297,7 +296,7 @@ export default function LeadsPage() {
                   <TR key={lead.id}>
                     <TD>
                       <p className="font-semibold text-slate-900 dark:text-slate-100">{lead.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-300">{lead.email ?? lead.phone ?? "—"}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-300">{lead.email ?? lead.phone ?? "-"}</p>
                     </TD>
                     <TD>
                       <p className="text-sm text-slate-700 dark:text-slate-200">{lead.company}</p>
@@ -313,25 +312,29 @@ export default function LeadsPage() {
                       </p>
                     </TD>
                     <TD>
-                      <p className="text-sm text-slate-700 dark:text-slate-200">{lead.owner ?? "—"}</p>
+                      <p className="text-sm text-slate-700 dark:text-slate-200">{lead.owner ?? "-"}</p>
                     </TD>
                     <TD>
                       <p className="text-sm text-slate-700 dark:text-slate-200">
-                        {lead.nextContact ? new Date(lead.nextContact).toLocaleDateString() : "—"}
+                        {lead.nextContact ? new Date(lead.nextContact).toLocaleDateString() : "-"}
                       </p>
                     </TD>
                     <TD className="text-right">
                       <RowActionsMenu
                         actions={[
                           {
-                            label: "Modifier",
+                            label: "Create task",
+                            href: `/tasks?linkType=lead&linkId=${lead.id}`,
+                          },
+                          {
+                            label: "Edit",
                             onClick: () => openModal(lead),
                           },
                           {
-                            label: "Supprimer",
+                            label: "Delete",
                             tone: "danger",
                             onClick: () => {
-                              if (!window.confirm("Supprimer ce lead ?")) return;
+                              if (!window.confirm("Delete this lead?")) return;
                               deleteLead(lead.id);
                             },
                           },
@@ -346,7 +349,13 @@ export default function LeadsPage() {
         </CardContent>
       </Card>
 
-      <LeadModal open={modalOpen} lead={modalLead} onClose={closeModal} onSave={handleSave} />
+      <LeadModal
+        key={modalLead?.id ?? "lead-modal"}
+        open={modalOpen}
+        lead={modalLead}
+        onClose={closeModal}
+        onSave={handleSave}
+      />
     </div>
   );
 }

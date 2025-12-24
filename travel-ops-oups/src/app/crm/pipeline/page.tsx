@@ -15,10 +15,10 @@ export default function PipelinePage() {
       <PageHeader
         eyebrow="CRM"
         title="Pipeline"
-        subtitle="Suivi des opportunités par étape."
+        subtitle="Track opportunities by stage."
         actions={
           <Link href="/crm/leads" className={buttonClassName({ variant: "outline" })}>
-            Voir les leads
+            View leads
           </Link>
         }
       />
@@ -30,13 +30,11 @@ export default function PipelinePage() {
             <Card key={stage.value} className="overflow-hidden">
               <CardHeader className="items-center">
                 <CardTitle>{stage.label}</CardTitle>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                  {stageLeads.length}
-                </span>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{stageLeads.length}</span>
               </CardHeader>
               <CardContent className="space-y-3">
                 {stageLeads.length === 0 ? (
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Aucune opportunité.</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">No opportunities.</p>
                 ) : (
                   stageLeads.map((lead) => (
                     <div
@@ -50,7 +48,9 @@ export default function PipelinePage() {
                         </div>
                         <select
                           value={lead.stage}
-                          onChange={(event) => setLeadStage(lead.id, event.target.value as (typeof leadStages)[number]["value"])}
+                          onChange={(event) =>
+                            setLeadStage(lead.id, event.target.value as (typeof leadStages)[number]["value"])
+                          }
                           className="rounded-md border border-slate-200 px-2 py-1 text-xs"
                         >
                           {leadStages.map((option) => (
@@ -61,8 +61,12 @@ export default function PipelinePage() {
                         </select>
                       </div>
                       <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                        <span>{lead.owner ?? "—"}</span>
-                        <span>{lead.nextContact ? `Relance ${new Date(lead.nextContact).toLocaleDateString()}` : "Pas de relance"}</span>
+                        <span>{lead.owner ?? "Unassigned"}</span>
+                        <span>
+                          {lead.nextContact
+                            ? `Next contact ${new Date(lead.nextContact).toLocaleDateString()}`
+                            : "No follow-up scheduled"}
+                        </span>
                       </div>
                     </div>
                   ))

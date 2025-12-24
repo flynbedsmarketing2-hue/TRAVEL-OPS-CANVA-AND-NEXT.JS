@@ -5,7 +5,9 @@ import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import { useBookingStore } from "../stores/useBookingStore";
 import { useCrmStore } from "../stores/useCrmStore";
+import { useMarketingStore } from "../stores/useMarketingStore";
 import { usePackageStore } from "../stores/usePackageStore";
+import { useTaskStore } from "../stores/useTaskStore";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,11 +15,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const loadPackages = usePackageStore((state) => state.loadFromServer);
   const loadBookings = useBookingStore((state) => state.loadFromServer);
   const loadCrm = useCrmStore((state) => state.loadFromServer);
+  const loadTasks = useTaskStore((state) => state.loadFromServer);
+  const loadMarketing = useMarketingStore((state) => state.loadFromServer);
 
   useEffect(() => {
     void loadPackages();
     void loadBookings();
     void loadCrm();
+    void loadTasks();
+    void loadMarketing();
 
     const node = containerRef.current;
     if (!node) return;
@@ -36,7 +42,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     const observer = new MutationObserver(syncInertState);
     observer.observe(node, { attributes: true, attributeFilter: ["aria-hidden", "data-aria-hidden"] });
     return () => observer.disconnect();
-  }, [loadBookings, loadPackages, loadCrm]);
+  }, [loadBookings, loadPackages, loadCrm, loadTasks, loadMarketing]);
 
   return (
     <div ref={containerRef} className="flex min-h-screen">

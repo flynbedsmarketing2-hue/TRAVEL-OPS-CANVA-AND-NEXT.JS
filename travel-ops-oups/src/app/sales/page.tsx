@@ -142,7 +142,7 @@ export default function SalesPage() {
   };
 
   const deleteOne = (bookingId: string) => {
-    const ok = window.confirm("Supprimer cette reservation ?");
+    const ok = window.confirm("Delete this booking?");
     if (!ok) return;
     deleteBooking(bookingId);
   };
@@ -172,20 +172,20 @@ export default function SalesPage() {
           <div style="text-align:right;font-size:12px;color:#475569;">
             <div>Type: <strong style="color:#0f172a;">${booking.bookingType}</strong></div>
             <div>Pax: <strong style="color:#0f172a;">${booking.paxTotal}</strong></div>
-            <div>Paiement: <strong style="color:#0f172a;">${status.text}</strong></div>
-            ${booking.reservedUntil ? `<div>Option jusqu'au <strong style="color:#0f172a;">${booking.reservedUntil}</strong></div>` : ""}
+            <div>Payment: <strong style="color:#0f172a;">${status.text}</strong></div>
+              ${booking.reservedUntil ? `<div>Hold until <strong style="color:#0f172a;">${booking.reservedUntil}</strong></div>` : ""}
           </div>
         </div>
       </div>
-      ${
-        kind === "invoice"
-          ? `<div style="margin-top:10px;font-size:12px;color:#475569;">
-               <strong>Invoice</strong> - detail des lignes de facturation.
-             </div>`
-          : `<div style="margin-top:10px;font-size:12px;color:#475569;">
-               <strong>Confirmation</strong> - recap de la reservation.
-             </div>`
-      }
+        ${
+          kind === "invoice"
+            ? `<div style="margin-top:10px;font-size:12px;color:#475569;">
+                 <strong>Invoice</strong> - detailed invoice lines.
+               </div>`
+            : `<div style="margin-top:10px;font-size:12px;color:#475569;">
+                 <strong>Confirmation</strong> - booking recap.
+               </div>`
+        }
       <div style="margin-top:14px;">
         <h3 style="margin:0 0 6px 0;font-size:14px;font-weight:800;">Rooming</h3>
         <table style="width:100%;border-collapse:collapse;font-size:12px;">
@@ -293,12 +293,12 @@ export default function SalesPage() {
     <div className="space-y-8">
       <PageHeader
         eyebrow="Sales"
-        title="Bookings & paiements"
-        subtitle="Creation rapide, controle stock, exports."
+        title="Bookings & payments"
+        subtitle="Quick creation, stock control, and exports."
         actions={
           <Button onClick={openCreate}>
             <PlusCircle className="h-4 w-4" />
-            Nouvelle reservation
+            New booking
           </Button>
         }
       />
@@ -314,7 +314,7 @@ export default function SalesPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {bookings.length === 0 ? (
-              <p className="text-sm text-slate-600 dark:text-slate-300">Aucune reservation.</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300">No bookings.</p>
             ) : (
               <Table>
                 <THead>
@@ -322,9 +322,9 @@ export default function SalesPage() {
                     <TH>Package</TH>
                     <TH>Type</TH>
                     <TH>Pax</TH>
-                    <TH>Paiement</TH>
+                    <TH>Payment</TH>
                     <TH>Statut</TH>
-                    <TH>Option</TH>
+                    <TH>Hold</TH>
                     <TH className="text-right">Actions</TH>
                   </TR>
                 </THead>
@@ -375,10 +375,17 @@ export default function SalesPage() {
                         <TD className="text-right">
                           <RowActionsMenu
                             actions={[
-                              { label: "Editer", onClick: () => openEdit(booking) },
-                              { label: "Confirmation", onClick: () => exportBookingPdf(booking, "confirmation") },
+                              {
+                                label: "Create task",
+                                href: `/tasks?linkType=booking&linkId=${booking.id}`,
+                              },
+                              { label: "Edit", onClick: () => openEdit(booking) },
+                              {
+                                label: "Print confirmation",
+                                onClick: () => exportBookingPdf(booking, "confirmation"),
+                              },
                               { label: "Invoice", onClick: () => exportBookingPdf(booking, "invoice") },
-                              { label: "Supprimer", tone: "danger", onClick: () => deleteOne(booking.id) },
+                              { label: "Delete", tone: "danger", onClick: () => deleteOne(booking.id) },
                             ]}
                           />
                         </TD>
