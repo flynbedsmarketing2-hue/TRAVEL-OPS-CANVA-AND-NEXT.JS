@@ -16,6 +16,7 @@ import { computeTotals, formatMoney, paymentStatus } from "../../lib/booking";
 import RowActionsMenu from "../../components/RowActionsMenu";
 import { EmptyState } from "../../components/ui/EmptyState";
 import TableSkeleton from "../../components/ui/TableSkeleton";
+import { Drawer } from "../../components/ui/Drawer";
 import { useToast } from "../../components/ui/toast";
 
 type JsPdfLike = {
@@ -66,6 +67,7 @@ export default function SalesPage() {
   const { bookings, addBooking, updateBooking, deleteBooking } = useBookingStore();
   const { packages } = usePackageStore();
   const toast = useToast();
+  const [drawerBooking, setDrawerBooking] = useState<Booking | null>(null);
 
   const publishedPackages = packages.filter((p) => p.status === "published");
 
@@ -123,6 +125,9 @@ export default function SalesPage() {
     setOpen(false);
     setEditingId(null);
   };
+
+  const openDrawer = (booking: Booking) => setDrawerBooking(booking);
+  const closeDrawer = () => setDrawerBooking(null);
 
   const onSubmit = () => {
     if (!draft.packageId) return;
@@ -481,14 +486,26 @@ export default function SalesPage() {
                         return (
                           <TR key={booking.id} className="transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-slate-800/60">
                             <TD className="min-w-[220px]">
-                              <div className="min-w-0">
-                                <p className="truncate font-semibold text-slate-900 dark:text-slate-100">
-                                  {pkg?.general.productName ?? "Package inconnu"}
-                                </p>
-                                <p className="truncate text-xs text-slate-500 dark:text-slate-300">
-                                  {pkg?.general.productCode ?? "-"} - {pkg?.flights.destination ?? "-"}
-                                </p>
-                              </div>
+                      <div
+                        className="min-w-0 cursor-pointer"
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`View booking ${booking.id.slice(0, 6)}`}
+                        onClick={() => openDrawer(booking)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            openDrawer(booking);
+                          }
+                        }}
+                      >
+                        <p className="truncate font-semibold text-slate-900 dark:text-slate-100">
+                          {pkg?.general.productName ?? "Package inconnu"}
+                        </p>
+                        <p className="truncate text-xs text-slate-500 dark:text-slate-300">
+                          {pkg?.general.productCode ?? "-"} - {pkg?.flights.destination ?? "-"}
+                        </p>
+                      </div>
                             </TD>
                             <TD>
                               <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
@@ -518,6 +535,10 @@ export default function SalesPage() {
                                 <RowActionsMenu
                                   actions={[
                                     {
+                                      label: "View details",
+                                      onClick: () => openDrawer(booking),
+                                    },
+                                    {
                                       label: "Create task",
                                       href: `/tasks?linkType=booking&linkId=${booking.id}`,
                                     },
@@ -544,6 +565,102 @@ export default function SalesPage() {
           )}
         </CardContent>
       </Card>
+
+      <Drawer
+        isOpen={Boolean(drawerBooking)}
+        onClose={closeDrawer}
+        title={drawerBooking ? `Booking ${drawerBooking.id.slice(0, 6)}` : "Booking details"}
+        description={
+          drawerBooking
+            ? packageMap[drawerBooking.packageId]?.general.productName ?? "Booking en cours"
+            : undefined
+        }
+      >
+        {drawerBooking ? (
+          <div className="space-y-4 py-2 text-sm text-slate-700 dark:text-slate-200">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
+                Package
+              </p>
+              <p className="text-base font-semibold text-slate-900 dark:text-white">
+                {packageMap[drawerBooking.packageId]?.general.productName ?? "Package inconnu"}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                #{packageMap[drawerBooking.packageId]?.general.productCode ?? "—"}
+              </p>
+            </div>
+            <div className="grid gap-3 text-sm sm:grid-cols-2">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                  Type
+                </p>
+                <p className="text-base text-slate-900 dark:text-white">{drawerBooking.bookingType}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                  Pax
+                </p>
+                <p className="text-base text-slate-900 dark:text-white">{drawerBooking.paxTotal}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                  Payment
+                </p>
+                <p className="text-base text-slate-900 dark:text-white">
+                  {formatMoney(drawerBooking.payment.paidAmount)}/{formatMoney(drawerBooking.payment.totalPrice)}
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                  Hold until
+                </p>
+                <p className="text-base text-slate-900 dark:text-white">{drawerBooking.reservedUntil || "-"}</p>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                Status
+              </p>
+              <span className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-slate-700">
+                {paymentStatus(drawerBooking.payment).text}
+              </span>
+            </div>
+            <div className="pt-4">
+              <RowActionsMenu
+                actions={[
+                  {
+                    label: "Create task",
+                    href: `/tasks?linkType=booking&linkId=${drawerBooking.id}`,
+                  },
+                  {
+                    label: "Edit",
+                    onClick: () => {
+                      openEdit(drawerBooking);
+                      closeDrawer();
+                    },
+                  },
+                  {
+                    label: "Print confirmation",
+                    onClick: () => exportBookingPdf(drawerBooking, "confirmation"),
+                  },
+                  {
+                    label: "Invoice",
+                    onClick: () => exportBookingPdf(drawerBooking, "invoice"),
+                  },
+                  {
+                    label: "Delete",
+                    tone: "danger",
+                    onClick: () => {
+                      deleteOne(drawerBooking.id);
+                      closeDrawer();
+                    },
+                  },
+                ]}
+              />
+            </div>
+          </div>
+        ) : null}
+      </Drawer>
 
       <BookingWizardModal
         open={open}

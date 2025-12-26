@@ -16,7 +16,6 @@ import RowActionsMenu from "../../components/RowActionsMenu";
 import { EmptyState } from "../../components/ui/EmptyState";
 import CardSkeleton from "../../components/ui/CardSkeleton";
 import { useToast } from "../../components/ui/toast";
-import { useToast } from "../../components/ui/toast";
 
 type StatusFilter = "all" | "published" | "draft";
 type SortKey = "recent" | "priceAsc" | "priceDesc" | "stockDesc";
