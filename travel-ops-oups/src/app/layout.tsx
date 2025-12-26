@@ -14,6 +14,22 @@ const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
 });
 
+const themeInitScript = `
+(function () {
+  try {
+    const stored = window.localStorage.getItem("travelops-ui-store");
+    const data = stored ? JSON.parse(stored) : null;
+    const mode = data?.state?.theme ?? data?.theme ?? "system";
+    const matcher = window.matchMedia("(prefers-color-scheme: dark)");
+    const resolved =
+      mode === "system" ? (matcher.matches ? "dark" : "light") : mode;
+    document.documentElement.classList.toggle("dark", resolved === "dark");
+  } catch (error) {
+    console.error(error);
+  }
+})();
+`;
+
 export const metadata: Metadata = {
   title: "TravelOps Platform",
   description: "Backoffice voyage Next.js local-only",
@@ -26,9 +42,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body
-        className={`${plusJakarta.variable} ${notoSans.variable} min-h-screen transition-colors`}
-      >
+      <body className={`${plusJakarta.variable} ${notoSans.variable} min-h-screen transition-colors`}>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
           <AppShell>{children}</AppShell>
         </ThemeProvider>

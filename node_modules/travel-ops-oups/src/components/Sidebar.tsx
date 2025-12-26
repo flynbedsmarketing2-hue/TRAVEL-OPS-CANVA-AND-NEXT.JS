@@ -23,10 +23,12 @@ export default function Sidebar({ open = false, onClose }: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const stored = localStorage.getItem("sidebarCollapsed");
-    if (stored === "true") {
-      setCollapsed(true);
-    }
+    if (stored === null) return;
+    const storedCollapsed = stored === "true";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCollapsed((prev) => (prev === storedCollapsed ? prev : storedCollapsed));
   }, []);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 border-r border-white/70 bg-[linear-gradient(155deg,#f9fbff,#e9eeff)] shadow-[16px_0_36px_rgba(182,193,224,0.35)] backdrop-blur-xl transition-[width,transform,box-shadow] duration-300 dark:border-slate-800/70 dark:bg-slate-950/60 lg:static",
+        "fixed inset-y-0 left-0 z-40 border-r border-white/70 bg-[linear-gradient(155deg,#f9fbff,#e9eeff)] shadow-[16px_0_36px_rgba(182,193,224,0.35)] backdrop-blur-xl transition-[width,transform,box-shadow,color] duration-300 dark:border-slate-800/70 dark:bg-slate-950/60 lg:static",
         widthClass,
         open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}
@@ -82,7 +84,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
           <div key={section.label}>
             <p
               className={cn(
-                "px-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500 transition-opacity duration-200",
+                "px-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500 transition duration-200 dark:text-slate-400",
                 collapsed ? "opacity-0" : "opacity-100"
               )}
             >
@@ -101,7 +103,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
                     aria-label={collapsed ? item.label : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative flex items-center gap-3 rounded-2xl text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/40 border-l-4 border-transparent",
+                      "relative flex items-center gap-3 rounded-2xl text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white border-l-4 border-transparent dark:focus-visible:ring-offset-slate-900",
                       collapsed ? "justify-center px-2 py-2" : "px-4 py-2.5",
                       active
                         ? "border-primary bg-white/80 text-primary shadow-[0_10px_20px_rgba(59,130,246,0.25)]"

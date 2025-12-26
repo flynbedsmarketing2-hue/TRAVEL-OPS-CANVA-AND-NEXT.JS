@@ -4,23 +4,57 @@
 
 :root {
   color-scheme: light;
-  --bg: #f4f6fb;
-  --surface: #ffffff;
-  --surface-2: #f7f9ff;
-  --border: #e5e9f3;
-  --text: #0f172a;
-  --muted: #64748b;
-  --primary: #5d87ff;
-  --primary-strong: #3856e5;
-  --accent: #49beff;
-  --radius-card: 16px;
+  --token-background: #f4f6fb;
+  --token-surface: #ffffff;
+  --token-surface-2: #f7f9ff;
+  --token-border: #e5e9f3;
+  --token-muted: #64748b;
+  --token-primary: #5d87ff;
+  --token-primary-strong: #3856e5;
+  --token-secondary: #49beff;
+  --token-accent: #f6c35c;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-card: var(--radius-lg);
   --radius-hero: 20px;
   --radius-input: 12px;
+  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.1);
+  --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.12);
+  --bg: var(--token-background);
+  --surface: var(--token-surface);
+  --surface-2: var(--token-surface-2);
+  --border: var(--token-border);
+  --text: #0f172a;
+  --muted: var(--token-muted);
+  --primary: var(--token-primary);
+  --primary-strong: var(--token-primary-strong);
+  --accent: var(--token-accent);
+}
+
+html.dark {
+  color-scheme: dark;
+  --token-background: #0a0f1f;
+  --token-surface: #0f172a;
+  --token-surface-2: #111827;
+  --token-border: #1f2937;
+  --token-muted: #94a3b8;
+  --token-primary: #8aa2ff;
+  --token-primary-strong: #5c7dff;
+  --token-secondary: #5bd1ff;
+  --token-accent: #ffc857;
+  --bg: var(--token-background);
+  --surface: var(--token-surface);
+  --surface-2: var(--token-surface-2);
+  --border: var(--token-border);
+  --text: #f8fafc;
+  --muted: var(--token-muted);
 }
 
 body {
   @apply text-slate-900 antialiased dark:text-slate-100;
-  background: var(--bg);
+  background: var(--token-background);
   background-image:
     radial-gradient(circle at 18% 8%, rgba(93, 135, 255, 0.18), transparent 200px),
     radial-gradient(circle at 82% 12%, rgba(73, 190, 255, 0.12), transparent 200px);
@@ -28,7 +62,7 @@ body {
 }
 
 html.dark body {
-  background: #0a0f1f;
+  background: var(--token-background);
   background-image:
     radial-gradient(circle at 18% 8%, rgba(93, 135, 255, 0.18), transparent 180px),
     radial-gradient(circle at 78% 12%, rgba(73, 190, 255, 0.12), transparent 200px);
@@ -39,19 +73,19 @@ a {
 }
 
 .card {
-  @apply rounded-[var(--radius-card)] border border-[var(--border)] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)];
+  @apply rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] shadow-soft;
 }
 
 html.dark .card {
-  @apply border-slate-800/70 bg-slate-900 shadow-[0_16px_36px_rgba(0,0,0,0.45)];
+  @apply border-[var(--border)] bg-[var(--token-surface)] shadow-soft;
 }
 
 .section-shell {
-  @apply space-y-4 rounded-[var(--radius-card)] border border-[var(--border)] bg-white p-5 shadow-[0_14px_32px_rgba(15,23,42,0.08)];
+  @apply space-y-4 rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-soft;
 }
 
 html.dark .section-shell {
-  @apply border-slate-800/70 bg-slate-900 shadow-[0_18px_38px_rgba(0,0,0,0.5)];
+  @apply border-[var(--border)] bg-[var(--token-surface)] shadow-soft;
 }
 
 ::selection {

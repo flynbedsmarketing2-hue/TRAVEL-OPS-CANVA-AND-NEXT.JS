@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { makePersistStorage } from "./storeUtils";
 
-export type ThemeMode = "light" | "dark";
+export type ThemeMode = "light" | "dark" | "system";
 
 type UiStore = {
   theme: ThemeMode;
@@ -17,10 +17,11 @@ const storage = makePersistStorage();
 export const useUiStore = create<UiStore>()(
   persist(
     (set, get) => ({
-      theme: "light",
+      theme: "system",
       setTheme: (theme) => set({ theme }),
       toggleTheme: () => {
-        const next: ThemeMode = get().theme === "dark" ? "light" : "dark";
+        const current = get().theme;
+        const next: ThemeMode = current === "light" ? "dark" : current === "dark" ? "system" : "light";
         set({ theme: next });
       },
     }),

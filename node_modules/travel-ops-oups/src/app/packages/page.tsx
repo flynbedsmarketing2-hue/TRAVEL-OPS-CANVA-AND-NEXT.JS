@@ -3,16 +3,20 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
-import { Download, Plus, Search, Upload } from "lucide-react";
-import PageHeader from "../../components/PageHeader";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
+import { Download, Plus, Upload } from "lucide-react";
+import PageHeader from "../../components/layout/PageHeader";
 import { Button, buttonClassName } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { cn } from "../../components/ui/cn";
-import { Input } from "../../components/ui/input";
+import TableToolbar from "../../components/tables/TableToolbar";
 import { usePackageStore } from "../../stores/usePackageStore";
 import type { TravelPackage } from "../../types";
 import RowActionsMenu from "../../components/RowActionsMenu";
+import { EmptyState } from "../../components/ui/EmptyState";
+import CardSkeleton from "../../components/ui/CardSkeleton";
+import { useToast } from "../../components/ui/toast";
+import { useToast } from "../../components/ui/toast";
 
 type StatusFilter = "all" | "published" | "draft";
 type SortKey = "recent" | "priceAsc" | "priceDesc" | "stockDesc";
@@ -48,23 +52,6 @@ function StatusPill({ status }: { status: TravelPackage["status"] }) {
   );
 }
 
-function ChipButton({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "inline-flex h-9 items-center rounded-full border px-3 text-sm font-semibold transition",
-        active
-          ? "border-primary bg-primary/10 text-primary"
-          : "border-slate-200 bg-white text-slate-800 hover:border-primary/40 hover:text-primary dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100"
-      )}
-    >
-      {children}
-    </button>
-  );
-}
-
 function Kpi({ label, value }: { label: string; value: number }) {
   return (
     <Card>
@@ -79,10 +66,12 @@ function Kpi({ label, value }: { label: string; value: number }) {
 export default function PackagesPage() {
   const { packages, duplicatePackage, deletePackage, importPackages, exportPackages } = usePackageStore();
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const toast = useToast();
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sort, setSort] = useState<SortKey>("recent");
+  const isLoading = false; // TODO: feed the real loading state from packages store
 
   const stats = useMemo(() => {
     const total = packages.length;
@@ -109,6 +98,71 @@ export default function PackagesPage() {
       });
   }, [packages, search, sort, statusFilter]);
 
+  const resetPackageFilters = () => {
+    setSearch("");
+    setStatusFilter("all");
+    setSort("recent");
+  };
+
+  const handleExport = () => {
+    const data = exportPackages();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `travelops-packages-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({
+      title: "Export terminé",
+      description: `${data.length} package(s) téléchargé(s) en JSON.`,
+      variant: "success",
+    });
+  };
+
+  const handleImportFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    try {
+      const parsed: unknown = JSON.parse(text);
+      const imported = asPackageArray(parsed);
+      if (!imported) {
+        window.alert("JSON invalide: tableau attendu.");
+        toast({
+          title: "Import échoué",
+          description: "JSON invalide: tableau attendu.",
+          variant: "error",
+        });
+        return;
+      }
+      const mode = window.confirm("Replace existing packages? (OK = replace, Cancel = merge)")
+        ? "replace"
+        : "merge";
+      const count = importPackages(imported, mode);
+      window.alert(`Import termine : ${count} package(s).`);
+      toast({
+        title: "Import terminé",
+        description: `${count} package(s) ${mode === "replace" ? "remplacé(s)" : "fusionné(s)"}.`,
+        variant: "success",
+      });
+    } catch {
+      window.alert("JSON invalide.");
+      toast({ title: "Import échoué", description: "JSON invalide.", variant: "error" });
+    } finally {
+      e.currentTarget.value = "";
+    }
+  };
+
+  const isEmpty = !isLoading && packages.length === 0;
+  const hasNoResults = !isLoading && filtered.length === 0 && packages.length > 0;
+
+  const packageStatusChips = [
+    { label: "Tous", active: statusFilter === "all", onClick: () => setStatusFilter("all") },
+    { label: "Publies", active: statusFilter === "published", onClick: () => setStatusFilter("published") },
+    { label: "Brouillons", active: statusFilter === "draft", onClick: () => setStatusFilter("draft") },
+  ];
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -117,22 +171,10 @@ export default function PackagesPage() {
         subtitle="Filtres rapides, import/export JSON, creation en local."
         actions={
           <>
-            <Button
-              variant="outline"
-              onClick={() => {
-                const data = exportPackages();
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `travelops-packages-${new Date().toISOString().slice(0, 10)}.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-            >
-              <Download className="h-4 w-4" />
-              Export JSON
-            </Button>
+            <Button variant="outline" onClick={handleExport}>
+                <Download className="h-4 w-4" />
+                Export JSON
+              </Button>
 
             <Button variant="outline" onClick={() => fileRef.current?.click()}>
               <Upload className="h-4 w-4" />
@@ -143,28 +185,7 @@ export default function PackagesPage() {
               type="file"
               accept="application/json"
               className="hidden"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                const text = await file.text();
-                try {
-                  const parsed: unknown = JSON.parse(text);
-                  const imported = asPackageArray(parsed);
-                  if (!imported) {
-                    window.alert("JSON invalide: tableau attendu.");
-                    return;
-                  }
-                  const mode = window.confirm("Replace existing packages? (OK = replace, Cancel = merge)")
-                    ? "replace"
-                    : "merge";
-                  const count = importPackages(imported, mode);
-                  window.alert(`Import termine : ${count} package(s).`);
-                } catch {
-                  window.alert("JSON invalide.");
-                } finally {
-                  e.currentTarget.value = "";
-                }
-              }}
+              onChange={handleImportFile}
             />
 
             <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
@@ -183,47 +204,85 @@ export default function PackagesPage() {
 
         <Card>
           <CardContent className="space-y-4 pt-5">
-            <div className="grid gap-3 lg:grid-cols-[1fr,auto]">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Rechercher un package"
-                  className="pl-10"
-                />
-              </div>
-
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortKey)}
-                className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 shadow-sm shadow-black/5 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100"
-              >
-                <option value="recent">Recents</option>
-                <option value="priceAsc">Prix min +</option>
-                <option value="priceDesc">Prix min -</option>
-                <option value="stockDesc">Stock -</option>
-              </select>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <ChipButton active={statusFilter === "all"} onClick={() => setStatusFilter("all")}>
-                Tous
-              </ChipButton>
-              <ChipButton active={statusFilter === "published"} onClick={() => setStatusFilter("published")}>
-                Publies
-              </ChipButton>
-              <ChipButton active={statusFilter === "draft"} onClick={() => setStatusFilter("draft")}>
-                Brouillons
-              </ChipButton>
-            </div>
+            <TableToolbar
+              search={{
+                value: search,
+                onChange: (value) => setSearch(value),
+                placeholder: "Rechercher un package",
+              }}
+              leftActions={
+                <>
+                  <label htmlFor="package-sort" className="sr-only">
+                    Sort packages
+                  </label>
+                  <select
+                    id="package-sort"
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value as SortKey)}
+                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 shadow-sm shadow-black/5 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100"
+                  >
+                    <option value="recent">Recents</option>
+                    <option value="priceAsc">Prix min +</option>
+                    <option value="priceDesc">Prix min -</option>
+                    <option value="stockDesc">Stock -</option>
+                  </select>
+                </>
+              }
+              chips={packageStatusChips}
+              rightActions={
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                  {filtered.length} packages
+                </span>
+              }
+            />
           </CardContent>
         </Card>
 
-        {filtered.length === 0 ? (
-          <div className="section-shell">
-            <p className="text-sm text-slate-600 dark:text-slate-300">Aucun package selon ces filtres.</p>
-          </div>
+        {isLoading ? (
+          <Card>
+            <CardContent className="space-y-4">
+              <CardSkeleton items={3} />
+            </CardContent>
+          </Card>
+        ) : isEmpty ? (
+          <EmptyState
+            icon={<Download className="h-10 w-10 rounded-full bg-primary/10 p-2 text-primary" />}
+            title="Aucun package"
+            description="Créez une offre pour suivre vos ventes et vos stocks."
+            primaryAction={
+              <Link href="/packages/new">
+                <Button>
+                  <Plus className="h-4 w-4" />
+                  Créer une offre
+                </Button>
+              </Link>
+            }
+            secondaryAction={
+              <Button variant="outline" onClick={() => fileRef.current?.click()}>
+                Importer JSON
+              </Button>
+            }
+            variant="section"
+            className="mt-3"
+          />
+        ) : hasNoResults ? (
+          <EmptyState
+            icon={<Download className="h-10 w-10 rounded-full bg-primary/10 p-2 text-primary" />}
+            title="Aucun résultat"
+            description="Aucun package ne correspond aux filtres sélectionnés."
+            primaryAction={
+              <Button variant="ghost" onClick={resetPackageFilters}>
+                Réinitialiser les filtres
+              </Button>
+            }
+            secondaryAction={
+              <Button variant="outline" onClick={() => setSearch("")}>
+                Effacer la recherche
+              </Button>
+            }
+            variant="inline"
+            className="mt-3"
+          />
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {filtered.map((pkg) => {

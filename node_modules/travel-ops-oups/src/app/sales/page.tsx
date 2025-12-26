@@ -1,11 +1,12 @@
 'use client';
 
 import { useMemo, useState } from "react";
-import { ClipboardList, Columns, Filter, PlusCircle, Search } from "lucide-react";
-import PageHeader from "../../components/PageHeader";
+import { ClipboardList, Columns, Filter, PlusCircle } from "lucide-react";
+import PageHeader from "../../components/layout/PageHeader";
+import TableToolbar from "../../components/tables/TableToolbar";
 import BookingWizardModal, { type BookingDraft } from "../../components/BookingWizardModal";
 import { Button } from "../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { Card, CardContent } from "../../components/ui/card";
 import { cn } from "../../components/ui/cn";
 import { Table, TBody, TD, THead, TH, TR } from "../../components/ui/table";
 import { useBookingStore } from "../../stores/useBookingStore";
@@ -14,6 +15,8 @@ import type { Booking, TravelPackage } from "../../types";
 import { computeTotals, formatMoney, paymentStatus } from "../../lib/booking";
 import RowActionsMenu from "../../components/RowActionsMenu";
 import { EmptyState } from "../../components/ui/EmptyState";
+import TableSkeleton from "../../components/ui/TableSkeleton";
+import { useToast } from "../../components/ui/toast";
 
 type JsPdfLike = {
   internal: {
@@ -35,6 +38,9 @@ type Html2PdfWorker = {
 };
 
 type Html2PdfFactory = () => Html2PdfWorker;
+
+type StatusFilter = "all" | "published" | "draft";
+type SortKey = "recent" | "priceAsc" | "priceDesc" | "stockDesc";
 
 const defaultBooking = (packageId: string | undefined): BookingDraft => ({
   packageId: packageId ?? "",
@@ -59,12 +65,17 @@ const defaultBooking = (packageId: string | undefined): BookingDraft => ({
 export default function SalesPage() {
   const { bookings, addBooking, updateBooking, deleteBooking } = useBookingStore();
   const { packages } = usePackageStore();
+  const toast = useToast();
 
   const publishedPackages = packages.filter((p) => p.status === "published");
 
   const [draft, setDraft] = useState<BookingDraft>(defaultBooking(publishedPackages[0]?.id));
   const [editingId, setEditingId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sort, setSort] = useState<SortKey>("recent");
+  const isLoading = false; // TODO: wire loading state from bookings store
 
   const packageMap = useMemo(() => Object.fromEntries(packages.map((p) => [p.id, p])), [packages]);
 
@@ -140,12 +151,17 @@ export default function SalesPage() {
       addBooking(payload);
     }
     close();
+    toast({
+      title: editingId ? "Réservation mise à jour" : "Nouvelle réservation",
+      variant: "success",
+    });
   };
 
   const deleteOne = (bookingId: string) => {
     const ok = window.confirm("Delete this booking?");
     if (!ok) return;
     deleteBooking(bookingId);
+    toast({ title: "Réservation supprimée", variant: "info" });
   };
 
   const exportBookingPdf = async (booking: Booking, kind: "confirmation" | "invoice") => {
@@ -290,208 +306,256 @@ export default function SalesPage() {
     worker.save();
   };
 
+  const filtered = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+    const matching = bookings.filter((booking) => {
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "published" && booking.bookingType === "Confirmée") ||
+        (statusFilter === "draft" && booking.bookingType === "En option");
+      if (!matchesStatus) return false;
+
+      if (!normalizedSearch) return true;
+      const pkg = packageMap[booking.packageId];
+      const haystack = `${pkg?.general.productName ?? ""} ${pkg?.general.productCode ?? ""} ${booking.bookingType} ${booking.id}`;
+      return haystack.toLowerCase().includes(normalizedSearch);
+    });
+
+    return [...matching].sort((a, b) => {
+      if (sort === "recent") {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      if (sort === "priceAsc") {
+        return a.payment.totalPrice - b.payment.totalPrice;
+      }
+      if (sort === "priceDesc") {
+        return b.payment.totalPrice - a.payment.totalPrice;
+      }
+      if (sort === "stockDesc") {
+        return b.paxTotal - a.paxTotal;
+      }
+      return 0;
+    });
+  }, [bookings, packageMap, search, sort, statusFilter]);
+
+  const bookingStatusChips = [
+    { label: "Tous", active: statusFilter === "all", onClick: () => setStatusFilter("all") },
+    { label: "Publies", active: statusFilter === "published", onClick: () => setStatusFilter("published") },
+    { label: "Brouillons", active: statusFilter === "draft", onClick: () => setStatusFilter("draft") },
+  ];
+
+  const resetFilters = () => {
+    setSearch("");
+    setStatusFilter("all");
+    setSort("recent");
+  };
+
+  const hasNoBookings = !isLoading && bookings.length === 0;
+  const hasNoResults = !isLoading && filtered.length === 0 && bookings.length > 0;
+
   return (
     <div className="space-y-8">
       <PageHeader
         eyebrow="Sales"
         title="Bookings & payments"
-        subtitle="Quick creation, stock control, and exports."
-        actions={
-          <Button onClick={openCreate}>
-            <PlusCircle className="h-4 w-4" />
-            New booking
-          </Button>
-        }
+        description="Quick creation, stock control, and exports."
       />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <ClipboardList className="h-4 w-4" />
-              </span>
-              Reservations
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/40 lg:flex-row lg:items-center lg:justify-between">
-                <div className="flex flex-1 flex-wrap items-center gap-3">
-                  <div className="relative flex-1 min-w-[220px]">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <Input
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Search bookings"
-                      className="pl-10"
-                      aria-label="Search bookings"
-                    />
-                  </div>
-                  <label htmlFor="booking-sort" className="sr-only">
-                    Sort bookings
-                  </label>
-                  <select
-                    id="booking-sort"
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value as SortKey)}
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 shadow-sm shadow-black/5 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100"
-                  >
-                    <option value="recent">Recents</option>
-                    <option value="priceAsc">Prix min +</option>
-                    <option value="priceDesc">Prix min -</option>
-                    <option value="stockDesc">Stock -</option>
-                  </select>
-                  <Button variant="ghost" size="sm" className="whitespace-nowrap" aria-label="Open filters">
-                    <Filter className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
-                      Filters
-                    </span>
-                  </Button>
-                  <Button variant="ghost" size="sm" className="whitespace-nowrap" aria-label="Customize columns">
-                    <Columns className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
-                      Columns
-                    </span>
-                  </Button>
-                </div>
-                <Button variant="primary" size="sm" onClick={openCreate} className="whitespace-nowrap">
-                  <PlusCircle className="h-4 w-4" />
-                  New booking
+      <Card>
+        <CardContent className="space-y-4">
+          <TableToolbar
+            search={{
+              value: search,
+              onChange: (value) => setSearch(value),
+              placeholder: "Search bookings",
+            }}
+            leftActions={
+              <>
+                <label htmlFor="booking-sort" className="sr-only">
+                  Sort bookings
+                </label>
+                <select
+                  id="booking-sort"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortKey)}
+                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 shadow-sm shadow-black/5 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100"
+                >
+                  <option value="recent">Recents</option>
+                  <option value="priceAsc">Prix min +</option>
+                  <option value="priceDesc">Prix min -</option>
+                  <option value="stockDesc">Stock -</option>
+                </select>
+                <Button variant="ghost" size="sm" className="whitespace-nowrap" aria-label="Open filters">
+                  <Filter className="h-4 w-4" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                    Filters
+                  </span>
                 </Button>
-              </div>
-              <div className="flex flex-wrap items-center gap-2 text-sm">
-                <ChipButton active={statusFilter === "all"} onClick={() => setStatusFilter("all")}>
-                  Tous
-                </ChipButton>
-                <ChipButton active={statusFilter === "published"} onClick={() => setStatusFilter("published")}>
-                  Publies
-                </ChipButton>
-                <ChipButton active={statusFilter === "draft"} onClick={() => setStatusFilter("draft")}>
-                  Brouillons
-                </ChipButton>
-                <span className="ml-auto text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-                  {filtered.length} bookings
-                </span>
+                <Button variant="ghost" size="sm" className="whitespace-nowrap" aria-label="Customize columns">
+                  <Columns className="h-4 w-4" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                    Columns
+                  </span>
+                </Button>
+              </>
+            }
+            chips={bookingStatusChips}
+            rightActions={
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                {filtered.length} bookings
+              </span>
+            }
+            primaryAction={
+              <Button variant="primary" size="sm" onClick={openCreate} className="whitespace-nowrap">
+                <PlusCircle className="h-4 w-4" />
+                New booking
+              </Button>
+            }
+          />
+
+          {isLoading ? (
+            <TableSkeleton hasToolbar rows={6} columns={7} />
+          ) : hasNoBookings ? (
+            <EmptyState
+              icon={<ClipboardList className="h-10 w-10 rounded-full bg-primary/10 p-2 text-primary" />}
+              title="Aucune réservation"
+              description="Créez une réservation pour suivre les paiements et les engagements."
+              primaryAction={
+                <Button variant="primary" size="sm" onClick={openCreate}>
+                  <PlusCircle className="h-4 w-4" />
+                  Créer une réservation
+                </Button>
+              }
+              className="mt-3"
+              variant="section"
+            />
+          ) : hasNoResults ? (
+            <EmptyState
+              icon={<ClipboardList className="h-10 w-10 rounded-full bg-primary/10 p-2 text-primary" />}
+              title="Aucun résultat"
+              description="Aucun booking ne correspond à ces filtres."
+              primaryAction={
+                <Button variant="ghost" size="sm" onClick={resetFilters}>
+                  Réinitialiser les filtres
+                </Button>
+              }
+              secondaryAction={
+                <Button variant="outline" size="sm" onClick={() => setSearch("")}>
+                  Effacer la recherche
+                </Button>
+              }
+              className="mt-3"
+              variant="inline"
+            />
+          ) : (
+            <div className="rounded-[22px] border border-slate-200 bg-white shadow-[0_20px_45px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-slate-900">
+              <div className="overflow-hidden">
+                <div className="overflow-x-auto">
+                  <Table className="min-w-[720px]">
+                    <THead className="sticky top-0 z-10 bg-slate-50/90 backdrop-blur dark:bg-slate-900/80">
+                      <TR>
+                        <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Package</TH>
+                        <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Type</TH>
+                        <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Pax</TH>
+                        <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Payment</TH>
+                        <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Statut</TH>
+                        <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Hold</TH>
+                        <TH className="text-right font-semibold tracking-[0.2em] text-xs text-slate-500">
+                          Actions
+                        </TH>
+                      </TR>
+                    </THead>
+                    <TBody>
+                      {filtered.map((booking) => {
+                        const pkg = packageMap[booking.packageId];
+                        const status = paymentStatus(booking.payment);
+                        const statusClass =
+                          status.label === "paid"
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-900/20 dark:text-emerald-200"
+                            : status.label === "partial"
+                              ? "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-900/20 dark:text-amber-200"
+                              : status.label === "overpaid"
+                                ? "border-indigo-200 bg-indigo-50 text-indigo-800 dark:border-indigo-900/60 dark:bg-indigo-900/20 dark:text-indigo-200"
+                                : "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-200";
+
+                        return (
+                          <TR key={booking.id} className="transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-slate-800/60">
+                            <TD className="min-w-[220px]">
+                              <div className="min-w-0">
+                                <p className="truncate font-semibold text-slate-900 dark:text-slate-100">
+                                  {pkg?.general.productName ?? "Package inconnu"}
+                                </p>
+                                <p className="truncate text-xs text-slate-500 dark:text-slate-300">
+                                  {pkg?.general.productCode ?? "-"} - {pkg?.flights.destination ?? "-"}
+                                </p>
+                              </div>
+                            </TD>
+                            <TD>
+                              <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                {booking.bookingType}
+                              </span>
+                            </TD>
+                            <TD>
+                              <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                {booking.paxTotal}
+                              </span>
+                            </TD>
+                            <TD>
+                              <span className="text-sm text-slate-700 dark:text-slate-200">
+                                {formatMoney(booking.payment.paidAmount)}/{formatMoney(booking.payment.totalPrice)}
+                              </span>
+                            </TD>
+                            <TD>
+                              <span className={cn("inline-flex rounded-full border px-3 py-1 text-xs font-semibold", statusClass)}>
+                                {status.text}
+                              </span>
+                            </TD>
+                            <TD>
+                              <span className="text-sm text-slate-600 dark:text-slate-300">{booking.reservedUntil || "-"}</span>
+                            </TD>
+                            <TD className="text-right pr-4">
+                              <div className="flex items-center justify-end">
+                                <RowActionsMenu
+                                  actions={[
+                                    {
+                                      label: "Create task",
+                                      href: `/tasks?linkType=booking&linkId=${booking.id}`,
+                                    },
+                                    { label: "Edit", onClick: () => openEdit(booking) },
+                                    {
+                                      label: "Print confirmation",
+                                      onClick: () => exportBookingPdf(booking, "confirmation"),
+                                    },
+                                    { label: "Invoice", onClick: () => exportBookingPdf(booking, "invoice") },
+                                    { label: "Delete", tone: "danger", onClick: () => deleteOne(booking.id) },
+                                  ]}
+                                  ariaLabel={`Actions for booking ${booking.id.slice(0, 6)}`}
+                                />
+                              </div>
+                            </TD>
+                          </TR>
+                        );
+                      })}
+                    </TBody>
+                  </Table>
+                </div>
               </div>
             </div>
+          )}
+        </CardContent>
+      </Card>
 
-            {bookings.length === 0 ? (
-              <EmptyState
-                icon={<ClipboardList className="h-10 w-10 rounded-full bg-primary/10 p-2 text-primary" />}
-                title="Aucun enregistrement"
-                description="Creez une reservation pour suivre les paiements et les engagements."
-                primaryAction={{ label: "Creer une reservation", onClick: openCreate }}
-                className="mt-3"
-              />
-            ) : (
-              <div className="rounded-[22px] border border-slate-200 bg-white shadow-[0_20px_45px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-slate-900">
-                <div className="overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <Table className="min-w-[720px]">
-                      <THead className="sticky top-0 z-10 bg-slate-50/90 backdrop-blur dark:bg-slate-900/80">
-                        <TR>
-                          <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Package</TH>
-                          <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Type</TH>
-                          <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Pax</TH>
-                          <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Payment</TH>
-                          <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Statut</TH>
-                          <TH className="font-semibold tracking-[0.2em] text-xs text-slate-500">Hold</TH>
-                          <TH className="text-right font-semibold tracking-[0.2em] text-xs text-slate-500">
-                            Actions
-                          </TH>
-                        </TR>
-                      </THead>
-                      <TBody>
-                        {bookings.map((booking) => {
-                          const pkg = packageMap[booking.packageId];
-                          const status = paymentStatus(booking.payment);
-                          const statusClass =
-                            status.label === "paid"
-                              ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-900/20 dark:text-emerald-200"
-                              : status.label === "partial"
-                                ? "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-900/20 dark:text-amber-200"
-                                : status.label === "overpaid"
-                                  ? "border-indigo-200 bg-indigo-50 text-indigo-800 dark:border-indigo-900/60 dark:bg-indigo-900/20 dark:text-indigo-200"
-                                  : "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-200";
-
-                          return (
-                            <TR key={booking.id} className="transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-slate-800/60">
-                              <TD className="min-w-[220px]">
-                                <div className="min-w-0">
-                                  <p className="truncate font-semibold text-slate-900 dark:text-slate-100">
-                                    {pkg?.general.productName ?? "Package inconnu"}
-                                  </p>
-                                  <p className="truncate text-xs text-slate-500 dark:text-slate-300">
-                                    {pkg?.general.productCode ?? "-"} - {pkg?.flights.destination ?? "-"}
-                                  </p>
-                                </div>
-                              </TD>
-                              <TD>
-                                <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                                  {booking.bookingType}
-                                </span>
-                              </TD>
-                              <TD>
-                                <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                                  {booking.paxTotal}
-                                </span>
-                              </TD>
-                              <TD>
-                                <span className="text-sm text-slate-700 dark:text-slate-200">
-                                  {formatMoney(booking.payment.paidAmount)}/{formatMoney(booking.payment.totalPrice)}
-                                </span>
-                              </TD>
-                              <TD>
-                                <span className={cn("inline-flex rounded-full border px-3 py-1 text-xs font-semibold", statusClass)}>
-                                  {status.text}
-                                </span>
-                              </TD>
-                              <TD>
-                                <span className="text-sm text-slate-600 dark:text-slate-300">{booking.reservedUntil || "-"}</span>
-                              </TD>
-                              <TD className="text-right pr-4">
-                                <div className="flex items-center justify-end">
-                                  <RowActionsMenu
-                                    actions={[
-                                      {
-                                        label: "Create task",
-                                        href: `/tasks?linkType=booking&linkId=${booking.id}`,
-                                      },
-                                      { label: "Edit", onClick: () => openEdit(booking) },
-                                      {
-                                        label: "Print confirmation",
-                                        onClick: () => exportBookingPdf(booking, "confirmation"),
-                                      },
-                                      { label: "Invoice", onClick: () => exportBookingPdf(booking, "invoice") },
-                                      { label: "Delete", tone: "danger", onClick: () => deleteOne(booking.id) },
-                                    ]}
-                                    ariaLabel={`Actions for booking ${booking.id.slice(0, 6)}`}
-                                  />
-                                </div>
-                              </TD>
-                            </TR>
-                          );
-                        })}
-                      </TBody>
-                    </Table>
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <BookingWizardModal
-          open={open}
-          packages={publishedPackages}
-          draft={draft}
-          setDraft={setDraft}
-          editing={Boolean(editingId)}
-          remainingStock={remainingStock}
-          computeReservedUntil={computeReservedUntil}
-          onClose={close}
-          onSubmit={onSubmit}
-        />
+      <BookingWizardModal
+        open={open}
+        packages={publishedPackages}
+        draft={draft}
+        setDraft={setDraft}
+        editing={Boolean(editingId)}
+        remainingStock={remainingStock}
+        computeReservedUntil={computeReservedUntil}
+        onClose={close}
+        onSubmit={onSubmit}
+      />
     </div>
   );
 }
