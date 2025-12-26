@@ -12,6 +12,7 @@ type Action = {
 
 type Props = {
   actions: Action[];
+  ariaLabel?: string;
 };
 
 export default function RowActionsMenu({ actions }: Props) {
@@ -32,7 +33,9 @@ export default function RowActionsMenu({ actions }: Props) {
     <div ref={menuRef} className="relative">
       <button
         type="button"
-        aria-label="Actions"
+        aria-label={ariaLabel ?? "Actions"}
+        aria-haspopup="menu"
+        aria-expanded={open}
         className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/70 bg-[linear-gradient(145deg,#f9fbff,#e9eeff)] text-slate-700 shadow-[6px_6px_12px_rgba(182,193,224,0.32),-6px_-6px_12px_rgba(255,255,255,0.9)] transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
         onClick={() => setOpen((prev) => !prev)}
       >
