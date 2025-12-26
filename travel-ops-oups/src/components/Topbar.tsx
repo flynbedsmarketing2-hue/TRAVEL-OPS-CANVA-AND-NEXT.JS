@@ -14,7 +14,7 @@ export default function Topbar({ onOpenSidebar }: Props) {
 
   return (
     <header className="sticky top-0 z-30 border-b border-white/60 bg-[linear-gradient(120deg,#f9fbff,#e9eeff)] shadow-[0_12px_28px_rgba(182,193,224,0.26)] backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 2xl:max-w-screen-2xl">
+      <div className="flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-6 lg:px-8 2xl:max-w-screen-2xl">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
