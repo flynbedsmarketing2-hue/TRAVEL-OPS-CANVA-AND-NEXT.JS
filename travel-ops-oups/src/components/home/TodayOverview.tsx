@@ -47,8 +47,8 @@ export default function TodayOverview() {
   return (
     <section className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Today overview</h2>
-        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{today}</span>
+        <h2 className="text-lg font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">Today overview</h2>
+        <span className="text-sm font-medium text-[var(--muted)] dark:text-[var(--muted)]">{today}</span>
       </div>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
@@ -58,3 +58,4 @@ export default function TodayOverview() {
     </section>
   );
 }
+

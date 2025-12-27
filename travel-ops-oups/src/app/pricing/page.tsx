@@ -484,19 +484,19 @@ export default function PricingWizardPage() {
             <div className="flex flex-wrap gap-3 pt-4 text-sm">
               <a
                 href={`/api/pricing/${scenarioId ?? "preview"}/export?format=pdf`}
-                className="rounded-full bg-blue-600 px-4 py-2 text-white"
+                className="rounded-full bg-[var(--token-accent)] px-4 py-2 text-[var(--token-inverse)]"
               >
                 Export PDF
               </a>
               <a
                 href={`/api/pricing/${scenarioId ?? "preview"}/export?format=whatsapp`}
-                className="rounded-full bg-green-600 px-4 py-2 text-white"
+                className="rounded-full bg-[var(--token-accent)] px-4 py-2 text-[var(--token-inverse)]"
               >
                 WhatsApp text
               </a>
               <a
                 href={`/api/pricing/${scenarioId ?? "preview"}/export?format=json`}
-                className="rounded-full bg-slate-900 px-4 py-2 text-white"
+                className="rounded-full bg-[var(--token-surface)] px-4 py-2 text-[var(--token-inverse)]"
               >
                 Download JSON
               </a>
@@ -510,8 +510,8 @@ export default function PricingWizardPage() {
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-10 sm:px-6 lg:px-0">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-blue-600">Pricing module</p>
-          <h1 className="text-3xl font-semibold text-slate-900">Adaptive pricing wizard</h1>
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--token-primary)]">Pricing module</p>
+          <h1 className="text-3xl font-semibold text-[var(--text)]">Adaptive pricing wizard</h1>
         </div>
         <div className="text-sm text-gray-500">
           Autosaving scenario {scenarioId ? `(${scenarioId})` : "(draft)"}...
@@ -523,7 +523,9 @@ export default function PricingWizardPage() {
             key={step}
             onClick={() => setCurrentStep(step)}
             className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
-              currentStep === step ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 bg-white"
+              currentStep === step
+                ? "border-[var(--token-accent)]/40 bg-[var(--token-accent)]/10 text-[var(--token-accent)]"
+                : "border-[var(--border)] bg-[var(--token-surface)]"
             }`}
           >
             <p className="font-semibold">{navLabel(step)}</p>
@@ -535,7 +537,7 @@ export default function PricingWizardPage() {
       <div className="flex items-center justify-between pt-6">
         <button
           onClick={() => setCurrentStep((prev) => wizardSteps[Math.max(0, wizardSteps.indexOf(prev) - 1)])}
-          className="rounded-full border px-4 py-2 text-sm text-slate-700"
+          className="rounded-full border px-4 py-2 text-sm text-[var(--text)]"
         >
           Back
         </button>
@@ -544,7 +546,7 @@ export default function PricingWizardPage() {
             const nextIndex = Math.min(wizardSteps.length - 1, wizardSteps.indexOf(currentStep) + 1);
             setCurrentStep(wizardSteps[nextIndex]);
           }}
-          className="rounded-full bg-blue-600 px-4 py-2 text-sm text-white"
+          className="rounded-full bg-[var(--token-accent)] px-4 py-2 text-sm text-[var(--token-inverse)]"
         >
           Next
         </button>
@@ -563,10 +565,10 @@ function WizardCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-lg font-semibold text-slate-900">{title}</p>
+          <p className="text-lg font-semibold text-[var(--text)]">{title}</p>
           <p className="text-xs uppercase tracking-widest text-gray-500">{description}</p>
         </div>
       </div>
@@ -574,4 +576,5 @@ function WizardCard({
     </div>
   );
 }
+
 

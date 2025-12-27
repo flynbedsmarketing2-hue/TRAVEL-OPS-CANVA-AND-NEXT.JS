@@ -61,7 +61,7 @@ export default function CommandPalette({
   return (
     <div
       ref={dialogRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 px-4 py-10 backdrop-blur sm:px-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--token-text)]/70 px-4 py-10 backdrop-blur sm:px-6"
       role="dialog"
       aria-modal="true"
       aria-label="Command palette"
@@ -71,7 +71,7 @@ export default function CommandPalette({
         }
       }}
     >
-      <div className="w-full max-w-3xl rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--token-surface)]/95 p-6 shadow-[0_25px_60px_rgba(15,23,42,0.4)] backdrop-blur">
+      <div className="w-full max-w-3xl rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--token-surface)]/95 p-6 shadow-md backdrop-blur">
         <div className="flex items-center gap-3">
           <span className="shrink-0 text-lg font-semibold tracking-tight text-[var(--text)]">
             Command palette
@@ -91,7 +91,7 @@ export default function CommandPalette({
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={handleInputKeyDown}
             placeholder="Type a command or search..."
-            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--token-surface-2)] px-4 py-3 text-sm font-medium text-[var(--text)] shadow-sm outline-none transition-colors duration-150 focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]"
+            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--token-surface-2)] px-4 py-3 text-sm font-medium text-[var(--text)] shadow-sm outline-none transition-colors duration-150 focus:border-[var(--token-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]"
           />
         </div>
 
@@ -113,9 +113,9 @@ export default function CommandPalette({
                           key={command.id}
                           type="button"
                           onClick={() => selectCommand(command)}
-                          className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] ${
+                          className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] ${
                             isHighlighted
-                              ? "bg-primary/10 text-primary shadow-[0_0_0_1px_rgba(59,130,246,0.5)]"
+                              ? "bg-[var(--token-accent)]/10 text-[var(--token-accent)] ring-1 ring-[var(--token-accent)]/40"
                               : "bg-[var(--token-surface)] text-[var(--text)] hover:bg-[var(--token-surface-2)]"
                           }`}
                         >
@@ -133,3 +133,4 @@ export default function CommandPalette({
     </div>
   );
 }
+

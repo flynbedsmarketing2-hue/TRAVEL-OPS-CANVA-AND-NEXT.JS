@@ -52,44 +52,44 @@ function TaskModal({ open, initial, link, onClose, onSave }: TaskModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-2xl rounded-2xl border border-slate-200/60 bg-white/95 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-950/80">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[var(--token-text)]/40 p-4">
+      <div className="w-full max-w-2xl rounded-2xl border border-[var(--border)]/60 bg-[var(--token-surface)]/95 p-6 shadow-md dark:border-[var(--border)] dark:bg-[var(--token-surface)]/80">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <h2 className="text-lg font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">
             {initial ? "Edit task" : "Add task"}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/60"
           >
             Close
           </button>
         </div>
         <div className="mt-4 space-y-3">
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Title
             <input
               value={form.title}
               onChange={(event) => setForm({ ...form, title: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Description
             <textarea
               value={form.description}
               onChange={(event) => setForm({ ...form, description: event.target.value })}
-              className="mt-1 h-20 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 h-20 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
               Priority
               <select
                 value={form.priority}
                 onChange={(event) => setForm({ ...form, priority: event.target.value as TaskPriority })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
               >
                 {taskPriorities.map((priority) => (
                   <option key={priority.value} value={priority.value}>
@@ -98,12 +98,12 @@ function TaskModal({ open, initial, link, onClose, onSave }: TaskModalProps) {
                 ))}
               </select>
             </label>
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
               Status
               <select
                 value={form.status}
                 onChange={(event) => setForm({ ...form, status: event.target.value as TaskStatus })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
               >
                 {taskStatuses.map((status) => (
                   <option key={status.value} value={status.value}>
@@ -114,21 +114,21 @@ function TaskModal({ open, initial, link, onClose, onSave }: TaskModalProps) {
             </label>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
               Owner
               <input
                 value={form.owner}
                 onChange={(event) => setForm({ ...form, owner: event.target.value })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
               />
             </label>
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
               Due date
               <input
                 type="date"
                 value={form.dueDate ?? ""}
                 onChange={(event) => setForm({ ...form, dueDate: event.target.value || undefined })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
               />
             </label>
           </div>
@@ -257,8 +257,8 @@ export default function TasksPage() {
               onClick={() => setTab("mine")}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${
                 tab === "mine"
-                  ? "border border-primary/80 bg-primary/10 text-primary"
-                  : "border border-slate-200 text-slate-700"
+                  ? "border border-[var(--token-accent)]/60 bg-[var(--token-accent)]/10 text-[var(--token-accent)]"
+                  : "border border-[var(--border)] text-[var(--text)]"
               }`}
             >
               My tasks
@@ -268,8 +268,8 @@ export default function TasksPage() {
               onClick={() => setTab("team")}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${
                 tab === "team"
-                  ? "border border-primary/80 bg-primary/10 text-primary"
-                  : "border border-slate-200 text-slate-700"
+                  ? "border border-[var(--token-accent)]/60 bg-[var(--token-accent)]/10 text-[var(--token-accent)]"
+                  : "border border-[var(--border)] text-[var(--text)]"
               }`}
             >
               Team
@@ -277,12 +277,12 @@ export default function TasksPage() {
           </div>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Status
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value as TaskStatus | "")}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             >
               <option value="">All</option>
               {taskStatuses.map((statusOption) => (
@@ -292,12 +292,12 @@ export default function TasksPage() {
               ))}
             </select>
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Priority
             <select
               value={priorityFilter}
               onChange={(event) => setPriorityFilter(event.target.value as TaskPriority | "")}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             >
               <option value="">All</option>
               {taskPriorities.map((priorityOption) => (
@@ -307,12 +307,12 @@ export default function TasksPage() {
               ))}
             </select>
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Due date
             <select
               value={dueFilter}
               onChange={(event) => setDueFilter(event.target.value as DueFilter)}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             >
               <option value="all">All</option>
               <option value="today">Today</option>
@@ -326,14 +326,14 @@ export default function TasksPage() {
       <Card>
         <CardHeader>
           <CardTitle>Tasks</CardTitle>
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2 text-xs text-[var(--muted)] dark:text-[var(--muted)]">
             <Filter className="h-4 w-4" />
             {filteredTasks.length} result(s)
           </div>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           {filteredTasks.length === 0 ? (
-            <div className="py-8 text-center text-sm text-slate-500">No tasks for this filter.</div>
+            <div className="py-8 text-center text-sm text-[var(--muted)]">No tasks for this filter.</div>
           ) : (
             <Table>
               <THead>
@@ -354,21 +354,21 @@ export default function TasksPage() {
                   const isOverdue = dueDate ? dueDate.getTime() < todayStart : false;
                   const linkHref = getLinkHref(task.link);
                   return (
-                    <TR key={task.id} className={isOverdue ? "bg-rose-50 text-rose-900 dark:bg-rose-900/20" : ""}>
+                    <TR key={task.id} className={isOverdue ? "bg-[var(--token-danger)]/10 text-[var(--token-danger)]" : ""}>
                       <TD>
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{task.title}</p>
+                        <p className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">{task.title}</p>
                         {task.description ? (
-                          <p className="text-xs text-slate-500 dark:text-slate-300">{task.description}</p>
+                          <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">{task.description}</p>
                         ) : null}
                       </TD>
                       <TD>{task.owner}</TD>
                       <TD>
-                        <span className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                        <span className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
                           {taskPriorities.find((p) => p.value === task.priority)?.label ?? task.priority}
                         </span>
                       </TD>
                       <TD>
-                        <span className="text-xs text-slate-500 dark:text-slate-300">
+                        <span className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
                           {taskStatuses.find((s) => s.value === task.status)?.label ?? task.status}
                         </span>
                       </TD>
@@ -430,3 +430,4 @@ export default function TasksPage() {
     </div>
   );
 }
+

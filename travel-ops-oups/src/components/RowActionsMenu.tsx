@@ -55,7 +55,7 @@ export default function RowActionsMenu({ actions, ariaLabel = "Actions" }: Props
         aria-label={ariaLabel}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--token-surface)] text-[var(--text)] shadow-sm transition-colors duration-150 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]"
+        className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--token-surface)] text-[var(--text)] shadow-sm transition-colors duration-150 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]"
         onClick={() => setOpen((prev) => !prev)}
       >
         <MoreHorizontal className="h-4 w-4" />
@@ -69,8 +69,8 @@ export default function RowActionsMenu({ actions, ariaLabel = "Actions" }: Props
           <div className="py-1">
             {actions.map((action) => {
               const classes = cn(
-                "flex w-full items-center gap-2 px-3.5 py-2.5 text-sm text-[var(--text)] transition-colors duration-150 hover:bg-[var(--token-surface-2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
-                action.tone === "danger" && "text-red-600 hover:bg-red-50/80 dark:text-red-400 dark:hover:bg-red-950/40"
+                "flex w-full items-center gap-2 px-3.5 py-2.5 text-sm text-[var(--text)] transition-colors duration-150 hover:bg-[var(--token-surface-2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
+                action.tone === "danger" && "text-[var(--token-danger)] hover:bg-[var(--token-danger)]/10"
               );
 
               if (action.href) {

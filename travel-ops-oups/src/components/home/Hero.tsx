@@ -6,13 +6,13 @@ import { buttonClassName } from "../ui/buttonStyles";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(135deg,#e0e7ff,#f4f7fe)] p-8 shadow-soft dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800">
+    <section className="relative overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--token-surface)] p-8 shadow-soft">
       <div className="max-w-4xl space-y-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary">TravelOps V2.0</p>
-        <h1 className="text-3xl font-extrabold leading-tight text-slate-900 dark:text-white md:text-4xl">
-          TravelOps backoffice, minimal and fast
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--primary)]">Nouba Plus</p>
+        <h1 className="text-3xl font-extrabold leading-tight text-[var(--text)] md:text-4xl">
+          Nouba Plus backoffice, minimal and fast
         </h1>
-        <p className="text-lg font-medium text-slate-600 dark:text-slate-300">
+        <p className="text-lg font-medium text-[var(--muted)]">
           CRM, sales, operations and marketing combined in a single workspace built for lean travel teams.
         </p>
         <div className="flex flex-wrap gap-3">
@@ -23,20 +23,16 @@ export default function Hero() {
             Explore modules
           </Link>
         </div>
-        <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
           <div className="flex items-center gap-2">
-            <ArrowRight className="h-3 w-3 text-secondary" />
+            <ArrowRight className="h-3 w-3 text-[var(--primary)]" />
             <span>Built for dense workflows</span>
           </div>
           <div className="flex items-center gap-2">
-            <ArrowRight className="h-3 w-3 text-secondary" />
+            <ArrowRight className="h-3 w-3 text-[var(--primary)]" />
             <span>Designed for high velocity teams</span>
           </div>
         </div>
-      </div>
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-10 top-10 h-32 w-32 rounded-full bg-primary/40 blur-[80px]"></div>
-        <div className="absolute right-10 bottom-10 h-40 w-40 rounded-full bg-secondary/40 blur-[100px]"></div>
       </div>
     </section>
   );

@@ -42,8 +42,8 @@ function asPackageArray(value: unknown): TravelPackage[] | null {
 function StatusPill({ status }: { status: TravelPackage["status"] }) {
   const styles =
     status === "published"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-900/20 dark:text-emerald-200"
-      : "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-900/20 dark:text-amber-200";
+      ? "border-[var(--token-primary)]/20 bg-[var(--token-surface-2)] text-[var(--token-primary)]"
+      : "border-[var(--token-accent)]/30 bg-[var(--token-surface-2)] text-[var(--token-accent)]";
   return (
     <span className={cn("inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold", styles)}>
       {status === "published" ? "Publie" : "Brouillon"}
@@ -235,7 +235,7 @@ export default function PackagesPage() {
                     id="package-sort"
                     value={sort}
                     onChange={(e) => setSort(e.target.value as SortKey)}
-                    className="h-10 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm font-semibold text-[var(--text)] shadow-sm outline-none transition focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                    className="h-10 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm font-semibold text-[var(--text)] shadow-sm outline-none transition focus:border-[var(--token-accent)] focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/20"
                   >
                     <option value="recent">Recents</option>
                     <option value="priceAsc">Prix min +</option>
@@ -262,7 +262,9 @@ export default function PackagesPage() {
           </Card>
         ) : isEmpty ? (
           <EmptyState
-            icon={<Download className="h-10 w-10 rounded-full bg-primary/10 p-2 text-primary" />}
+            icon={
+              <Download className="h-10 w-10 rounded-full bg-[var(--token-primary)]/10 p-2 text-[var(--token-primary)]" />
+            }
             title="Aucun package"
             description="Créez une offre pour suivre vos ventes et vos stocks."
             primaryAction={
@@ -283,7 +285,9 @@ export default function PackagesPage() {
           />
         ) : hasNoResults ? (
           <EmptyState
-            icon={<Download className="h-10 w-10 rounded-full bg-primary/10 p-2 text-primary" />}
+            icon={
+              <Download className="h-10 w-10 rounded-full bg-[var(--token-primary)]/10 p-2 text-[var(--token-primary)]" />
+            }
             title="Aucun résultat"
             description="Aucun package ne correspond aux filtres sélectionnés."
             primaryAction={
@@ -311,13 +315,15 @@ export default function PackagesPage() {
                     {image ? (
                       <img src={image} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <div className="h-full w-full bg-gradient-to-br from-primary/15 via-[var(--token-surface-2)] to-[var(--token-border)]" />
+                      <div className="h-full w-full bg-[var(--token-surface-2)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0" />
+                    <div className="absolute inset-0 bg-[var(--token-text)]/35" />
                     <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-white">{pkg.general.productName || "Sans nom"}</p>
-                        <p className="truncate text-xs text-white/80">
+                        <p className="truncate text-sm font-semibold text-[var(--token-inverse)]">
+                          {pkg.general.productName || "Sans nom"}
+                        </p>
+                        <p className="truncate text-xs text-[var(--token-inverse)] opacity-80">
                           {pkg.general.productCode || "-"} - {pkg.flights.destination || "-"}
                         </p>
                       </div>
@@ -381,3 +387,4 @@ export default function PackagesPage() {
     </div>
   );
 }
+

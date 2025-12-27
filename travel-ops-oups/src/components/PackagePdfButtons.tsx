@@ -62,7 +62,7 @@ export function PackagePdfButtons({ travelPackage }: Props) {
       const h = pdf.internal.pageSize.getHeight();
       pdf.setFontSize(9);
       pdf.setTextColor(100);
-      pdf.text(`TravelOps Platform`, 12, h - 10);
+      pdf.text(`Nouba Plus`, 12, h - 10);
       pdf.text(`${generatedAt}`, w / 2, h - 10, { align: "center" });
       pdf.text(`Page ${i}/${total}`, w - 12, h - 10, { align: "right" });
     }
@@ -123,8 +123,8 @@ const Table = ({ headers, rows }: { headers: string[]; rows: string[][] }) => (
             style={{
               textAlign: "left",
               padding: "6px 8px",
-              borderBottom: "1px solid #e5e7eb",
-              background: "#f8fafc",
+              borderBottom: "1px solid var(--token-border)",
+              background: "var(--token-surface-2)",
             }}
           >
             {h}
@@ -140,7 +140,7 @@ const Table = ({ headers, rows }: { headers: string[]; rows: string[][] }) => (
               key={j}
               style={{
                 padding: "6px 8px",
-                borderBottom: "1px solid #f1f5f9",
+                borderBottom: "1px solid var(--token-surface-2)",
               }}
             >
               {cell}
@@ -167,27 +167,27 @@ const BrandHeader = ({
       alignItems: "center",
       justifyContent: "space-between",
       marginBottom: 12,
-      borderBottom: "2px solid #2b8cee",
+      borderBottom: "2px solid var(--token-accent)",
       paddingBottom: 8,
     }}
   >
     <div>
-      <p style={{ margin: 0, color: "#2b8cee", fontWeight: 700, fontSize: 12 }}>
-        TravelOps Platform
+      <p style={{ margin: 0, color: "var(--token-accent)", fontWeight: 700, fontSize: 12 }}>
+        Nouba Plus
       </p>
-      <h1 style={{ margin: "2px 0 4px 0", fontSize: 20, color: "#0f172a" }}>{title}</h1>
-      <p style={{ margin: 0, color: "#475569", fontSize: 12 }}>{subtitle}</p>
+      <h1 style={{ margin: "2px 0 4px 0", fontSize: 20, color: "var(--token-text)" }}>{title}</h1>
+      <p style={{ margin: 0, color: "var(--token-muted)", fontSize: 12 }}>{subtitle}</p>
     </div>
     <div
       style={{
         width: 52,
         height: 52,
         borderRadius: 12,
-        background: "#e8f3ff",
+        background: "var(--token-surface-2)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "#2b8cee",
+        color: "var(--token-accent)",
         fontWeight: 700,
       }}
     >
@@ -205,7 +205,7 @@ const Cover = ({
 }) => (
   <div
     style={{
-      border: "1px solid #e5e7eb",
+      border: "1px solid var(--token-border)",
       borderRadius: 16,
       overflow: "hidden",
       marginBottom: 12,
@@ -222,11 +222,11 @@ const Cover = ({
         style={{
           width: "100%",
           height: 180,
-          background: "#f1f5f9",
+          background: "var(--token-surface-2)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#64748b",
+          color: "var(--token-muted)",
           fontSize: 12,
           fontWeight: 600,
         }}
@@ -235,13 +235,13 @@ const Cover = ({
       </div>
     )}
     <div style={{ padding: 14 }}>
-      <p style={{ margin: 0, color: "#2b8cee", fontWeight: 800, fontSize: 12 }}>
-        {mode} · TravelOps Platform
+      <p style={{ margin: 0, color: "var(--token-accent)", fontWeight: 800, fontSize: 12 }}>
+        {mode} · Nouba Plus
       </p>
       <h2 style={{ margin: "6px 0 6px 0", fontSize: 22 }}>
         {pkg.general.productName}
       </h2>
-      <p style={{ margin: 0, color: "#475569", fontSize: 12 }}>
+      <p style={{ margin: 0, color: "var(--token-muted)", fontSize: 12 }}>
         {pkg.flights.destination} · Code {pkg.general.productCode} · Stock{" "}
         {pkg.general.stock} pax
       </p>
@@ -259,7 +259,7 @@ const B2CContent = forwardRef<HTMLDivElement, { pkg: TravelPackage }>(
   return (
     <div
       ref={ref}
-      style={{ width: 794, padding: 20, color: "#0f172a", fontFamily: "Arial" }}
+      style={{ width: 794, padding: 20, color: "var(--token-text)", fontFamily: "Arial" }}
     >
       <Cover pkg={pkg} mode="B2C" />
       <BrandHeader
@@ -271,22 +271,22 @@ const B2CContent = forwardRef<HTMLDivElement, { pkg: TravelPackage }>(
       <div
         style={{
           padding: 12,
-          background: "#f8fafc",
+          background: "var(--token-surface-2)",
           borderRadius: 12,
           marginBottom: 12,
         }}
       >
-        <p style={{ margin: 0, fontSize: 13, color: "#0f172a" }}>
+        <p style={{ margin: 0, fontSize: 13, color: "var(--token-text)" }}>
           Prix dès {Number.isFinite(lowestPrice) ? `${lowestPrice}€` : "—"} · Stock{" "}
           {pkg.general.stock} pax
         </p>
-        <p style={{ margin: "4px 0 0 0", fontSize: 12, color: "#475569" }}>
+        <p style={{ margin: "4px 0 0 0", fontSize: 12, color: "var(--token-muted)" }}>
           Responsable : {pkg.general.responsible}
         </p>
       </div>
 
       <Block title="Programme détaillé">
-        <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12, color: "#0f172a" }}>
+        <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12, color: "var(--token-text)" }}>
           {pkg.itinerary.days.map((day) => (
             <li key={day.dayNumber} style={{ marginBottom: 4 }}>
               <strong>Jour {day.dayNumber}</strong> — {day.description}
@@ -330,7 +330,7 @@ const B2BContent = forwardRef<HTMLDivElement, { pkg: TravelPackage }>(
   ({ pkg }, ref) => (
     <div
       ref={ref}
-      style={{ width: 794, padding: 20, color: "#0f172a", fontFamily: "Arial" }}
+      style={{ width: 794, padding: 20, color: "var(--token-text)", fontFamily: "Arial" }}
     >
       <Cover pkg={pkg} mode="B2B" />
       <BrandHeader
@@ -349,7 +349,7 @@ const B2BContent = forwardRef<HTMLDivElement, { pkg: TravelPackage }>(
           `${p.commission ?? 0}`,
         ])}
       />
-      <p style={{ margin: "4px 0 0 0", fontSize: 12, color: "#475569" }}>
+      <p style={{ margin: "4px 0 0 0", fontSize: 12, color: "var(--token-muted)" }}>
         Com agence adulte T1/T2/T3 : {pkg.agencyCommissions.adulte.t1}/
         {pkg.agencyCommissions.adulte.t2}/{pkg.agencyCommissions.adulte.t3} · Enfant{" "}
         {pkg.agencyCommissions.enfant} · Bébé {pkg.agencyCommissions.bebe}
@@ -383,14 +383,14 @@ const B2BContent = forwardRef<HTMLDivElement, { pkg: TravelPackage }>(
     </Block>
 
     <Block title="Itinéraire complet">
-      <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12, color: "#0f172a" }}>
+      <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12, color: "var(--token-text)" }}>
         {pkg.itinerary.days.map((day) => (
           <li key={day.dayNumber} style={{ marginBottom: 4 }}>
             <strong>Jour {day.dayNumber}</strong> — {day.description}
           </li>
         ))}
       </ul>
-      <p style={{ margin: "6px 0 0 0", fontSize: 12, color: "#475569" }}>
+      <p style={{ margin: "6px 0 0 0", fontSize: 12, color: "var(--token-muted)" }}>
         Notes internes : {pkg.itinerary.internalNotes || "—"} · Infos client :{" "}
         {pkg.itinerary.clientInformation || "—"}
       </p>

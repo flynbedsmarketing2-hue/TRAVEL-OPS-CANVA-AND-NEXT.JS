@@ -57,35 +57,35 @@ function CampaignModal({ open, initial, onClose, onSave }: CampaignModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-2xl rounded-2xl border border-slate-200/60 bg-white/95 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-950/80">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[var(--token-text)]/40 p-4">
+      <div className="w-full max-w-2xl rounded-2xl border border-[var(--border)]/60 bg-[var(--token-surface)]/95 p-6 shadow-md dark:border-[var(--border)] dark:bg-[var(--token-surface)]/80">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <h2 className="text-lg font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">
             {initial ? "Edit campaign" : "Add campaign"}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/60"
           >
             Close
           </button>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Name
             <input
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Channel
             <select
               value={form.channel}
               onChange={(event) => setForm({ ...form, channel: event.target.value as CampaignChannel })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             >
               {Object.entries(channelLabels).map(([value, label]) => (
                 <option key={value} value={value}>
@@ -94,46 +94,46 @@ function CampaignModal({ open, initial, onClose, onSave }: CampaignModalProps) {
               ))}
             </select>
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Planned budget
             <input
               type="number"
               min={0}
               value={form.budgetPlanned}
               onChange={(event) => setForm({ ...form, budgetPlanned: Number(event.target.value) })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Start
             <input
               type="date"
               value={form.startDate}
               onChange={(event) => setForm({ ...form, startDate: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             End
             <input
               type="date"
               value={form.endDate ?? ""}
               onChange={(event) => setForm({ ...form, endDate: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
         </div>
-        <label className="mt-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
+        <label className="mt-4 text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
           Notes
           <textarea
             value={form.notes ?? ""}
             onChange={(event) => setForm({ ...form, notes: event.target.value })}
-            className="mt-1 h-24 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+            className="mt-1 h-24 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
           />
         </label>
-        <label className="mt-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
+        <label className="mt-4 text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
           Linked packages (IDs separated by commas)
           <input
             value={form.linkedPackageIds.join(",")}
@@ -146,7 +146,7 @@ function CampaignModal({ open, initial, onClose, onSave }: CampaignModalProps) {
                   .filter(Boolean),
               })
             }
-            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
           />
         </label>
         <div className="mt-4 flex justify-end gap-2">
@@ -206,7 +206,7 @@ export default function CampaignsPage() {
         </CardHeader>
         <CardContent className="overflow-x-auto">
           {campaigns.length === 0 ? (
-            <div className="py-8 text-center text-sm text-slate-500">No campaigns saved.</div>
+            <div className="py-8 text-center text-sm text-[var(--muted)]">No campaigns saved.</div>
           ) : (
             <Table>
               <THead>
@@ -223,8 +223,8 @@ export default function CampaignsPage() {
                 {campaigns.map((campaign) => (
                   <TR key={campaign.id}>
                     <TD>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100">{campaign.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-300">{campaign.notes ?? "-"}</p>
+                      <p className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">{campaign.name}</p>
+                      <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">{campaign.notes ?? "-"}</p>
                     </TD>
                     <TD>{channelLabels[campaign.channel] ?? campaign.channel}</TD>
                     <TD>{campaign.budgetPlanned} DZD</TD>
@@ -265,3 +265,4 @@ export default function CampaignsPage() {
     </div>
   );
 }
+

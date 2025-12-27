@@ -21,7 +21,7 @@ export default function TableSkeleton({ rows = 8, columns = 6, hasToolbar = fals
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-[22px] border border-slate-200 bg-white shadow-[0_20px_45px_rgba(15,23,42,0.08)] transition-colors duration-150 dark:border-slate-800 dark:bg-slate-900">
+      <div className="overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--token-surface)] shadow-sm transition-colors duration-150">
         <div className="overflow-hidden">
           <div className="overflow-x-auto">
             <div className="min-w-[640px] space-y-2 px-4 py-3">
@@ -36,7 +36,7 @@ export default function TableSkeleton({ rows = 8, columns = 6, hasToolbar = fals
                     key={`row-${rowIndex}`}
                     className={cn(
                       "grid gap-4 rounded-2xl px-1 py-3 transition-colors duration-150",
-                      rowIndex % 2 === 0 ? "bg-slate-50/80 dark:bg-slate-800/80" : "bg-white dark:bg-slate-900"
+                      rowIndex % 2 === 0 ? "bg-[var(--token-surface-2)]" : "bg-[var(--token-surface)]"
                     )}
                     style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
                   >

@@ -70,7 +70,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
               collapsed ? "sr-only" : "opacity-100"
             )}
           >
-            TravelOps
+            Nouba Plus
           </span>
         </Link>
 
@@ -79,7 +79,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-pressed={collapsed}
           onClick={() => setCollapsed((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--token-surface)] text-[var(--muted)] shadow-sm transition hover:text-primary focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/70"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--token-surface)] text-[var(--muted)] shadow-sm transition hover:text-primary focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/70"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
@@ -109,10 +109,10 @@ export default function Sidebar({ open = false, onClose }: Props) {
                     aria-label={collapsed ? item.label : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative flex items-center gap-3 rounded-2xl border border-transparent text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
+                      "relative flex items-center gap-3 rounded-2xl border border-transparent text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
                       collapsed ? "justify-center px-2 py-2" : "px-4 py-2.5",
                       active
-                        ? "border-primary/40 bg-[var(--token-surface-2)] text-primary shadow-sm"
+                        ? "bg-[var(--token-surface-2)] text-[var(--text)] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-1 before:rounded-full before:bg-[var(--token-accent)]"
                         : "text-[var(--text)] hover:border-[var(--border)] hover:bg-[var(--token-surface-2)]"
                     )}
                   >

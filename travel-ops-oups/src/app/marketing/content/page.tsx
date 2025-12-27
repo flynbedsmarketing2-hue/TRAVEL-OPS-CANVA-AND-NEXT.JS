@@ -53,44 +53,44 @@ function ContentModal({ open, initial, onClose, onSave }: ContentModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-200/60 bg-white/95 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-950/80">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[var(--token-text)]/40 p-4">
+      <div className="w-full max-w-lg rounded-2xl border border-[var(--border)]/60 bg-[var(--token-surface)]/95 p-6 shadow-md dark:border-[var(--border)] dark:bg-[var(--token-surface)]/80">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <h2 className="text-lg font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">
             {initial ? "Edit content" : "Add content"}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/60"
           >
             Close
           </button>
         </div>
         <div className="mt-4 space-y-3">
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Title
             <input
               value={form.title}
               onChange={(event) => setForm({ ...form, title: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Platform
             <input
               value={form.platform}
               onChange={(event) => setForm({ ...form, platform: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
               Status
               <select
                 value={form.status}
                 onChange={(event) => setForm({ ...form, status: event.target.value as ContentStatus })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
               >
                 {Object.entries(statusLabels).map(([key, label]) => (
                   <option key={key} value={key}>
@@ -99,30 +99,30 @@ function ContentModal({ open, initial, onClose, onSave }: ContentModalProps) {
                 ))}
               </select>
             </label>
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
               Publish date
               <input
                 type="date"
                 value={form.publishDate ?? ""}
                 onChange={(event) => setForm({ ...form, publishDate: event.target.value || undefined })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
               />
             </label>
           </div>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Campaign link (ID)
             <input
               value={form.linkedCampaignId ?? ""}
               onChange={(event) => setForm({ ...form, linkedCampaignId: event.target.value || undefined })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Package link (ID)
             <input
               value={form.linkedPackageId ?? ""}
               onChange={(event) => setForm({ ...form, linkedPackageId: event.target.value || undefined })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
         </div>
@@ -192,12 +192,12 @@ export default function ContentPage() {
           <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3">
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Status
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value as ContentStatus | "")}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             >
               <option value="">All</option>
               {Object.entries(statusLabels).map(([key, label]) => (
@@ -207,7 +207,7 @@ export default function ContentPage() {
               ))}
             </select>
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Title
             <Input
               placeholder="Search content"
@@ -225,7 +225,7 @@ export default function ContentPage() {
         </CardHeader>
         <CardContent className="overflow-x-auto">
           {filtered.length === 0 ? (
-            <div className="py-8 text-center text-sm text-slate-500">No content items.</div>
+            <div className="py-8 text-center text-sm text-[var(--muted)]">No content items.</div>
           ) : (
             <Table>
               <THead>
@@ -242,7 +242,7 @@ export default function ContentPage() {
                 {filtered.map((item) => (
                   <TR key={item.id}>
                     <TD>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100">{item.title}</p>
+                      <p className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">{item.title}</p>
                     </TD>
                     <TD>{item.platform}</TD>
                     <TD>{statusLabels[item.status]}</TD>
@@ -281,3 +281,4 @@ export default function ContentPage() {
     </div>
   );
 }
+

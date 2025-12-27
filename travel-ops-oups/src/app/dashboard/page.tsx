@@ -249,7 +249,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-3 text-center">
                   <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Overdue</p>
-                  <p className="mt-1 text-2xl font-bold text-rose-700 dark:text-rose-200">{overdueTasks.length}</p>
+                  <p className="mt-1 text-2xl font-bold text-[var(--token-danger)]">{overdueTasks.length}</p>
                 </div>
               </div>
               {tasksTodayPreview.length === 0 ? (
@@ -351,7 +351,7 @@ export default function DashboardPage() {
               <ul className="space-y-2 text-sm text-[var(--text)]">
                 {todos.map((todo, idx) => (
                   <li key={idx} className="flex items-start gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--token-accent)]" />
                     <span>{todo}</span>
                   </li>
                 ))}
@@ -378,7 +378,7 @@ export default function DashboardPage() {
                     className={cn(
                       "flex items-start gap-2 rounded-xl border px-3 py-2 text-sm",
                       alert.level === "warn"
-                        ? "border-amber-200 bg-amber-50 text-amber-900"
+                        ? "border-[var(--token-accent)]/30 bg-[var(--token-accent)]/10 text-[var(--token-accent)]"
                         : "border-[var(--border)] bg-[var(--token-surface-2)] text-[var(--text)]"
                     )}
                   >

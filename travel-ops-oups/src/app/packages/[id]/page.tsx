@@ -20,7 +20,7 @@ export default function PackageDetailPage() {
     !pkg ? (
         <Card>
           <CardContent className="space-y-4 pt-5">
-            <p className="text-sm text-slate-600 dark:text-slate-300">
+            <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
               Package introuvable. Vérifie l’id ou reviens à la liste.
             </p>
             <Link href="/packages" className={buttonClassName({ variant: "outline" })}>

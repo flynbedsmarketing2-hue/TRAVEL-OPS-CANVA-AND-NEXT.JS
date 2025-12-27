@@ -19,16 +19,17 @@ export function DuplicateScenarioButton({ scenario }: { scenario: PricingScenari
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm text-slate-500">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-sm">
+      <p className="text-sm text-[var(--muted)]">
         Create a variant of this scenario for quick comparisons.
       </p>
       <button
         onClick={handleDuplicate}
-        className="mt-3 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+        className="mt-3 rounded-full bg-[var(--token-accent)] px-4 py-2 text-sm font-semibold text-[var(--token-inverse)]"
       >
         Duplicate scenario
       </button>
     </div>
   );
 }
+

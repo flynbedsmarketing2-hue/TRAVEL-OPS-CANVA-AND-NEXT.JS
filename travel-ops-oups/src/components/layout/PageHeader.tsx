@@ -38,7 +38,7 @@ export default function PageHeader({
                   {item.href ? (
                     <Link
                       href={item.href}
-                      className="text-[var(--muted)] transition-colors duration-150 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]"
+                      className="text-[var(--muted)] transition-colors duration-150 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]"
                     >
                       {item.label}
                     </Link>

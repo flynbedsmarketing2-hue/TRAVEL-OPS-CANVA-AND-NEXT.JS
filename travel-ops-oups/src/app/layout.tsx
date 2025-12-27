@@ -31,7 +31,7 @@ const themeInitScript = `
 `;
 
 export const metadata: Metadata = {
-  title: "TravelOps Platform",
+  title: "Nouba Plus",
   description: "Backoffice voyage Next.js local-only",
 };
 

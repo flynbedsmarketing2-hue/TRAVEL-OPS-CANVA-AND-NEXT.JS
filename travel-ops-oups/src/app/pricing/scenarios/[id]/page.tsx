@@ -22,7 +22,7 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
   if (!scenario) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-10">
-        <p className="text-center text-sm text-red-500">Scenario not found.</p>
+        <p className="text-center text-sm text-[var(--token-danger)]">Scenario not found.</p>
       </div>
     );
   }
@@ -122,27 +122,27 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-10 sm:px-6 lg:px-0">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-blue-600">Pricing detail</p>
-          <h1 className="text-3xl font-semibold text-slate-900">{scenario.name}</h1>
-          <p className="text-sm text-slate-500">{scenario.destination}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--token-primary)]">Pricing detail</p>
+          <h1 className="text-3xl font-semibold text-[var(--text)]">{scenario.name}</h1>
+          <p className="text-sm text-[var(--muted)]">{scenario.destination}</p>
         </div>
         <div className="flex gap-2">
           <Link
             href={`/pricing/scenarios/${scenario.id}/compare?ids=${scenario.id}`}
-            className="rounded-full border px-3 py-2 text-xs font-semibold text-slate-600"
+            className="rounded-full border px-3 py-2 text-xs font-semibold text-[var(--muted)]"
           >
             Compare
           </Link>
           <ExportLinks scenarioId={scenario.id} />
         </div>
       </div>
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-sm text-slate-500">Sales price: {calc.salesTotal.toFixed(0)} DZD</p>
-        <p className="text-sm text-slate-500">Per pax (rounded): {calc.perPaxPrice.toFixed(0)} DZD</p>
-        <p className="text-sm text-slate-500">Commission: {calc.commissionTotal.toFixed(0)} DZD</p>
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-sm">
+        <p className="text-sm text-[var(--muted)]">Sales price: {calc.salesTotal.toFixed(0)} DZD</p>
+        <p className="text-sm text-[var(--muted)]">Per pax (rounded): {calc.perPaxPrice.toFixed(0)} DZD</p>
+        <p className="text-sm text-[var(--muted)]">Commission: {calc.commissionTotal.toFixed(0)} DZD</p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Pax breakdown</p>
           <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
             {Object.entries(scenario.paxBreakdown ?? {}).map(([key, value]) => (
@@ -152,7 +152,7 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
             ))}
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Totals</p>
           <div className="mt-3 space-y-2 text-sm">
             <p>Total cost: {calc.totalCostDzd.toFixed(0)} DZD</p>
@@ -161,8 +161,8 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
           </div>
         </div>
       </div>
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-sm uppercase tracking-[0.1em] text-blue-600">Cost lines</p>
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-sm">
+        <p className="text-sm uppercase tracking-[0.1em] text-[var(--token-primary)]">Cost lines</p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="text-xs uppercase tracking-[0.2em] text-gray-500">
@@ -185,7 +185,7 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
             </tbody>
           </table>
         </div>
-        <div className="mt-4 text-sm text-slate-500">
+        <div className="mt-4 text-sm text-[var(--muted)]">
           <p>Margin config per pax category stored for manual fine tuning.</p>
         </div>
       </div>
@@ -201,7 +201,7 @@ function ExportLinks({ scenarioId }: { scenarioId: string }) {
         <a
           key={format}
           href={`/api/pricing/${scenarioId}/export?format=${format}`}
-          className="rounded-full bg-slate-900 px-3 py-2 text-xs font-semibold text-white"
+          className="rounded-full bg-[var(--token-surface)] px-3 py-2 text-xs font-semibold text-[var(--token-inverse)]"
         >
           {format.toUpperCase()}
         </a>

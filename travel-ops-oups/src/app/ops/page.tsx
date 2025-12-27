@@ -33,8 +33,8 @@ function isWithinJx(dday: number | null, filter: JxFilter) {
 function StatusPill({ status }: { status: OpsStatus }) {
   const styles =
     status === "validated"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-900/20 dark:text-emerald-200"
-      : "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-900/20 dark:text-amber-200";
+      ? "border-[var(--token-primary)]/30 bg-[var(--token-surface-2)] text-[var(--token-primary)]"
+      : "border-[var(--token-accent)]/30 bg-[var(--token-surface-2)] text-[var(--token-accent)]";
   return (
     <span className={cn("inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold", styles)}>
       {status === "validated" ? "Validé" : "À valider"}
@@ -58,8 +58,8 @@ function ChipButton({
       className={cn(
         "inline-flex h-9 items-center rounded-full border px-3 text-sm font-semibold transition",
         active
-          ? "border-primary bg-primary/10 text-primary"
-          : "border-slate-200 bg-white text-slate-800 hover:border-primary/40 hover:text-primary dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100"
+          ? "border-[var(--token-accent)]/40 bg-[var(--token-accent)]/10 text-[var(--token-accent)]"
+          : "border-[var(--border)] bg-[var(--token-surface)] text-[var(--text)] hover:border-primary/40 hover:text-primary dark:border-[var(--border)] dark:bg-[var(--token-surface)]/30 dark:text-[var(--token-inverse)]"
       )}
     >
       {children}
@@ -141,7 +141,7 @@ export default function OpsPage() {
           <CardContent className="space-y-4">
             <div className="grid gap-3 lg:grid-cols-[1fr,auto]">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]" />
                 <Input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -185,12 +185,12 @@ export default function OpsPage() {
 
         <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm text-slate-600 dark:text-slate-300">{rows.length} groupe(s) affiché(s)</p>
+            <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">{rows.length} groupe(s) affiché(s)</p>
           </div>
 
           {rows.length === 0 ? (
             <div className="section-shell">
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
                 Aucun groupe à afficher. Créez un package avec des vols pour générer un projet Ops.
               </p>
               <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
@@ -217,22 +217,22 @@ export default function OpsPage() {
                     <TR key={`${pkg.id}:${group.id}`}>
                       <TD className="min-w-[220px]">
                         <div className="min-w-0">
-                          <p className="truncate font-semibold text-slate-900 dark:text-slate-100">
+                          <p className="truncate font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">
                             {pkg.general.productName || "Sans nom"}
                           </p>
-                          <p className="truncate text-xs text-slate-500 dark:text-slate-300">
+                          <p className="truncate text-xs text-[var(--muted)] dark:text-[var(--muted)]">
                             {pkg.general.productCode} • {pkg.flights.destination || "—"}
                           </p>
                         </div>
                       </TD>
                       <TD className="min-w-[220px]">
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{group.flightLabel}</p>
+                        <p className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">{group.flightLabel}</p>
                       </TD>
                       <TD className="min-w-[160px]">
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">
+                        <p className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">
                           {group.departureDate ? group.departureDate.slice(0, 10) : "—"}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-300">
+                        <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
                           {dday === null ? "J-—" : dday >= 0 ? `J-${dday}` : "Déjà parti"}
                         </p>
                       </TD>
@@ -241,12 +241,12 @@ export default function OpsPage() {
                       </TD>
                       <TD>
                         {hasAlerts ? (
-                          <div className="space-y-1 text-xs font-semibold text-amber-900 dark:text-amber-200">
+                          <div className="space-y-1 text-xs font-semibold text-[var(--token-accent)]">
                             {alerts.overdueSuppliers ? <p>Fournisseurs en retard: {alerts.overdueSuppliers}</p> : null}
                             {alerts.overdueCosts ? <p>Paiements en retard: {alerts.overdueCosts}</p> : null}
                           </div>
                         ) : (
-                          <span className="text-sm text-slate-500 dark:text-slate-300">Aucune</span>
+                          <span className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">Aucune</span>
                         )}
                       </TD>
                       <TD className="text-right">
@@ -285,8 +285,8 @@ function Kpi({ label, value, icon }: { label: string; value: number; icon: React
     <Card>
       <CardContent className="flex items-center justify-between gap-4 py-5">
         <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{label}</p>
-          <p className="font-heading text-2xl font-semibold text-slate-900 dark:text-slate-100">{value}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)] dark:text-[var(--muted)]">{label}</p>
+          <p className="font-heading text-2xl font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">{value}</p>
         </div>
         <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           {icon}
@@ -295,4 +295,5 @@ function Kpi({ label, value, icon }: { label: string; value: number; icon: React
     </Card>
   );
 }
+
 

@@ -35,7 +35,7 @@ export default function TableToolbar({
 }: TableToolbarProps) {
   const hasPrimaryContent = Boolean(primaryAction || rightActions);
   const chipBaseClasses =
-    "flex items-center gap-2 rounded-full border px-3 py-1 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]";
+    "flex items-center gap-2 rounded-full border px-3 py-1 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]";
 
   return (
     <div
@@ -83,7 +83,7 @@ export default function TableToolbar({
               className={cn(
                 chipBaseClasses,
                 chip.active
-                  ? "border-primary/40 bg-[var(--token-surface)] text-primary shadow-sm"
+                  ? "border-[var(--token-accent)]/40 bg-[var(--token-surface)] text-[var(--text)] shadow-sm"
                   : "border-[var(--border)] bg-[var(--token-surface)] text-[var(--muted)] hover:border-[var(--token-border)] hover:text-[var(--text)]"
               )}
               aria-pressed={chip.active ?? false}
@@ -105,7 +105,7 @@ export default function TableToolbar({
                       chip.onRemove?.();
                     }
                   }}
-                  className="text-[0.65rem] text-slate-500 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+                  className="text-[0.65rem] text-[var(--muted)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] hover:text-[var(--token-accent)]"
                 >
                   <X className="h-3.5 w-3.5" />
                 </span>

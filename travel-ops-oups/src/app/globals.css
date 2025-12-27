@@ -4,16 +4,19 @@
 
 :root {
   color-scheme: light;
-  --token-background: #f4f6fb;
+  --token-background: #f5f6f8;
   --token-surface: #ffffff;
-  --token-surface-2: #f7f9ff;
-  --token-border: #e5e9f3;
-  --token-muted: #64748b;
-  --token-text: #0f172a;
-  --token-primary: #5d87ff;
-  --token-primary-strong: #3856e5;
-  --token-secondary: #49beff;
-  --token-accent: #f6c35c;
+  --token-surface-2: #f1f3f6;
+  --token-border: #d9dee7;
+  --token-muted: #5b6474;
+  --token-text: #0b1220;
+  --token-primary: #0f1e36;
+  --token-primary-strong: #0a1628;
+  --token-secondary: #264a7a;
+  --token-accent: #f28c28;
+  --token-inverse: #ffffff;
+  --token-danger: #c2413d;
+  --token-danger-strong: #a93734;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -22,9 +25,9 @@
   --radius-card: var(--radius-lg);
   --radius-hero: 20px;
   --radius-input: 12px;
-  --shadow-sm: 0 6px 16px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.12);
-  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 18px rgba(15, 23, 42, 0.1);
+  --shadow-soft: 0 12px 24px rgba(15, 23, 42, 0.08);
   --bg: var(--token-background);
   --surface: var(--token-surface);
   --surface-2: var(--token-surface-2);
@@ -38,16 +41,19 @@
 
 html.dark {
   color-scheme: dark;
-  --token-background: #0a0f1f;
-  --token-surface: #0f172a;
-  --token-surface-2: #111827;
-  --token-border: #1f2937;
-  --token-muted: #94a3b8;
-  --token-text: #f8fafc;
-  --token-primary: #8aa2ff;
-  --token-primary-strong: #5c7dff;
-  --token-secondary: #5bd1ff;
-  --token-accent: #ffc857;
+  --token-background: #0c1017;
+  --token-surface: #111722;
+  --token-surface-2: #151c29;
+  --token-border: #273042;
+  --token-muted: #9aa3b2;
+  --token-text: #f3f5f7;
+  --token-primary: #d7e0f2;
+  --token-primary-strong: #b6c6e6;
+  --token-secondary: #7fa0d4;
+  --token-accent: #f39a3d;
+  --token-inverse: #f8fafc;
+  --token-danger: #f38b84;
+  --token-danger-strong: #e0746e;
   --bg: var(--token-background);
   --surface: var(--token-surface);
   --surface-2: var(--token-surface-2);
@@ -57,23 +63,19 @@ html.dark {
 }
 
 body {
-  @apply text-slate-900 antialiased dark:text-slate-100;
+  @apply antialiased;
+  color: var(--token-text);
   background: var(--token-background);
-  background-image:
-    radial-gradient(circle at 18% 8%, rgba(93, 135, 255, 0.18), transparent 200px),
-    radial-gradient(circle at 82% 12%, rgba(73, 190, 255, 0.12), transparent 200px);
-  background-repeat: no-repeat;
-}
-
-html.dark body {
-  background: var(--token-background);
-  background-image:
-    radial-gradient(circle at 18% 8%, rgba(93, 135, 255, 0.18), transparent 180px),
-    radial-gradient(circle at 78% 12%, rgba(73, 190, 255, 0.12), transparent 200px);
 }
 
 a {
-  @apply text-slate-900 underline-offset-4 transition-colors hover:text-primary dark:text-slate-100;
+  color: var(--token-text);
+  text-underline-offset: 4px;
+  transition: color 150ms ease;
+}
+
+a:hover {
+  color: var(--token-primary);
 }
 
 .card {
@@ -93,5 +95,5 @@ html.dark .section-shell {
 }
 
 ::selection {
-  background: rgba(93, 135, 255, 0.25);
+  background: rgba(242, 140, 40, 0.28);
 }

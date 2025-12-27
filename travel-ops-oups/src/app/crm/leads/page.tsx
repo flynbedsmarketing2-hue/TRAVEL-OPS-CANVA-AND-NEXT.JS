@@ -54,78 +54,78 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-xl rounded-2xl border border-slate-200/60 bg-white/95 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-950/80">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[var(--token-text)]/40 p-4">
+      <div className="w-full max-w-xl rounded-2xl border border-[var(--border)]/60 bg-[var(--token-surface)]/95 p-6 shadow-md dark:border-[var(--border)] dark:bg-[var(--token-surface)]/80">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <h2 className="text-lg font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">
             {lead ? "Edit lead" : "Add lead"}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/60"
           >
             Close
           </button>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Name
             <input
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Company
             <input
               value={form.company}
               onChange={(event) => setForm({ ...form, company: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Email
             <input
               value={form.email}
               onChange={(event) => setForm({ ...form, email: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Phone
             <input
               value={form.phone}
               onChange={(event) => setForm({ ...form, phone: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Owner
             <input
               value={form.owner}
               onChange={(event) => setForm({ ...form, owner: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Next contact
             <input
               type="date"
               value={form.nextContact ?? ""}
               onChange={(event) => setForm({ ...form, nextContact: event.target.value })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Stage
             <select
               value={form.stage}
               onChange={(event) => setForm({ ...form, stage: event.target.value as LeadStage })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             >
               {leadStages.map((stageOption) => (
                 <option key={stageOption.value} value={stageOption.value}>
@@ -134,12 +134,12 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
               ))}
             </select>
           </label>
-          <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <label className="text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
             Source
             <select
               value={form.source}
               onChange={(event) => setForm({ ...form, source: event.target.value as LeadSource })}
-              className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
             >
               {leadSources.map((sourceOption) => (
                 <option key={sourceOption.value} value={sourceOption.value}>
@@ -149,12 +149,12 @@ function LeadModal({ open, lead, onClose, onSave }: LeadModalProps) {
             </select>
           </label>
         </div>
-        <label className="mt-4 block text-sm font-semibold text-slate-700 dark:text-slate-200">
+        <label className="mt-4 block text-sm font-semibold text-[var(--text)] dark:text-[var(--muted)]">
           Notes
           <textarea
             value={form.notes}
             onChange={(event) => setForm({ ...form, notes: event.target.value })}
-            className="mt-1 h-24 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+            className="mt-1 h-24 w-full rounded-md border border-[var(--border)] px-3 py-2 text-sm"
           />
         </label>
         <div className="mt-4 flex justify-end gap-2">
@@ -231,7 +231,7 @@ export default function LeadsPage() {
             <select
               value={stageFilter}
               onChange={(event) => setStageFilter(event.target.value as LeadStage | "")}
-              className="h-11 rounded-[12px] border border-[var(--border)] bg-white px-3 text-sm text-slate-700 shadow-[0_6px_14px_rgba(15,23,42,0.05)]"
+              className="h-11 rounded-[12px] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm text-[var(--text)] shadow-sm"
             >
               <option value="">All stages</option>
               {leadStages.map((stageOption) => (
@@ -243,7 +243,7 @@ export default function LeadsPage() {
             <select
               value={sourceFilter}
               onChange={(event) => setSourceFilter(event.target.value as LeadSource | "")}
-              className="h-11 rounded-[12px] border border-[var(--border)] bg-white px-3 text-sm text-slate-700 shadow-[0_6px_14px_rgba(15,23,42,0.05)]"
+              className="h-11 rounded-[12px] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm text-[var(--text)] shadow-sm"
             >
               <option value="">All sources</option>
               {leadSources.map((sourceOption) => (
@@ -292,27 +292,27 @@ export default function LeadsPage() {
                 {filteredLeads.map((lead) => (
                   <TR key={lead.id}>
                     <TD>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100">{lead.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-300">{lead.email ?? lead.phone ?? "-"}</p>
+                      <p className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">{lead.name}</p>
+                      <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">{lead.email ?? lead.phone ?? "-"}</p>
                     </TD>
                     <TD>
-                      <p className="text-sm text-slate-700 dark:text-slate-200">{lead.company}</p>
+                      <p className="text-sm text-[var(--text)] dark:text-[var(--muted)]">{lead.company}</p>
                     </TD>
                     <TD>
-                      <span className="inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-xs font-semibold text-slate-700 dark:border-slate-800">
+                      <span className="inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-xs font-semibold text-[var(--text)] dark:border-[var(--border)]">
                         {leadStages.find((item) => item.value === lead.stage)?.label ?? lead.stage}
                       </span>
                     </TD>
                     <TD>
-                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                      <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
                         {leadSources.find((item) => item.value === lead.source)?.label ?? lead.source}
                       </p>
                     </TD>
                     <TD>
-                      <p className="text-sm text-slate-700 dark:text-slate-200">{lead.owner ?? "-"}</p>
+                      <p className="text-sm text-[var(--text)] dark:text-[var(--muted)]">{lead.owner ?? "-"}</p>
                     </TD>
                     <TD>
-                      <p className="text-sm text-slate-700 dark:text-slate-200">
+                      <p className="text-sm text-[var(--text)] dark:text-[var(--muted)]">
                         {lead.updatedAt ? new Date(lead.updatedAt).toLocaleDateString() : "—"}
                       </p>
                     </TD>
@@ -356,3 +356,4 @@ export default function LeadsPage() {
     </div>
   );
 }
+

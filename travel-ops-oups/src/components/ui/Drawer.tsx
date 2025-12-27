@@ -68,7 +68,7 @@ export function Drawer({ title, description, isOpen, onClose, children, classNam
     >
       <div
         ref={overlayRef}
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-[var(--token-text)]/50 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -79,27 +79,25 @@ export function Drawer({ title, description, isOpen, onClose, children, classNam
         ref={panelRef}
         tabIndex={-1}
         className={cn(
-          "relative h-full w-full max-w-md overflow-y-auto bg-[var(--token-surface)] p-6 shadow-lg transition duration-300 ease-out dark:bg-[var(--token-surface)]",
+          "relative h-full w-full max-w-md overflow-y-auto bg-[var(--token-surface)] p-6 shadow-md transition duration-300 ease-out dark:bg-[var(--token-surface)]",
           className
         )}
       >
         <div className="space-y-2">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
-              {description ? (
-                <p className="text-sm text-slate-500 dark:text-slate-300">{description}</p>
-              ) : null}
+              <h3 className="text-lg font-semibold text-[var(--text)]">{title}</h3>
+              {description ? <p className="text-sm text-[var(--muted)]">{description}</p> : null}
             </div>
             <button
               type="button"
-              className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500 transition hover:text-slate-900 dark:text-slate-300"
+              className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted)] transition hover:text-[var(--text)]"
               onClick={onClose}
             >
               Close
             </button>
           </div>
-          <div className="divide-y divide-slate-200 dark:divide-slate-800">{children}</div>
+          <div className="divide-y divide-[var(--border)]">{children}</div>
         </div>
       </div>
     </div>,

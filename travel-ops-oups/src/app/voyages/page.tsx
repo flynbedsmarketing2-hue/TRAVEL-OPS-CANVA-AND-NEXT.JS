@@ -29,7 +29,7 @@ export default function VoyagesPage() {
 
         {published.length === 0 ? (
           <div className="section-shell">
-            <p className="text-sm text-slate-600 dark:text-slate-300">Aucun package publie pour le moment.</p>
+            <p className="text-sm text-[var(--muted)]">Aucun package publie pour le moment.</p>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -37,33 +37,37 @@ export default function VoyagesPage() {
               const image = pkg.general.imageUrl;
               return (
                 <Card key={pkg.id} className="overflow-hidden">
-                  <div className="relative h-40 bg-slate-100 dark:bg-slate-900">
+                  <div className="relative h-40 bg-[var(--token-surface-2)]">
                     {image ? (
                       <img src={image} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <div className="h-full w-full bg-gradient-to-br from-primary/20 via-slate-100 to-slate-200 dark:from-primary/20 dark:via-slate-950/60 dark:to-slate-900" />
+                      <div className="h-full w-full bg-[var(--token-surface-2)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0" />
+                    <div className="absolute inset-0 bg-[var(--token-text)]/35" />
                     <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-white">{pkg.general.productName}</p>
-                        <p className="truncate text-xs text-white/80">{pkg.flights.destination || "-"}</p>
+                        <p className="truncate text-sm font-semibold text-[var(--token-inverse)]">
+                          {pkg.general.productName}
+                        </p>
+                        <p className="truncate text-xs text-[var(--token-inverse)] opacity-80">
+                          {pkg.flights.destination || "-"}
+                        </p>
                       </div>
-                      <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                      <span className="rounded-full bg-[var(--token-inverse)]/15 px-3 py-1 text-xs font-semibold text-[var(--token-inverse)] backdrop-blur">
                         Stock {pkg.general.stock}
                       </span>
                     </div>
                   </div>
 
                   <CardContent className="space-y-4 pt-5">
-                    <div className="space-y-1 text-sm text-slate-700 dark:text-slate-200">
+                    <div className="space-y-1 text-sm text-[var(--text)]">
                       <p className="line-clamp-2">
                         Villes:{" "}
                         <span className="font-semibold">
                           {pkg.flights.cities.length ? pkg.flights.cities.join(", ") : "A definir"}
                         </span>
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-300">Code: {pkg.general.productCode || "-"}</p>
+                      <p className="text-xs text-[var(--muted)]">Code: {pkg.general.productCode || "-"}</p>
                     </div>
 
                     <Link href="/sales" className={buttonClassName({ variant: "primary" })}>
@@ -79,3 +83,4 @@ export default function VoyagesPage() {
     </div>
   );
 }
+

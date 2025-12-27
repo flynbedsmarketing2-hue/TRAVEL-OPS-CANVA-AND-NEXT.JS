@@ -21,8 +21,8 @@ const focusableSelectors =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 const statusClasses: Record<DrawerStatusTone, string> = {
-  success: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-900/20 dark:text-emerald-200",
-  warning: "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-900/20 dark:text-amber-200",
+  success: "border-[var(--token-primary)]/30 bg-[var(--token-surface-2)] text-[var(--token-primary)]",
+  warning: "border-[var(--token-accent)]/30 bg-[var(--token-surface-2)] text-[var(--token-accent)]",
   info: "border-[var(--border)] bg-[var(--token-surface-2)] text-[var(--text)]",
 };
 
@@ -84,7 +84,7 @@ export function RightDrawer({
     <div role="presentation" className="fixed inset-0 z-50 flex items-stretch justify-end">
       <div
         ref={overlayRef}
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-[var(--token-text)]/50 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -95,7 +95,7 @@ export function RightDrawer({
         ref={panelRef}
         tabIndex={-1}
         className={cn(
-          "relative h-full w-full max-w-xl overflow-y-auto border-l border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-xl transition duration-300 ease-out",
+          "relative h-full w-full max-w-xl overflow-y-auto border-l border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-md transition duration-300 ease-out",
           className
         )}
       >
@@ -119,7 +119,7 @@ export function RightDrawer({
             </div>
             <button
               type="button"
-              className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--muted)] transition hover:border-primary/40 hover:text-[var(--text)]"
+              className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--muted)] transition hover:border-[var(--token-accent)]/40 hover:text-[var(--text)]"
               onClick={onClose}
             >
               Close

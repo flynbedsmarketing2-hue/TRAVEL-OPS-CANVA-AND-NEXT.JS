@@ -60,8 +60,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 }
 
 const variantClasses: Record<ToastVariant, string> = {
-  success: "border-emerald-200 bg-emerald-50 text-emerald-900 dark:bg-emerald-900/80 dark:text-emerald-200",
-  error: "border-rose-200 bg-rose-50 text-rose-900 dark:bg-rose-900/80 dark:text-rose-200",
+  success: "border-[var(--token-primary)]/30 bg-[var(--token-surface-2)] text-[var(--token-primary)]",
+  error: "border-[var(--token-accent)]/30 bg-[var(--token-surface-2)] text-[var(--token-accent)]",
   info: "border-[var(--border)] bg-[var(--token-surface)] text-[var(--text)]",
 };
 
@@ -92,9 +92,7 @@ function Toaster({
             <div className="flex-1 space-y-0.5">
               <p className="text-sm font-semibold leading-snug">{toast.title}</p>
               {toast.description ? (
-                <p className="text-xs leading-tight text-slate-700 dark:text-slate-200/80">
-                  {toast.description}
-                </p>
+                <p className="text-xs leading-tight text-[var(--muted)]">{toast.description}</p>
               ) : null}
             </div>
             <button

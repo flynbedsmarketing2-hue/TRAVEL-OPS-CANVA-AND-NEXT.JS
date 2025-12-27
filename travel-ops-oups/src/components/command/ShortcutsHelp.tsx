@@ -28,7 +28,7 @@ export default function ShortcutsHelp({ isOpen, onClose }: ShortcutsHelpProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4 py-10 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--token-text)]/50 px-4 py-10 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Keyboard shortcuts"
@@ -38,22 +38,25 @@ export default function ShortcutsHelp({ isOpen, onClose }: ShortcutsHelpProps) {
         }
       }}
     >
-      <div className="w-full max-w-md rounded-[18px] border border-white/20 bg-white/90 p-6 shadow-[0_20px_45px_rgba(15,23,42,0.4)] backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
+      <div className="w-full max-w-md rounded-[18px] border border-[var(--border)] bg-[var(--token-surface)]/95 p-6 shadow-md backdrop-blur">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Shortcuts</h2>
+          <h2 className="text-lg font-semibold text-[var(--text)]">Shortcuts</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white"
+            className="rounded-full border border-[var(--border)] px-2 py-1 text-xs font-semibold text-[var(--muted)] transition hover:text-[var(--text)]"
           >
             Esc
           </button>
         </div>
         <ul className="mt-4 space-y-2">
           {shortcuts.map((shortcut) => (
-            <li key={shortcut.label} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-200">
+            <li
+              key={shortcut.label}
+              className="flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--token-surface-2)] px-3 py-2 text-sm font-semibold text-[var(--text)]"
+            >
               <span>{shortcut.description}</span>
-              <span className="rounded-full border border-slate-300 bg-white px-3 py-0.5 text-xs font-medium uppercase tracking-[0.3em] text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+              <span className="rounded-full border border-[var(--border)] bg-[var(--token-surface)] px-3 py-0.5 text-xs font-medium uppercase tracking-[0.3em] text-[var(--muted)]">
                 {shortcut.label}
               </span>
             </li>

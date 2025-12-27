@@ -3,10 +3,10 @@ import { cn } from "./cn";
 
 export function FormSection({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
   return (
-    <div className="space-y-3 rounded-[16px] border border-[var(--border)] bg-white p-5 shadow-[0_8px_20px_rgba(15,23,42,0.05)] dark:border-slate-800 dark:bg-slate-900">
+    <div className="space-y-3 rounded-[16px] border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-sm">
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-600">{title}</h3>
-        {description ? <p className="text-sm text-slate-500">{description}</p> : null}
+        <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{title}</h3>
+        {description ? <p className="text-sm text-[var(--muted)]">{description}</p> : null}
       </div>
       <div className="space-y-3">{children}</div>
     </div>
@@ -17,8 +17,8 @@ export function FormRow({ label, hint, children, inline }: { label: string; hint
   return (
     <div className={cn("flex gap-3", inline ? "items-center" : "flex-col")}>
       <div className="min-w-[160px]">
-        <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{label}</p>
-        {hint ? <p className="text-xs text-slate-500">{hint}</p> : null}
+        <p className="text-sm font-medium text-[var(--text)]">{label}</p>
+        {hint ? <p className="text-xs text-[var(--muted)]">{hint}</p> : null}
       </div>
       <div className="flex-1">{children}</div>
     </div>
@@ -37,14 +37,14 @@ export function RepeatableRow({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-[12px] border border-[var(--border)] bg-white px-3 py-3 shadow-[0_6px_14px_rgba(15,23,42,0.05)] dark:border-slate-800 dark:bg-slate-900">
+    <div className="rounded-[12px] border border-[var(--border)] bg-[var(--token-surface)] px-3 py-3 shadow-sm">
       <div className="mb-2 flex items-center justify-between">
-        {title ? <p className="text-sm font-semibold text-slate-700 dark:text-slate-100">{title}</p> : <span />}
+        {title ? <p className="text-sm font-semibold text-[var(--text)]">{title}</p> : <span />}
         <div className="flex items-center gap-2">
           {onRemove ? (
             <button
               type="button"
-              className="text-xs font-semibold text-rose-600 hover:text-rose-700"
+              className="text-xs font-semibold text-[var(--muted)] hover:text-[var(--token-accent)]"
               onClick={onRemove}
             >
               Remove
@@ -53,7 +53,7 @@ export function RepeatableRow({
           {onAdd ? (
             <button
               type="button"
-              className="text-xs font-semibold text-primary hover:text-primary-strong"
+              className="text-xs font-semibold text-[var(--token-primary)] hover:text-[var(--token-primary-strong)]"
               onClick={onAdd}
             >
               Add

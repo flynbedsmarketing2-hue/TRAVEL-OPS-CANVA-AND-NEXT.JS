@@ -4,11 +4,11 @@ export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "dan
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 export const buttonBase =
-  "inline-flex items-center justify-center gap-2 font-semibold transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] disabled:pointer-events-none disabled:opacity-60 active:translate-y-[1px] rounded-[var(--radius-md)]";
+  "inline-flex items-center justify-center gap-2 font-semibold transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] disabled:pointer-events-none disabled:opacity-60 active:translate-y-[1px] rounded-[var(--radius-md)]";
 
 export const buttonVariants: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--token-primary)] text-white shadow-sm hover:bg-[var(--token-primary-strong)] hover:shadow-md active:scale-[0.98]",
+    "bg-[var(--token-accent)] text-[var(--token-inverse)] shadow-sm hover:bg-[var(--token-accent)]/90 hover:shadow-md active:scale-[0.98]",
   secondary:
     "border border-[var(--token-border)] bg-[var(--token-surface)] text-[var(--text)] shadow-sm hover:border-[var(--token-primary)]",
   outline:
@@ -16,7 +16,7 @@ export const buttonVariants: Record<ButtonVariant, string> = {
   ghost:
     "text-[var(--text)] hover:bg-[var(--token-surface-2)] hover:text-[var(--token-primary)]",
   danger:
-    "bg-[#ef4444] text-white shadow-sm hover:bg-[#dc2626]",
+    "bg-[var(--token-danger)] text-[var(--token-inverse)] shadow-sm hover:bg-[var(--token-danger-strong)]",
 };
 
 export const buttonSizes: Record<ButtonSize, string> = {
@@ -34,4 +34,5 @@ export function buttonClassName(options?: { variant?: ButtonVariant; size?: Butt
     options?.className
   );
 }
+
 

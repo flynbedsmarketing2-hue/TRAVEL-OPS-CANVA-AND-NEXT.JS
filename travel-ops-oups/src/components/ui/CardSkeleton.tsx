@@ -12,7 +12,7 @@ export default function CardSkeleton({ items = 3 }: CardSkeletonProps) {
         <div
           key={`card-${index}`}
           className={cn(
-            "rounded-[22px] border border-slate-200 bg-white p-4 shadow-[0_20px_45px_rgba(15,23,42,0.08)] transition-colors duration-150 dark:border-slate-800 dark:bg-slate-900"
+            "rounded-[22px] border border-[var(--border)] bg-[var(--token-surface)] p-4 shadow-sm transition-colors duration-150"
           )}
         >
           <Skeleton className="h-36 w-full" />

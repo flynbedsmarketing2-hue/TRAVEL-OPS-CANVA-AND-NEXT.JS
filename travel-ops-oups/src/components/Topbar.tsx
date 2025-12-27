@@ -22,7 +22,7 @@ export default function Topbar({ onOpenSidebar }: Props) {
             variant="ghost"
             size="md"
             onClick={() => onOpenSidebar?.()}
-            className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 text-[var(--text)] shadow-sm transition hover:bg-[var(--surface-2)] hover:text-[var(--token-primary)] focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/50 lg:hidden"
+            className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 text-[var(--text)] shadow-sm transition hover:bg-[var(--surface-2)] hover:text-[var(--token-primary)] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/50 lg:hidden"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
@@ -32,7 +32,7 @@ export default function Topbar({ onOpenSidebar }: Props) {
             href="/"
             className="hidden text-sm font-semibold text-[var(--text)]/80 transition hover:text-primary lg:inline"
           >
-            TravelOps
+            Nouba Plus
           </Link>
         </div>
 
