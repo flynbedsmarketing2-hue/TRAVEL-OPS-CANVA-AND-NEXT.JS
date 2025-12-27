@@ -17,7 +17,7 @@ type DataTableProps<T> = {
 
 export function DataTable<T>({ columns, data, emptyState }: DataTableProps<T>) {
   if (!data.length && emptyState) {
-    return <Card className="p-6">{emptyState}</Card>;
+    return <Card className="p-8 text-center">{emptyState}</Card>;
   }
   return (
     <Table>

@@ -28,11 +28,11 @@ export default function PageHeader({
   const resolvedDescription = description ?? subtitle;
 
   return (
-    <div className="flex w-full flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface)]/85 px-4 py-4 shadow-sm transition-colors duration-150 backdrop-blur">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex-1 min-w-0 space-y-1">
+    <div className="flex w-full flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface)]/90 p-6 shadow-sm transition-colors duration-150 backdrop-blur">
+      <div className="flex flex-wrap items-start justify-between gap-6">
+        <div className="flex-1 min-w-0 space-y-2">
           {breadcrumb && breadcrumb.length ? (
-            <nav className="flex flex-wrap items-baseline gap-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--muted)]">
+            <nav className="flex flex-wrap items-baseline gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--muted)]">
               {breadcrumb.map((item, index) => (
                 <span key={item.label + index} className="flex items-center gap-2">
                   {item.href ? (
@@ -51,13 +51,11 @@ export default function PageHeader({
             </nav>
           ) : null}
           {eyebrow ? (
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">{eyebrow}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--token-primary)]">{eyebrow}</p>
           ) : null}
           <div>
-            <h1 className="text-2xl font-semibold leading-tight text-[var(--text)]">{title}</h1>
-            {resolvedDescription ? (
-              <p className="text-sm text-[var(--muted)]">{resolvedDescription}</p>
-            ) : null}
+            <h1 className="font-heading">{title}</h1>
+            {resolvedDescription ? <p className="text-sm text-[var(--muted)]">{resolvedDescription}</p> : null}
           </div>
         </div>
         {actions ? (

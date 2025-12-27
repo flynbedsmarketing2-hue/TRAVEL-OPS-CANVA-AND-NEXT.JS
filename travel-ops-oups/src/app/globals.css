@@ -4,30 +4,33 @@
 
 :root {
   color-scheme: light;
-  --token-background: #f5f6f8;
-  --token-surface: #ffffff;
-  --token-surface-2: #f1f3f6;
-  --token-border: #d9dee7;
-  --token-muted: #5b6474;
-  --token-text: #0b1220;
-  --token-primary: #0f1e36;
-  --token-primary-strong: #0a1628;
-  --token-secondary: #264a7a;
-  --token-accent: #f28c28;
+  /* Neutral, high-contrast palette for readability */
+  --token-background: #f7fafc; /* very light */
+  --token-surface: #ffffff; /* cards, panels */
+  --token-surface-2: #f3f6fa; /* subtle surfaces */
+  --token-border: #e6eef8; /* faint border */
+  --token-muted: #64748b; /* muted text */
+  --token-text: #0f1724; /* main text, high contrast */
+  --token-primary: #0b1220; /* headings / primary text */
+  --token-primary-strong: #071029;
+  --token-secondary: #0f172a;
+  --token-accent: #2563eb; /* blue accent for CTAs */
+  --accent-start: #2563eb;
+  --accent-end: #60a5fa;
   --token-inverse: #ffffff;
-  --token-danger: #c2413d;
-  --token-danger-strong: #a93734;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  --token-danger: #c02424;
+  --token-danger-strong: #a31818;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
   --radius-2xl: 24px;
   --radius-card: var(--radius-lg);
   --radius-hero: 20px;
   --radius-input: 12px;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 8px 18px rgba(15, 23, 42, 0.1);
-  --shadow-soft: 0 12px 24px rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 1px 3px rgba(2,6,23,0.06);
+  --shadow-md: 0 6px 20px rgba(2,6,23,0.08);
+  --shadow-soft: 0 10px 30px rgba(2,6,23,0.06);
   --bg: var(--token-background);
   --surface: var(--token-surface);
   --surface-2: var(--token-surface-2);
@@ -41,19 +44,19 @@
 
 html.dark {
   color-scheme: dark;
-  --token-background: #0c1017;
-  --token-surface: #111722;
-  --token-surface-2: #151c29;
-  --token-border: #273042;
+  --token-background: #0b1220;
+  --token-surface: #0f1724;
+  --token-surface-2: #111827;
+  --token-border: #1f2937;
   --token-muted: #9aa3b2;
-  --token-text: #f3f5f7;
-  --token-primary: #d7e0f2;
-  --token-primary-strong: #b6c6e6;
-  --token-secondary: #7fa0d4;
-  --token-accent: #f39a3d;
-  --token-inverse: #f8fafc;
-  --token-danger: #f38b84;
-  --token-danger-strong: #e0746e;
+  --token-text: #e6eef8;
+  --token-primary: #e6f0ff;
+  --token-primary-strong: #cfe2ff;
+  --token-secondary: #9fb7ff;
+  --token-accent: #3b82f6;
+  --token-inverse: #0b1220;
+  --token-danger: #fda4af;
+  --token-danger-strong: #fb7185;
   --bg: var(--token-background);
   --surface: var(--token-surface);
   --surface-2: var(--token-surface-2);
@@ -65,21 +68,35 @@ html.dark {
 body {
   @apply antialiased;
   color: var(--token-text);
-  background: var(--token-background);
+  background-color: var(--token-background);
+  background-image: radial-gradient(circle at 10% 10%, rgba(37,99,235,0.03), transparent 14%), radial-gradient(circle at 90% 80%, rgba(15,23,42,0.02), transparent 18%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  font-variation-settings: "wght" 400;
 }
 
 a {
-  color: var(--token-text);
+  color: var(--token-primary);
   text-underline-offset: 4px;
   transition: color 150ms ease;
 }
 
 a:hover {
-  color: var(--token-primary);
+  color: color-mix(in srgb, var(--token-accent) 75%, var(--token-primary) 25%);
 }
 
 .card {
-  @apply rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] shadow-soft;
+  @apply rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] shadow-md;
+  padding: 1rem;
+}
+
+.container {
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 html.dark .card {
@@ -87,7 +104,7 @@ html.dark .card {
 }
 
 .section-shell {
-  @apply space-y-4 rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-soft;
+  @apply space-y-6 rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-sm;
 }
 
 html.dark .section-shell {
@@ -95,5 +112,13 @@ html.dark .section-shell {
 }
 
 ::selection {
-  background: rgba(242, 140, 40, 0.28);
+  background: rgba(37, 99, 235, 0.16);
 }
+
+/* Headings for better hierarchy */
+h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; color: var(--token-primary); }
+h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 600; color: var(--token-primary); }
+h3 { font-size: 1.125rem; line-height: 1.6rem; font-weight: 600; color: var(--token-primary); }
+
+/* Utility tweaks */
+.muted { color: var(--token-muted); }

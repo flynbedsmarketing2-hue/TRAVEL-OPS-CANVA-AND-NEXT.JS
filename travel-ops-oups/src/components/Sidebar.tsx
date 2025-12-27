@@ -36,7 +36,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
   }, [collapsed]);
 
   const widthClass = collapsed ? "w-20" : "w-[280px]";
-  const paddingClass = collapsed ? "px-2 py-4" : "px-4 py-5";
+  const paddingClass = collapsed ? "px-3 py-4" : "px-4 py-6";
 
   return (
     <aside
@@ -56,12 +56,12 @@ export default function Sidebar({ open = false, onClose }: Props) {
         <Link
           href="/"
           className={cn(
-            "inline-flex items-center gap-2 font-heading text-base font-semibold text-[var(--text)] transition-opacity duration-200",
+            "inline-flex items-center gap-3 font-heading text-base font-semibold text-[var(--text)] transition-opacity duration-200",
             collapsed ? "justify-center" : ""
           )}
           onClick={() => onClose?.()}
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--token-surface-2)] text-primary shadow-sm">
+          <span className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface-2)] text-[var(--token-accent)] shadow-sm">
             <Plane className="h-5 w-5" />
           </span>
           <span
@@ -74,12 +74,12 @@ export default function Sidebar({ open = false, onClose }: Props) {
           </span>
         </Link>
 
-        <button
+          <button
           type="button"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-pressed={collapsed}
           onClick={() => setCollapsed((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--token-surface)] text-[var(--muted)] shadow-sm transition hover:text-primary focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/70"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--token-surface)] text-[var(--muted)] shadow-sm transition hover:text-[var(--token-primary)] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/70"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
@@ -90,7 +90,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
           <div key={section.label}>
             <p
               className={cn(
-                "px-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)] transition duration-200",
+                "px-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)] transition duration-200",
                 collapsed ? "opacity-0" : "opacity-100"
               )}
             >
@@ -109,8 +109,8 @@ export default function Sidebar({ open = false, onClose }: Props) {
                     aria-label={collapsed ? item.label : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative flex items-center gap-3 rounded-2xl border border-transparent text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
-                      collapsed ? "justify-center px-2 py-2" : "px-4 py-2.5",
+                      "relative flex items-center gap-3 rounded-[var(--radius-md)] border border-transparent text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
+                      collapsed ? "justify-center px-3 py-2.5" : "px-4 py-3",
                       active
                         ? "bg-[var(--token-surface-2)] text-[var(--text)] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-1 before:rounded-full before:bg-[var(--token-accent)]"
                         : "text-[var(--text)] hover:border-[var(--border)] hover:bg-[var(--token-surface-2)]"

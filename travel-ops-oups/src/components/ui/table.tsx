@@ -4,7 +4,7 @@ import { cn } from "./cn";
 export function Table({ className, ...props }: React.TableHTMLAttributes<HTMLTableElement>) {
   return (
     <div className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] shadow-sm transition-colors duration-150">
-      <table className={cn("w-full min-w-full text-left text-sm", className)} {...props} />
+      <table className={cn("w-full min-w-full text-left text-sm md:text-base", className)} {...props} />
     </div>
   );
 }
@@ -46,13 +46,13 @@ export function TR({ className, ...props }: React.HTMLAttributes<HTMLTableRowEle
 }
 
 export function TH({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th className={cn("px-4 py-3.5", className)} {...props} />;
+  return <th className={cn("px-6 py-4", className)} {...props} />;
 }
 
 export function TD({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return (
     <td
-      className={cn("px-4 py-3 align-top text-[var(--text)]", className)}
+      className={cn("px-6 py-4 align-top text-[var(--text)]", className)}
       {...props}
     />
   );

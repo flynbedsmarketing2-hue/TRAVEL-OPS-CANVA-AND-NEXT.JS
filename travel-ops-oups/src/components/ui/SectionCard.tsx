@@ -13,7 +13,7 @@ export function SectionCard({ title, description, actions, children, className }
   return (
     <section
       className={cn(
-        "space-y-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-sm",
+        "space-y-5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-sm",
         className
       )}
     >
@@ -21,7 +21,7 @@ export function SectionCard({ title, description, actions, children, className }
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             {title ? (
-              <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">{title}</h3>
+              <h3 className="text-sm font-semibold tracking-tight text-[var(--token-primary)]">{title}</h3>
             ) : null}
             {description ? <p className="text-sm text-[var(--muted)]">{description}</p> : null}
           </div>

@@ -35,18 +35,18 @@ export default function TableToolbar({
 }: TableToolbarProps) {
   const hasPrimaryContent = Boolean(primaryAction || rightActions);
   const chipBaseClasses =
-    "flex items-center gap-2 rounded-full border px-3 py-1 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]";
+    "flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]";
 
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface-2)] px-4 py-3 shadow-sm transition duration-150 hover:border-[var(--token-border)]",
+        "flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface-2)] px-6 py-4 shadow-sm transition duration-150 hover:border-[var(--token-border)]",
         className
       )}
     >
       <div className="flex flex-wrap items-center gap-3">
         {search ? (
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-[240px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]" />
             <Input
               ref={search.inputRef}
@@ -74,7 +74,7 @@ export default function TableToolbar({
       </div>
 
       {chips && chips.length ? (
-        <div className="flex flex-wrap items-center gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-2 text-sm">
           {chips.map((chip) => (
             <button
               key={chip.label}

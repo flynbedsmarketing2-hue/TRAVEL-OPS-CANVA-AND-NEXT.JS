@@ -48,13 +48,10 @@ export default function Header() {
   const { theme, toggleTheme } = useUiStore();
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--token-surface)] shadow-sm backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 2xl:max-w-screen-2xl">
-        <Link
-          href="/"
-          className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 font-heading text-lg font-semibold text-[var(--text)] shadow-sm"
-        >
-          <Plane className="h-5 w-5" />
+    <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--token-surface)]/80 backdrop-blur-sm shadow-sm">
+      <div className="container flex items-center justify-between px-2 py-4">
+        <Link href="/" className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--token-surface)]/90 px-3 py-2 font-heading text-lg font-semibold text-[var(--text)] shadow-sm transition hover:ring-1 hover:ring-[var(--token-accent)]/10">
+          <Plane className="h-5 w-5 text-[var(--token-accent)]" />
           Nouba Plus
         </Link>
 
@@ -69,7 +66,7 @@ export default function Header() {
                 className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition ${
                   active
                     ? "border border-[var(--border)] bg-[var(--token-surface-2)] text-[var(--text)] shadow-sm"
-                    : "text-[var(--muted)] hover:bg-[var(--token-surface-2)] hover:text-[var(--text)]"
+                    : "text-[var(--muted)] hover:bg-[var(--token-surface-2)]/80 hover:text-[var(--text)]"
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -83,17 +80,14 @@ export default function Header() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="inline-flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] px-3.5 py-2 text-sm font-semibold text-[var(--muted)] shadow-sm transition hover:text-[var(--text)]"
+            className="inline-flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--token-surface)]/90 px-3.5 py-2 text-sm font-semibold text-[var(--muted)] shadow-sm transition hover:text-[var(--text)]"
             aria-label="Toggle theme"
             title="Toggle theme"
           >
             {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </button>
 
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 rounded-full bg-[var(--token-accent)] px-5 py-2.5 text-sm font-semibold text-[var(--token-inverse)] shadow-sm transition hover:bg-[var(--token-accent)]/90"
-          >
+          <Link href="/dashboard" className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-end)] px-5 py-2.5 text-sm font-semibold text-[var(--token-inverse)] shadow-md transition hover:scale-[1.01]">
             Open
           </Link>
         </div>
