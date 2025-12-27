@@ -112,6 +112,9 @@ export default function DashboardPage() {
   });
   const today = new Date();
   const referenceTime = today.getTime();
+  const debugStamp = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
+    today.getDate()
+  ).padStart(2, "0")} ${String(today.getHours()).padStart(2, "0")}:${String(today.getMinutes()).padStart(2, "0")}`;
   const overdueFollowups = leads.filter(
     (lead) => lead.nextContact && new Date(lead.nextContact).getTime() < referenceTime
   ).length;
@@ -157,6 +160,11 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center">
+        <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--token-surface-2)] px-3 py-1 text-xs font-semibold text-[var(--text)]">
+          UI Debug Build: {debugStamp}
+        </span>
+      </div>
       <PageHeader
         eyebrow="Dashboard"
         title="Today overview"

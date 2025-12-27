@@ -42,6 +42,19 @@ type Html2PdfFactory = () => Html2PdfWorker;
 
 type StatusFilter = "all" | "published" | "draft";
 type SortKey = "recent" | "priceAsc" | "priceDesc" | "stockDesc";
+type ColumnKey = "package" | "type" | "pax" | "payment" | "status" | "hold" | "actions";
+type TableDensity = "comfortable" | "compact";
+
+const tablePrefsKey = "travelops-sales-table-prefs";
+const defaultColumns: Record<ColumnKey, boolean> = {
+  package: true,
+  type: true,
+  pax: true,
+  payment: true,
+  status: true,
+  hold: true,
+  actions: true,
+};
 
 const defaultBooking = (packageId: string | undefined): BookingDraft => ({
   packageId: packageId ?? "",
@@ -78,6 +91,8 @@ export default function SalesPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sort, setSort] = useState<SortKey>("recent");
+  const [visibleColumns, setVisibleColumns] = useState<Record<ColumnKey, boolean>>(defaultColumns);
+  const [density, setDensity] = useState<TableDensity>("comfortable");
   const isLoading = false; // TODO: wire loading state from bookings store
 
   const packageMap = useMemo(() => Object.fromEntries(packages.map((p) => [p.id, p])), [packages]);
@@ -129,6 +144,29 @@ export default function SalesPage() {
 
   const openDrawer = (booking: Booking) => setDrawerBooking(booking);
   const closeDrawer = () => setDrawerBooking(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem(tablePrefsKey);
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored) as { columns?: Record<ColumnKey, boolean>; density?: TableDensity };
+      if (parsed.columns) {
+        setVisibleColumns((prev) => ({ ...prev, ...parsed.columns }));
+      }
+      if (parsed.density === "compact" || parsed.density === "comfortable") {
+        setDensity(parsed.density);
+      }
+    } catch {
+      // Ignore invalid stored prefs.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const payload = { columns: visibleColumns, density };
+    window.localStorage.setItem(tablePrefsKey, JSON.stringify(payload));
+  }, [visibleColumns, density]);
 
   const onSubmit = () => {
     if (!draft.packageId) return;
@@ -349,6 +387,17 @@ export default function SalesPage() {
     { label: "Publies", active: statusFilter === "published", onClick: () => setStatusFilter("published") },
     { label: "Brouillons", active: statusFilter === "draft", onClick: () => setStatusFilter("draft") },
   ];
+  const compactHeader = density === "compact" ? "py-2 text-[10px]" : "";
+  const compactCell = density === "compact" ? "py-2 text-xs" : "";
+  const columnOptions: { key: ColumnKey; label: string }[] = [
+    { key: "package", label: "Package" },
+    { key: "type", label: "Type" },
+    { key: "pax", label: "Pax" },
+    { key: "payment", label: "Payment" },
+    { key: "status", label: "Status" },
+    { key: "hold", label: "Hold" },
+    { key: "actions", label: "Actions" },
+  ];
 
   const resetFilters = () => {
     setSearch("");
@@ -414,12 +463,60 @@ export default function SalesPage() {
                     Filters
                   </span>
                 </Button>
-                <Button variant="ghost" size="sm" className="whitespace-nowrap" aria-label="Customize columns">
-                  <Columns className="h-4 w-4" />
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
-                    Columns
-                  </span>
-                </Button>
+                <details className="relative">
+                  <summary className="list-none [&::-webkit-details-marker]:hidden">
+                    <Button variant="ghost" size="sm" className="whitespace-nowrap" aria-label="Customize columns">
+                      <Columns className="h-4 w-4" />
+                      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+                        Columns
+                      </span>
+                    </Button>
+                  </summary>
+                  <div className="absolute right-0 z-40 mt-2 w-64 rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-3 shadow-md">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+                      Column visibility
+                    </p>
+                    <div className="mt-2 space-y-2">
+                      {columnOptions.map((col) => (
+                        <label key={col.key} className="flex items-center gap-2 text-sm text-[var(--text)]">
+                          <input
+                            type="checkbox"
+                            checked={visibleColumns[col.key]}
+                            onChange={(event) =>
+                              setVisibleColumns((prev) => ({ ...prev, [col.key]: event.target.checked }))
+                            }
+                          />
+                          <span>{col.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="mt-4 border-t border-[var(--border)] pt-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+                        Density
+                      </p>
+                      <div className="mt-2 flex items-center gap-3 text-sm text-[var(--text)]">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="table-density"
+                            checked={density === "comfortable"}
+                            onChange={() => setDensity("comfortable")}
+                          />
+                          <span>Comfortable</span>
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="table-density"
+                            checked={density === "compact"}
+                            onChange={() => setDensity("compact")}
+                          />
+                          <span>Compact</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </details>
               </>
             }
             chips={bookingStatusChips}
@@ -474,15 +571,46 @@ export default function SalesPage() {
             <Table className="min-w-[720px]">
               <THead className="sticky top-0 z-10 bg-[var(--token-surface-2)]/90 backdrop-blur">
                 <TR>
-                  <TH className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Package</TH>
-                  <TH className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Type</TH>
-                  <TH className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Pax</TH>
-                  <TH className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Payment</TH>
-                  <TH className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Statut</TH>
-                  <TH className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Hold</TH>
-                  <TH className="text-right text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
-                    Actions
-                  </TH>
+                  {visibleColumns.package ? (
+                    <TH className={cn("text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]", compactHeader)}>
+                      Package
+                    </TH>
+                  ) : null}
+                  {visibleColumns.type ? (
+                    <TH className={cn("text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]", compactHeader)}>
+                      Type
+                    </TH>
+                  ) : null}
+                  {visibleColumns.pax ? (
+                    <TH className={cn("text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]", compactHeader)}>
+                      Pax
+                    </TH>
+                  ) : null}
+                  {visibleColumns.payment ? (
+                    <TH className={cn("text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]", compactHeader)}>
+                      Payment
+                    </TH>
+                  ) : null}
+                  {visibleColumns.status ? (
+                    <TH className={cn("text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]", compactHeader)}>
+                      Statut
+                    </TH>
+                  ) : null}
+                  {visibleColumns.hold ? (
+                    <TH className={cn("text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]", compactHeader)}>
+                      Hold
+                    </TH>
+                  ) : null}
+                  {visibleColumns.actions ? (
+                    <TH
+                      className={cn(
+                        "text-right text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]",
+                        compactHeader
+                      )}
+                    >
+                      Actions
+                    </TH>
+                  ) : null}
                 </TR>
               </THead>
               <TBody>
@@ -500,76 +628,90 @@ export default function SalesPage() {
 
                   return (
                     <TR key={booking.id} className="transition-colors duration-150 hover:bg-[var(--token-surface-2)]">
-                      <TD className="min-w-[220px]">
-                        <div
-                          className="min-w-0 cursor-pointer"
-                          role="button"
-                          tabIndex={0}
-                          aria-label={`View booking ${booking.id.slice(0, 6)}`}
-                          onClick={() => openDrawer(booking)}
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter" || event.key === " ") {
-                              event.preventDefault();
-                              openDrawer(booking);
-                            }
-                          }}
-                        >
-                          <p className="truncate font-semibold text-[var(--text)]">
-                            {pkg?.general.productName ?? "Package inconnu"}
-                          </p>
-                          <p className="truncate text-xs text-[var(--muted)]">
-                            {pkg?.general.productCode ?? "-"} - {pkg?.flights.destination ?? "-"}
-                          </p>
-                        </div>
-                      </TD>
-                      <TD>
-                        <span className="text-sm font-semibold text-[var(--text)]">{booking.bookingType}</span>
-                      </TD>
-                      <TD>
-                        <span className="text-sm font-semibold text-[var(--text)]">{booking.paxTotal}</span>
-                      </TD>
-                      <TD>
-                        <span className="text-sm text-[var(--text)]">
-                          {formatMoney(booking.payment.paidAmount)}/{formatMoney(booking.payment.totalPrice)}
-                        </span>
-                      </TD>
-                      <TD>
-                        <span
-                          className={cn(
-                            "inline-flex rounded-full border px-3 py-1 text-xs font-semibold",
-                            statusClass
-                          )}
-                        >
-                          {status.text}
-                        </span>
-                      </TD>
-                      <TD>
-                        <span className="text-sm text-[var(--muted)]">{booking.reservedUntil || "-"}</span>
-                      </TD>
-                      <TD className="text-right pr-4">
-                        <div className="flex items-center justify-end">
-                          <RowActionsMenu
-                            actions={[
-                              {
-                                label: "View details",
-                                onClick: () => openDrawer(booking),
-                              },
-                              {
-                                label: "Create task",
-                                href: `/tasks?linkType=booking&linkId=${booking.id}`,
-                              },
-                              { label: "Edit", onClick: () => openEdit(booking) },
-                              {
-                                label: "Print confirmation",
-                                onClick: () => exportBookingPdf(booking, "confirmation"),
-                              },
-                              { label: "Invoice", onClick: () => exportBookingPdf(booking, "invoice") },
-                              { label: "Delete", tone: "danger", onClick: () => deleteOne(booking.id) },
-                            ]}
-                            ariaLabel={`Actions for booking ${booking.id.slice(0, 6)}`}
-                          />
-                        </div>
-                      </TD>
+                      {visibleColumns.package ? (
+                        <TD className={cn("min-w-[220px]", compactCell)}>
+                          <div
+                            className="min-w-0 cursor-pointer"
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`View booking ${booking.id.slice(0, 6)}`}
+                            onClick={() => openDrawer(booking)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                openDrawer(booking);
+                              }
+                            }}
+                          >
+                            <p className={cn("truncate font-semibold text-[var(--text)]", density === "compact" && "text-sm")}>
+                              {pkg?.general.productName ?? "Package inconnu"}
+                            </p>
+                            <p className={cn("truncate text-xs text-[var(--muted)]", density === "compact" && "text-[11px]")}>
+                              {pkg?.general.productCode ?? "-"} - {pkg?.flights.destination ?? "-"}
+                            </p>
+                          </div>
+                        </TD>
+                      ) : null}
+                      {visibleColumns.type ? (
+                        <TD className={compactCell}>
+                          <span className="text-sm font-semibold text-[var(--text)]">{booking.bookingType}</span>
+                        </TD>
+                      ) : null}
+                      {visibleColumns.pax ? (
+                        <TD className={compactCell}>
+                          <span className="text-sm font-semibold text-[var(--text)]">{booking.paxTotal}</span>
+                        </TD>
+                      ) : null}
+                      {visibleColumns.payment ? (
+                        <TD className={compactCell}>
+                          <span className="text-sm text-[var(--text)]">
+                            {formatMoney(booking.payment.paidAmount)}/{formatMoney(booking.payment.totalPrice)}
+                          </span>
+                        </TD>
+                      ) : null}
+                      {visibleColumns.status ? (
+                        <TD className={compactCell}>
+                          <span
+                            className={cn(
+                              "inline-flex rounded-full border px-3 py-1 text-xs font-semibold",
+                              statusClass
+                            )}
+                          >
+                            {status.text}
+                          </span>
+                        </TD>
+                      ) : null}
+                      {visibleColumns.hold ? (
+                        <TD className={compactCell}>
+                          <span className="text-sm text-[var(--muted)]">{booking.reservedUntil || "-"}</span>
+                        </TD>
+                      ) : null}
+                      {visibleColumns.actions ? (
+                        <TD className={cn("text-right pr-4", compactCell)}>
+                          <div className="flex items-center justify-end">
+                            <RowActionsMenu
+                              actions={[
+                                {
+                                  label: "View details",
+                                  onClick: () => openDrawer(booking),
+                                },
+                                {
+                                  label: "Create task",
+                                  href: `/tasks?linkType=booking&linkId=${booking.id}`,
+                                },
+                                { label: "Edit", onClick: () => openEdit(booking) },
+                                {
+                                  label: "Print confirmation",
+                                  onClick: () => exportBookingPdf(booking, "confirmation"),
+                                },
+                                { label: "Invoice", onClick: () => exportBookingPdf(booking, "invoice") },
+                                { label: "Delete", tone: "danger", onClick: () => deleteOne(booking.id) },
+                              ]}
+                              ariaLabel={`Actions for booking ${booking.id.slice(0, 6)}`}
+                            />
+                          </div>
+                        </TD>
+                      ) : null}
                     </TR>
                   );
                 })}
