@@ -219,31 +219,31 @@ export default function SalesPage() {
     root.style.width = "794px";
     root.style.padding = "20px";
     root.style.fontFamily = "Arial";
-    root.style.color = "var(--token-text)";
+    root.style.color = "var(--token-text, #0B1220)";
     root.innerHTML = `
-      <div style="border:2px solid var(--token-accent);border-radius:14px;padding:14px;margin-bottom:12px;">
+      <div style="border:2px solid var(--token-accent, #F28C28);border-radius:14px;padding:14px;margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
           <div>
-            <div style="color:var(--token-accent);font-weight:800;font-size:12px;">Nouba Plus</div>
+            <div style="color:var(--token-accent, #F28C28);font-weight:800;font-size:12px;">Nouba Plus</div>
             <div style="font-size:20px;font-weight:800;margin-top:4px;">${kind === "invoice" ? "Invoice" : "Confirmation"} - Booking ${booking.id.slice(0, 6)}</div>
-            <div style="font-size:12px;color:var(--token-muted);margin-top:4px;">
+            <div style="font-size:12px;color:var(--token-muted, #5B6474);margin-top:4px;">
                   #{packageMap[drawerBooking.packageId]?.general.productCode ?? "-"}
             </div>
           </div>
-          <div style="text-align:right;font-size:12px;color:var(--token-muted);">
-            <div>Type: <strong style="color:var(--token-text);">${booking.bookingType}</strong></div>
-            <div>Pax: <strong style="color:var(--token-text);">${booking.paxTotal}</strong></div>
-            <div>Payment: <strong style="color:var(--token-text);">${status.text}</strong></div>
-              ${booking.reservedUntil ? `<div>Hold until <strong style="color:var(--token-text);">${booking.reservedUntil}</strong></div>` : ""}
+          <div style="text-align:right;font-size:12px;color:var(--token-muted, #5B6474);">
+            <div>Type: <strong style="color:var(--token-text, #0B1220);">${booking.bookingType}</strong></div>
+            <div>Pax: <strong style="color:var(--token-text, #0B1220);">${booking.paxTotal}</strong></div>
+            <div>Payment: <strong style="color:var(--token-text, #0B1220);">${status.text}</strong></div>
+              ${booking.reservedUntil ? `<div>Hold until <strong style="color:var(--token-text, #0B1220);">${booking.reservedUntil}</strong></div>` : ""}
           </div>
         </div>
       </div>
         ${
           kind === "invoice"
-            ? `<div style="margin-top:10px;font-size:12px;color:var(--token-muted);">
+            ? `<div style="margin-top:10px;font-size:12px;color:var(--token-muted, #5B6474);">
                  <strong>Invoice</strong> - detailed invoice lines.
                </div>`
-            : `<div style="margin-top:10px;font-size:12px;color:var(--token-muted);">
+            : `<div style="margin-top:10px;font-size:12px;color:var(--token-muted, #5B6474);">
                  <strong>Confirmation</strong> - booking recap.
                </div>`
         }
@@ -252,8 +252,8 @@ export default function SalesPage() {
         <table style="width:100%;border-collapse:collapse;font-size:12px;">
           <thead>
             <tr>
-              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border);background:var(--token-surface-2);">Chambre</th>
-              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border);background:var(--token-surface-2);">Occupants</th>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Chambre</th>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Occupants</th>
             </tr>
           </thead>
           <tbody>
@@ -261,8 +261,8 @@ export default function SalesPage() {
               .map((room) => {
                 const occ = room.occupants.map((o) => `${o.type}${o.name ? ` - ${o.name}` : ""}`).join(", ");
                 return `<tr>
-                  <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);">${room.roomType}</td>
-                  <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);">${occ}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">${room.roomType}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">${occ}</td>
                 </tr>`;
               })
               .join("")}
@@ -274,36 +274,36 @@ export default function SalesPage() {
         <table style="width:100%;border-collapse:collapse;font-size:12px;">
           <thead>
             <tr>
-              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border);background:var(--token-surface-2);">Type</th>
-              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border);background:var(--token-surface-2);">Qté</th>
-              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border);background:var(--token-surface-2);">PU</th>
-              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border);background:var(--token-surface-2);">Sous-total</th>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Type</th>
+              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Qté</th>
+              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">PU</th>
+              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Sous-total</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);">ADL</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${totals.pax.ADL}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${formatMoney(totals.pricing.adultUnit)}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${formatMoney(totals.pax.ADL * totals.pricing.adultUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">ADL</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${totals.pax.ADL}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pricing.adultUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pax.ADL * totals.pricing.adultUnit)}</td>
             </tr>
             <tr>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);">CHD</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${totals.pax.CHD}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${formatMoney(totals.pricing.childUnit)}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${formatMoney(totals.pax.CHD * totals.pricing.childUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">CHD</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${totals.pax.CHD}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pricing.childUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pax.CHD * totals.pricing.childUnit)}</td>
             </tr>
             <tr>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);">INF</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${totals.pax.INF}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${formatMoney(totals.pricing.infantUnit)}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2);text-align:right;">${formatMoney(totals.pax.INF * totals.pricing.infantUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">INF</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${totals.pax.INF}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pricing.infantUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pax.INF * totals.pricing.infantUnit)}</td>
             </tr>
           </tbody>
         </table>
         <div style="display:flex;justify-content:flex-end;margin-top:10px;">
-          <div style="width:320px;border:1px solid var(--token-border);border-radius:12px;padding:10px;">
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--token-muted);">
+          <div style="width:320px;border:1px solid var(--token-border, #D9DEE7);border-radius:12px;padding:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--token-muted, #5B6474);">
               <span>Commission agence</span>
               <span>${formatMoney(totals.commissionTotal)}</span>
             </div>
@@ -311,7 +311,7 @@ export default function SalesPage() {
               <span>Total</span>
               <span>${formatMoney(booking.payment.totalPrice)}</span>
             </div>
-            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--token-muted);">
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--token-muted, #5B6474);">
               <span>Payé</span>
               <span>${formatMoney(booking.payment.paidAmount)}</span>
             </div>
@@ -450,7 +450,7 @@ export default function SalesPage() {
                   id="booking-sort"
                   value={sort}
                   onChange={(e) => setSort(e.target.value as SortKey)}
-                  className="h-10 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm font-semibold text-[var(--text)] shadow-sm outline-none transition focus:border-[var(--token-accent)] focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/20"
+                  className="h-10 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm font-semibold text-[var(--text)] shadow-sm outline-none transition focus:border-[var(--token-accent, #F28C28)] focus-visible:ring-2 focus-visible:ring-[var(--token-accent, #F28C28)]/20"
                 >
                   <option value="recent">Recents</option>
                   <option value="priceAsc">Prix min +</option>
@@ -569,7 +569,7 @@ export default function SalesPage() {
             />
           ) : (
             <Table className="min-w-[720px]">
-              <THead className="sticky top-0 z-10 bg-[var(--token-surface-2)]/90 backdrop-blur">
+              <THead className="sticky top-0 z-10 bg-[var(--token-surface-2, #F1F3F6)]/90 backdrop-blur">
                 <TR>
                   {visibleColumns.package ? (
                     <TH className={cn("text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]", compactHeader)}>
@@ -619,15 +619,15 @@ export default function SalesPage() {
                   const status = paymentStatus(booking.payment);
                   const statusClass =
                     status.label === "paid"
-                      ? "border-[var(--token-primary)]/30 bg-[var(--token-surface-2)] text-[var(--token-primary)]"
+                      ? "border-[var(--token-primary)]/30 bg-[var(--token-surface-2, #F1F3F6)] text-[var(--token-primary)]"
                       : status.label === "partial"
-                        ? "border-[var(--token-accent)]/30 bg-[var(--token-surface-2)] text-[var(--token-accent)]"
+                        ? "border-[var(--token-accent, #F28C28)]/30 bg-[var(--token-surface-2, #F1F3F6)] text-[var(--token-accent, #F28C28)]"
                         : status.label === "overpaid"
-                          ? "border-[var(--token-primary)]/30 bg-[var(--token-surface-2)] text-[var(--token-primary)]"
-                          : "border-[var(--border)] bg-[var(--token-surface-2)] text-[var(--text)]";
+                          ? "border-[var(--token-primary)]/30 bg-[var(--token-surface-2, #F1F3F6)] text-[var(--token-primary)]"
+                          : "border-[var(--border)] bg-[var(--token-surface-2, #F1F3F6)] text-[var(--text)]";
 
                   return (
-                    <TR key={booking.id} className="transition-colors duration-150 hover:bg-[var(--token-surface-2)]">
+                    <TR key={booking.id} className="transition-colors duration-150 hover:bg-[var(--token-surface-2, #F1F3F6)]">
                       {visibleColumns.package ? (
                         <TD className={cn("min-w-[220px]", compactCell)}>
                           <div
