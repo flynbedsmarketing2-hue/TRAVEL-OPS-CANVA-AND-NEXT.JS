@@ -46,7 +46,13 @@ export default function Sidebar({ open = false, onClose }: Props) {
         open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}
     >
-      <div className={cn("flex items-center justify-between gap-2 transition-opacity duration-200", paddingClass)}>
+      <div
+        className={cn(
+          "flex transition-opacity duration-200",
+          collapsed ? "flex-col items-center gap-3" : "items-center justify-between gap-2",
+          paddingClass
+        )}
+      >
         <Link
           href="/"
           className={cn(
@@ -61,7 +67,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
           <span
             className={cn(
               "text-sm font-semibold leading-tight text-[var(--text)] transition-opacity duration-200",
-              collapsed ? "opacity-0" : "opacity-100"
+              collapsed ? "sr-only" : "opacity-100"
             )}
           >
             TravelOps
