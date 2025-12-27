@@ -28,22 +28,22 @@ export default function PageHeader({
   const resolvedDescription = description ?? subtitle;
 
   return (
-    <div className="flex w-full flex-col gap-3 rounded-[16px] border border-[var(--border)] bg-white/80 px-4 py-4 shadow-[0_10px_24px_rgba(15,23,42,0.06)] transition-colors duration-150 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70">
+    <div className="flex w-full flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface)]/85 px-4 py-4 shadow-sm transition-colors duration-150 backdrop-blur">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex-1 min-w-0 space-y-1">
           {breadcrumb && breadcrumb.length ? (
-            <nav className="flex flex-wrap items-baseline gap-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
+            <nav className="flex flex-wrap items-baseline gap-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--muted)]">
               {breadcrumb.map((item, index) => (
                 <span key={item.label + index} className="flex items-center gap-2">
                   {item.href ? (
                     <Link
                       href={item.href}
-                      className="text-slate-500 transition-colors duration-150 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-400 dark:focus-visible:ring-offset-slate-900"
+                      className="text-[var(--muted)] transition-colors duration-150 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]"
                     >
                       {item.label}
                     </Link>
                   ) : (
-                    <span className="text-slate-500 dark:text-slate-400">{item.label}</span>
+                    <span className="text-[var(--muted)]">{item.label}</span>
                   )}
                   {index < breadcrumb.length - 1 ? <span aria-hidden="true">›</span> : null}
                 </span>
@@ -54,9 +54,9 @@ export default function PageHeader({
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">{eyebrow}</p>
           ) : null}
           <div>
-            <h1 className="text-2xl font-semibold leading-tight text-slate-900 dark:text-slate-100">{title}</h1>
+            <h1 className="text-2xl font-semibold leading-tight text-[var(--text)]">{title}</h1>
             {resolvedDescription ? (
-              <p className="text-sm text-slate-600 dark:text-slate-300">{resolvedDescription}</p>
+              <p className="text-sm text-[var(--muted)]">{resolvedDescription}</p>
             ) : null}
           </div>
         </div>

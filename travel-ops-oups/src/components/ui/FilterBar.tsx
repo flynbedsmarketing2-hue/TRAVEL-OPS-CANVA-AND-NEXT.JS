@@ -16,17 +16,17 @@ export function FilterBar({ searchPlaceholder = "Search...", value, onChange, fi
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-3 rounded-[16px] border border-[var(--border)] bg-white px-4 py-3 shadow-[0_8px_20px_rgba(15,23,42,0.05)] dark:border-slate-800 dark:bg-slate-900",
+        "flex flex-wrap items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface-2)] px-4 py-3 shadow-sm",
         className
       )}
     >
       <div className="relative flex-1 min-w-[220px]">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+        <Search className="absolute left-3 top-2.5 h-4 w-4 text-[var(--muted)]" />
         <Input
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={searchPlaceholder}
-          className="pl-9 bg-white dark:bg-slate-900"
+          className="pl-9"
         />
       </div>
       {filters ? <div className="flex flex-wrap items-center gap-2">{filters}</div> : null}

@@ -6,8 +6,11 @@ import { ImageUp, Plus, Save, Trash2 } from "lucide-react";
 import type { TravelPackage } from "../types";
 import { DEFAULT_RESPONSIBLE_NAME, generateProductCode, todayISO } from "../lib/packageDefaults";
 import { usePackageStore } from "../stores/usePackageStore";
+import { Button } from "./ui/button";
+import { StickyPreview } from "./ui/Stepper";
 
 type Mode = "create" | "edit";
+type EditorStep = "basics" | "itinerary" | "pricing" | "review";
 
 type Props = {
   mode: Mode;
@@ -15,14 +18,14 @@ type Props = {
 };
 
 const INPUT =
-  "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100";
+  "mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20";
 
 const READONLY_INPUT =
   INPUT +
-  " cursor-not-allowed bg-slate-50 text-slate-500 dark:bg-slate-900/40 dark:text-slate-400 focus:border-slate-200 focus:ring-0 dark:focus:border-slate-800";
+  " cursor-not-allowed bg-[var(--token-surface-2)] text-[var(--muted)] focus:border-[var(--border)] focus-visible:ring-0";
 
 const TEXTAREA =
-  "mt-1 min-h-[96px] w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100";
+  "mt-1 min-h-[96px] w-full rounded-lg border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20";
 
 const emptyPackage = (): TravelPackage => ({
   id: "new-package",
@@ -69,6 +72,8 @@ export function PackageEditor({ mode, initialPackage }: Props) {
   const { addPackage, updatePackage, setPackageStatus } = usePackageStore();
 
   const isEdit = mode === "edit";
+  const isCreate = !isEdit;
+  const [step, setStep] = useState<EditorStep>("basics");
   const [form, setForm] = useState<TravelPackage>(() => {
     const base = initialPackage ?? emptyPackage();
     return {
@@ -83,12 +88,58 @@ export function PackageEditor({ mode, initialPackage }: Props) {
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [pricingSelections, setPricingSelections] = useState<Record<number, boolean>>({});
+
+  const stepOrder: EditorStep[] = ["basics", "itinerary", "pricing", "review"];
+  const steps = [
+    { id: "basics", label: "Basics", description: "General info, flights, stay" },
+    { id: "itinerary", label: "Itinerary", description: "Content, program, notes" },
+    { id: "pricing", label: "Pricing", description: "Combos, commissions" },
+    { id: "review", label: "Review", description: "Final check" },
+  ] satisfies { id: EditorStep; label: string; description: string }[];
 
   const cityString = useMemo(() => form.flights.cities.join(", "), [form.flights.cities]);
   const lowestPrice = useMemo(() => {
     const prices = form.pricing.map((p) => Number(p.unitPrice) || 0).filter((p) => p > 0);
     return prices.length ? Math.min(...prices) : null;
   }, [form.pricing]);
+  const selectedPricing = form.pricing.filter((_, index) => pricingSelections[index] ?? true);
+  const totalDisplayedPrice = selectedPricing.reduce((sum, row) => sum + (Number(row.unitPrice) || 0), 0);
+  const totalCommission = selectedPricing.reduce((sum, row) => sum + (Number(row.commission) || 0), 0);
+  const pricingHasWarnings = selectedPricing.some(
+    (row) => !(Number(row.unitPrice) > 0) || !(Number(row.commission) >= 0)
+  );
+
+  const formatAmount = (value: number) =>
+    `${new Intl.NumberFormat("fr-FR").format(Math.round(value || 0))} DZD`;
+
+  const pricingNote = pricingHasWarnings
+    ? "Some combos are missing a price or commission. You can save a draft and finish later."
+    : "Pricing lines look ready for review.";
+
+  const pricingSummary = (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between text-sm">
+        <span className="text-[var(--muted)]">Total displayed price</span>
+        <span className="font-semibold text-[var(--text)]">{formatAmount(totalDisplayedPrice)}</span>
+      </div>
+      <div className="flex items-center justify-between text-sm">
+        <span className="text-[var(--muted)]">Total commission</span>
+        <span className="font-semibold text-[var(--text)]">{formatAmount(totalCommission)}</span>
+      </div>
+      <div className="rounded-lg border border-[var(--border)] bg-[var(--token-surface-2)] p-3 text-xs text-[var(--muted)]">
+        {pricingNote}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" onClick={() => save("draft")} disabled={saving}>
+          Save draft
+        </Button>
+        <Button size="sm" onClick={() => jumpToStep("review")} disabled={saving}>
+          Next
+        </Button>
+      </div>
+    </div>
+  );
 
   const previewImage = form.general.imageUrl || "";
 
@@ -138,18 +189,31 @@ export function PackageEditor({ mode, initialPackage }: Props) {
     setForm((prev) => ({ ...prev, general: { ...prev.general, imageUrl: base64 } }));
   };
 
+  const stepTargets: Record<EditorStep, string> = {
+    basics: "package-basics",
+    itinerary: "package-itinerary",
+    pricing: "package-pricing",
+    review: "package-review",
+  };
+
+  const jumpToStep = (nextStep: EditorStep) => {
+    setStep(nextStep);
+    if (typeof document === "undefined") return;
+    document.getElementById(stepTargets[nextStep])?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm uppercase tracking-[0.08em] text-primary">
-            {isEdit ? "√âdition" : "Cr√©ation"} du package
+            {isEdit ? "+Îdition" : "Cr+Æation"} du package
           </p>
-          <h1 className="font-heading text-2xl font-semibold text-slate-900 dark:text-slate-100">
+          <h1 className="font-heading text-2xl font-semibold text-[var(--text)]">
             {form.general.productName || "Nouveau package"}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-300">
-            Sections compl√®tes, persistance localStorage.
+          <p className="text-sm text-[var(--muted)]">
+            Sections compl+øtes, persistance localStorage.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -173,7 +237,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 : "border-slate-200 text-slate-700 dark:border-slate-800 dark:text-slate-200"
             }`}
           >
-            Publi√©
+            Publi+Æ
           </button>
           <button
             type="button"
@@ -209,7 +273,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
 
       <div className="grid gap-4 lg:grid-cols-[2fr,1fr]">
         <div className="space-y-4">
-          <Section title="1. Informations g√©n√©rales">
+          <Section title="1. Informations g+Æn+Ærales">
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Nom du produit">
                 <input
@@ -238,7 +302,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                   className={READONLY_INPUT}
                 />
               </Field>
-              <Field label="Date de cr√©ation">
+              <Field label="Date de cr+Æation">
                 <input
                   type="date"
                   value={form.general.creationDate}
@@ -286,7 +350,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="2. Vols & s√©jour">
+          <Section title="2. Vols & s+Æjour">
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Destination principale">
                 <input
@@ -295,7 +359,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                   className={INPUT}
                 />
               </Field>
-              <Field label="Villes (s√©par√©es par virgule)">
+              <Field label="Villes (s+Æpar+Æes par virgule)">
                 <input
                   value={cityString}
                   onChange={(e) =>
@@ -356,7 +420,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                         className={INPUT}
                       />
                     </Field>
-                    <Field label="Dur√©e (nuits/jours)">
+                    <Field label="Dur+Æe (nuits/jours)">
                       <input
                         value={f.duration ?? ""}
                         onChange={(e) =>
@@ -409,7 +473,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                         className={INPUT}
                       />
                     </Field>
-                    <Field label="D√©tails (horaires/confirmation)">
+                    <Field label="D+Ætails (horaires/confirmation)">
                       <textarea
                         value={f.details ?? ""}
                         onChange={(e) =>
@@ -447,12 +511,12 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-primary/40 hover:text-primary dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-200"
               >
                 <Plus className="h-4 w-4" />
-                Ajouter un autre d√©part
+                Ajouter un autre d+Æpart
               </button>
             </div>
           </Section>
 
-          <Section title="3. H√©bergements">
+          <Section title="3. H+Æbergements">
             <div className="space-y-3">
               {form.accommodations.map((acc, idx) => (
                 <div
@@ -476,7 +540,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                     </Field>
                   </div>
                   <div className="md:col-span-2">
-                    <Field label="Cat√©gorie">
+                    <Field label="Cat+Ægorie">
                       <input
                         value={acc.category ?? ""}
                         onChange={(e) =>
@@ -549,7 +613,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-primary/40 hover:text-primary dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-200"
               >
                 <Plus className="h-4 w-4" />
-                Ajouter un h√©bergement
+                Ajouter un h+Æbergement
               </button>
             </div>
           </Section>
@@ -671,7 +735,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
 
           <Section title="5. Commissions agences">
             <div className="grid gap-3 md:grid-cols-4">
-              <Field label="Adulte 1‚Äì5 pax">
+              <Field label="Adulte 1‘«Ù5 pax">
                 <input
                   type="number"
                   value={form.agencyCommissions.adulte.t1}
@@ -687,7 +751,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                   className={INPUT}
                 />
               </Field>
-              <Field label="Adulte 6‚Äì9 pax">
+              <Field label="Adulte 6‘«Ù9 pax">
                 <input
                   type="number"
                   value={form.agencyCommissions.adulte.t2}
@@ -703,7 +767,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                   className={INPUT}
                 />
               </Field>
-              <Field label="Adulte 10‚Äì15 pax">
+              <Field label="Adulte 10‘«Ù15 pax">
                 <input
                   type="number"
                   value={form.agencyCommissions.adulte.t3}
@@ -732,7 +796,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                   className={INPUT}
                 />
               </Field>
-              <Field label="B√©b√© (fixe)">
+              <Field label="B+Æb+Æ (fixe)">
                 <input
                   type="number"
                   value={form.agencyCommissions.bebe}
@@ -781,7 +845,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="7. Itin√©raire">
+          <Section title="7. Itin+Æraire">
             <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800">
               <span className="font-semibold text-slate-800 dark:text-slate-100">Activer le programme</span>
               <input
@@ -909,25 +973,25 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={previewImage} alt="Cover" className="h-full w-full object-cover" />
               ) : (
-                <div className="flex h-full items-center justify-center text-sm text-slate-500 dark:text-slate-300">
-                  Aper√ßu image
+                <div className="flex h-full items-center justify-center text-sm text-[var(--muted)]">
+                  Aper+∫u image
                 </div>
               )}
             </div>
             <div className="space-y-2 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Preview</p>
-              <p className="font-heading text-lg font-semibold text-slate-900 dark:text-slate-100">
+              <p className="font-heading text-lg font-semibold text-[var(--text)]">
                 {form.general.productName || "Nouveau package"}
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                Destination: {form.flights.destination || "‚Äî"}
+                Destination: {form.flights.destination || "‘«ˆ"}
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-300">
                 Stock: <span className="font-semibold">{form.general.stock}</span> pax
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                √Ä partir de:{" "}
-                <span className="font-semibold">{lowestPrice !== null ? `${lowestPrice} DZD` : "‚Äî"}</span>
+                +« partir de:{" "}
+                <span className="font-semibold">{lowestPrice !== null ? `${lowestPrice} DZD` : "‘«ˆ"}</span>
               </p>
             </div>
           </div>
@@ -935,8 +999,8 @@ export function PackageEditor({ mode, initialPackage }: Props) {
           <div className="card p-4 text-sm text-slate-600 dark:text-slate-300">
             <p className="font-semibold text-slate-800 dark:text-slate-100">Raccourcis</p>
             <ul className="mt-2 list-disc space-y-1 pl-5">
-              <li>Publi√© est bloqu√© si des champs obligatoires manquent.</li>
-              <li>Modifier les vols r√©g√©n√®re les groupes Ops uniquement si la structure change.</li>
+              <li>Publi+Æ est bloqu+Æ si des champs obligatoires manquent.</li>
+              <li>Modifier les vols r+Æg+Æn+øre les groupes Ops uniquement si la structure change.</li>
               <li>Images: URL ou fichier.</li>
             </ul>
           </div>
@@ -953,14 +1017,14 @@ function validatePackage(pkg: TravelPackage, opts: { intent: "save" | "publish" 
   if (!pkg.general.productName.trim()) issues.push("Nom du produit requis");
   if (!pkg.general.productCode.trim()) issues.push("Code produit requis");
   if (!pkg.general.responsible.trim()) issues.push("Responsable requis");
-  if (!pkg.general.creationDate) issues.push("Date de cr√©ation requise");
+  if (!pkg.general.creationDate) issues.push("Date de cr+Æation requise");
   if (!pkg.flights.destination.trim()) issues.push("Destination requise");
-  if (pkg.general.stock < 0) issues.push("Stock doit √™tre positif");
+  if (pkg.general.stock < 0) issues.push("Stock doit +¨tre positif");
 
   if (!pkg.flights.flights.length) issues.push("Au moins un vol requis");
   pkg.flights.flights.forEach((f, idx) => {
     if (!f.airline.trim()) issues.push(`Vol ${idx + 1}: compagnie requise`);
-    if (!f.departureDate) issues.push(`Vol ${idx + 1}: date d√©part requise`);
+    if (!f.departureDate) issues.push(`Vol ${idx + 1}: date d+Æpart requise`);
     if (!f.returnDate) issues.push(`Vol ${idx + 1}: date retour requise`);
   });
 
@@ -970,10 +1034,10 @@ function validatePackage(pkg: TravelPackage, opts: { intent: "save" | "publish" 
     if (strict && (Number(p.unitPrice) || 0) <= 0) issues.push(`Tarif ${idx + 1}: prix > 0 requis`);
   });
 
-  if (!pkg.itinerary.days.length) issues.push("Itin√©raire: ajouter au moins un jour");
+  if (!pkg.itinerary.days.length) issues.push("Itin+Æraire: ajouter au moins un jour");
   if (strict) {
     pkg.itinerary.days.forEach((d, idx) => {
-      if (!d.description.trim()) issues.push(`Itin√©raire J${idx + 1}: description requise`);
+      if (!d.description.trim()) issues.push(`Itin+Æraire J${idx + 1}: description requise`);
     });
   }
 
@@ -983,7 +1047,7 @@ function validatePackage(pkg: TravelPackage, opts: { intent: "save" | "publish" 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="section-shell">
-      <h2 className="font-heading text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
+      <h2 className="font-heading text-lg font-semibold text-[var(--text)]">{title}</h2>
       <div className="pt-2">{children}</div>
     </div>
   );

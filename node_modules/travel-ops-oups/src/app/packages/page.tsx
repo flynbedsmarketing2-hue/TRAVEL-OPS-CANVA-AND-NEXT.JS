@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
-import { ChangeEvent, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Download, Plus, Upload } from "lucide-react";
 import PageHeader from "../../components/layout/PageHeader";
 import { Button, buttonClassName } from "../../components/ui/button";
@@ -55,8 +55,8 @@ function Kpi({ label, value }: { label: string; value: number }) {
   return (
     <Card>
       <CardContent className="space-y-1 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{label}</p>
-        <p className="font-heading text-2xl font-semibold text-slate-900 dark:text-slate-100">{value}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{label}</p>
+        <p className="font-heading text-2xl font-semibold text-[var(--text)]">{value}</p>
       </CardContent>
     </Card>
   );
@@ -65,6 +65,7 @@ function Kpi({ label, value }: { label: string; value: number }) {
 export default function PackagesPage() {
   const { packages, duplicatePackage, deletePackage, importPackages, exportPackages } = usePackageStore();
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const toast = useToast();
 
   const [search, setSearch] = useState("");
@@ -162,6 +163,20 @@ export default function PackagesPage() {
     { label: "Brouillons", active: statusFilter === "draft", onClick: () => setStatusFilter("draft") },
   ];
 
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isEditable =
+        target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
+      if (event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey && !isEditable) {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -208,6 +223,8 @@ export default function PackagesPage() {
                 value: search,
                 onChange: (value) => setSearch(value),
                 placeholder: "Rechercher un package",
+                ariaLabel: "Rechercher un package",
+                inputRef: searchInputRef,
               }}
               leftActions={
                 <>
@@ -218,7 +235,7 @@ export default function PackagesPage() {
                     id="package-sort"
                     value={sort}
                     onChange={(e) => setSort(e.target.value as SortKey)}
-                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 shadow-sm shadow-black/5 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-100"
+                    className="h-10 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm font-semibold text-[var(--text)] shadow-sm outline-none transition focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                   >
                     <option value="recent">Recents</option>
                     <option value="priceAsc">Prix min +</option>
@@ -229,7 +246,7 @@ export default function PackagesPage() {
               }
               chips={packageStatusChips}
               rightActions={
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
                   {filtered.length} packages
                 </span>
               }
@@ -290,11 +307,11 @@ export default function PackagesPage() {
               const image = pkg.general.imageUrl;
               return (
                 <Card key={pkg.id} className="overflow-hidden">
-                  <div className="relative h-36 bg-slate-100 dark:bg-slate-900">
+                  <div className="relative h-36 bg-[var(--token-surface-2)]">
                     {image ? (
                       <img src={image} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <div className="h-full w-full bg-gradient-to-br from-primary/15 via-slate-100 to-slate-200 dark:from-primary/15 dark:via-slate-950/60 dark:to-slate-900" />
+                      <div className="h-full w-full bg-gradient-to-br from-primary/15 via-[var(--token-surface-2)] to-[var(--token-border)]" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0" />
                     <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3">
@@ -309,24 +326,24 @@ export default function PackagesPage() {
                   </div>
 
                   <CardContent className="space-y-4 pt-5">
-                    <div className="grid gap-2 text-sm text-slate-700 dark:text-slate-200 sm:grid-cols-3">
+                    <div className="grid gap-2 text-sm text-[var(--text)] sm:grid-cols-3">
                       <div className="space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
                           Stock
                         </p>
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{pkg.general.stock} pax</p>
+                        <p className="font-semibold text-[var(--text)]">{pkg.general.stock} pax</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
                           Prix min
                         </p>
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{formatMoney(price)}</p>
+                        <p className="font-semibold text-[var(--text)]">{formatMoney(price)}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
                           Commission
                         </p>
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{formatMoney(commission)}</p>
+                        <p className="font-semibold text-[var(--text)]">{formatMoney(commission)}</p>
                       </div>
                     </div>
 

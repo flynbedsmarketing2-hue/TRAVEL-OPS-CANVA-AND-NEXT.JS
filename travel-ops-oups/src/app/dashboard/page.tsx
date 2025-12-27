@@ -197,24 +197,24 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-xl border border-slate-200/70 bg-slate-50/60 p-3 text-center dark:border-slate-800 dark:bg-slate-950/40">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">New leads</p>
-                <p className="text-2xl font-semibold">{newLeads}</p>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--token-surface-2)] p-3 text-center">
+                <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">New leads</p>
+                <p className="text-2xl font-semibold text-[var(--text)]">{newLeads}</p>
               </div>
-              <div className="rounded-xl border border-slate-200/70 bg-slate-50/60 p-3 text-center dark:border-slate-800 dark:bg-slate-950/40">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Total CRM</p>
-                <p className="text-2xl font-semibold">{leads.length}</p>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--token-surface-2)] p-3 text-center">
+                <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Total CRM</p>
+                <p className="text-2xl font-semibold text-[var(--text)]">{leads.length}</p>
               </div>
-              <div className="rounded-xl border border-slate-200/70 bg-slate-50/60 p-3 text-center dark:border-slate-800 dark:bg-slate-950/40">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Overdue follow-ups</p>
-                <p className="text-2xl font-semibold">{overdueFollowups}</p>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--token-surface-2)] p-3 text-center">
+                <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Overdue follow-ups</p>
+                <p className="text-2xl font-semibold text-[var(--text)]">{overdueFollowups}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
               {leadStages.map((stage) => (
                 <span
                   key={stage.value}
-                  className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-slate-800 dark:text-slate-200"
+                  className="inline-flex items-center rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--text)]"
                 >
                   {stage.label}: {stageTotals[stage.value]}
                 </span>
@@ -235,29 +235,29 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200/70 bg-slate-50/60 p-3 text-center dark:border-slate-800 dark:bg-slate-950/50">
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Due today</p>
-                  <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{tasksDueToday.length}</p>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface-2)] p-3 text-center">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Due today</p>
+                  <p className="mt-1 text-2xl font-bold text-[var(--text)]">{tasksDueToday.length}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200/70 bg-white/60 p-3 text-center dark:border-slate-800 dark:bg-slate-900/50">
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Overdue</p>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-3 text-center">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Overdue</p>
                   <p className="mt-1 text-2xl font-bold text-rose-700 dark:text-rose-200">{overdueTasks.length}</p>
                 </div>
               </div>
               {tasksTodayPreview.length === 0 ? (
-                <p className="text-sm text-slate-600 dark:text-slate-300">No tasks are due today.</p>
+                <p className="text-sm text-[var(--muted)]">No tasks are due today.</p>
               ) : (
-                <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-200">
+                <ul className="space-y-2 text-sm text-[var(--text)]">
                   {tasksTodayPreview.map((task) => (
                     <li
                       key={task.id}
-                      className="flex items-center justify-between rounded-xl border border-slate-200/70 bg-white/60 px-3 py-2 text-sm dark:border-slate-800/70 dark:bg-slate-950/30"
+                      className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 text-sm"
                     >
                       <div className="min-w-0">
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{task.title}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-300">{task.owner}</p>
+                        <p className="font-semibold text-[var(--text)]">{task.title}</p>
+                        <p className="text-xs text-[var(--muted)]">{task.owner}</p>
                       </div>
-                      <span className="text-xs text-slate-500 dark:text-slate-300">
+                      <span className="text-xs text-[var(--muted)]">
                         {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}
                       </span>
                     </li>
@@ -282,38 +282,38 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200/70 bg-slate-50/60 p-3 text-center dark:border-slate-800 dark:bg-slate-950/40">
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Active campaigns</p>
-                  <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{activeCampaigns.length}</p>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface-2)] p-3 text-center">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Active campaigns</p>
+                  <p className="mt-1 text-2xl font-bold text-[var(--text)]">{activeCampaigns.length}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200/70 bg-white/60 p-3 text-center dark:border-slate-800 dark:bg-slate-900/40">
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Content this week</p>
-                  <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{contentThisWeek.length}</p>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-3 text-center">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Content this week</p>
+                  <p className="mt-1 text-2xl font-bold text-[var(--text)]">{contentThisWeek.length}</p>
                 </div>
               </div>
               {contentThisWeekPreview.length === 0 ? (
-                <p className="text-sm text-slate-600 dark:text-slate-300">No content scheduled this week.</p>
+                <p className="text-sm text-[var(--muted)]">No content scheduled this week.</p>
               ) : (
                 <div className="space-y-2">
                   {contentThisWeekPreview.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between rounded-xl border border-slate-200/70 bg-white/60 px-3 py-2 text-sm dark:border-slate-800/70 dark:bg-slate-950/30"
+                      className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 text-sm"
                     >
                       <div className="min-w-0">
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{item.title}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-300">
-                          {item.platform} • {new Date(item.publishDate ?? "").toLocaleDateString()}
+                        <p className="font-semibold text-[var(--text)]">{item.title}</p>
+                        <p className="text-xs text-[var(--muted)]">
+                          {item.platform} - {new Date(item.publishDate ?? "").toLocaleDateString()}
                         </p>
                       </div>
-                      <span className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
                         {contentStatusLabels[item.status]}
                       </span>
                     </div>
                   ))}
                 </div>
               )}
-              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center justify-between text-xs text-[var(--muted)]">
                 <span>Week of {weekStart.toLocaleDateString()}</span>
                 <Link href="/marketing/campaigns" className={buttonClassName({ variant: "ghost" })}>
                   Manage campaigns
@@ -323,6 +323,12 @@ export default function DashboardPage() {
           </Card>
         </div>
 
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted)]">Today</p>
+            <p className="text-sm text-[var(--muted)]">To do, alerts, and departures at a glance.</p>
+          </div>
+        </div>
         <div className="grid gap-4 lg:grid-cols-3">
           <Card>
             <CardHeader>
@@ -334,7 +340,7 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-200">
+              <ul className="space-y-2 text-sm text-[var(--text)]">
                 {todos.map((todo, idx) => (
                   <li key={idx} className="flex items-start gap-3">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
@@ -356,7 +362,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               {alerts.length === 0 ? (
-                <p className="text-sm text-slate-600 dark:text-slate-300">No alerts.</p>
+                <p className="text-sm text-[var(--muted)]">No alerts.</p>
               ) : (
                 alerts.map((alert, idx) => (
                   <div
@@ -365,7 +371,7 @@ export default function DashboardPage() {
                       "flex items-start gap-2 rounded-xl border px-3 py-2 text-sm",
                       alert.level === "warn"
                         ? "border-amber-200 bg-amber-50 text-amber-900"
-                        : "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-200"
+                        : "border-[var(--border)] bg-[var(--token-surface-2)] text-[var(--text)]"
                     )}
                   >
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -387,16 +393,16 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               {upcomingDepartures.length === 0 ? (
-                <p className="text-sm text-slate-600 dark:text-slate-300">No departures scheduled.</p>
+                <p className="text-sm text-[var(--muted)]">No departures scheduled.</p>
               ) : (
                 upcomingDepartures.map(({ pkg, nextDate }) => (
                   <div
                     key={pkg.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200/70 bg-white/60 px-3 py-2 text-sm dark:border-slate-800/70 dark:bg-slate-950/20"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 text-sm"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-semibold text-slate-900 dark:text-slate-100">{pkg.general.productName}</p>
-                      <p className="truncate text-xs text-slate-500 dark:text-slate-300">
+                      <p className="truncate font-semibold text-[var(--text)]">{pkg.general.productName}</p>
+                      <p className="truncate text-xs text-[var(--muted)]">
                         {pkg.flights.destination} - {nextDate}
                       </p>
                     </div>
@@ -417,22 +423,22 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               {recentBookings.length === 0 ? (
-                <p className="text-sm text-slate-600 dark:text-slate-300">No bookings yet.</p>
+                <p className="text-sm text-[var(--muted)]">No bookings yet.</p>
               ) : (
                 recentBookings.map((b) => (
                   <div
                     key={b.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200/70 bg-white/60 px-3 py-2 text-sm dark:border-slate-800/70 dark:bg-slate-950/20"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--border)] bg-[var(--token-surface)] px-3 py-2 text-sm"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-semibold text-slate-900 dark:text-slate-100">
+                      <p className="truncate font-semibold text-[var(--text)]">
                         Booking {b.id.slice(0, 6)} - {b.bookingType}
                       </p>
-                      <p className="truncate text-xs text-slate-500 dark:text-slate-300">
+                      <p className="truncate text-xs text-[var(--muted)]">
                         Pax {b.paxTotal} | Paiement {b.payment.paidAmount}/{b.payment.totalPrice}
                       </p>
                     </div>
-                    <span className="text-xs text-slate-500 dark:text-slate-300">
+                    <span className="text-xs text-[var(--muted)]">
                       {new Date(b.createdAt).toLocaleDateString()}
                     </span>
                   </div>

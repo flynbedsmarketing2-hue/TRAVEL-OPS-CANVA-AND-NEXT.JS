@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, Ref } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "../ui/input";
 import { cn } from "../ui/cn";
@@ -11,7 +11,13 @@ export type TableToolbarChip = {
 };
 
 export type TableToolbarProps = {
-  search?: { value: string; onChange: (value: string) => void; placeholder?: string };
+  search?: {
+    value: string;
+    onChange: (value: string) => void;
+    placeholder?: string;
+    ariaLabel?: string;
+    inputRef?: Ref<HTMLInputElement>;
+  };
   chips?: TableToolbarChip[];
   leftActions?: ReactNode;
   primaryAction?: ReactNode;
@@ -29,25 +35,26 @@ export default function TableToolbar({
 }: TableToolbarProps) {
   const hasPrimaryContent = Boolean(primaryAction || rightActions);
   const chipBaseClasses =
-    "flex items-center gap-2 rounded-full border px-3 py-1 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900";
+    "flex items-center gap-2 rounded-full border px-3 py-1 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]";
 
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-[16px] border border-slate-200 bg-slate-50/70 px-4 py-3 shadow-sm transition duration-150 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900/40",
+        "flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface-2)] px-4 py-3 shadow-sm transition duration-150 hover:border-[var(--token-border)]",
         className
       )}
     >
       <div className="flex flex-wrap items-center gap-3">
         {search ? (
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]" />
             <Input
+              ref={search.inputRef}
               value={search.value}
               onChange={(event) => search.onChange(event.target.value)}
               placeholder={search.placeholder ?? "Search"}
               className="pl-10"
-              aria-label={search.placeholder ?? "Search"}
+              aria-label={search.ariaLabel ?? search.placeholder ?? "Search"}
             />
           </div>
         ) : null}
@@ -76,8 +83,8 @@ export default function TableToolbar({
               className={cn(
                 chipBaseClasses,
                 chip.active
-                  ? "border-primary bg-white text-primary shadow-[0_5px_20px_rgba(59,130,246,0.25)] dark:bg-slate-900/70 dark:text-primary"
-                  : "border-slate-200 bg-white/60 text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-200 dark:hover:border-slate-700"
+                  ? "border-primary/40 bg-[var(--token-surface)] text-primary shadow-sm"
+                  : "border-[var(--border)] bg-[var(--token-surface)] text-[var(--muted)] hover:border-[var(--token-border)] hover:text-[var(--text)]"
               )}
               aria-pressed={chip.active ?? false}
             >
@@ -98,7 +105,7 @@ export default function TableToolbar({
                       chip.onRemove?.();
                     }
                   }}
-                  className="text-[0.65rem] text-slate-500 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+                  className="text-[0.65rem] text-slate-500 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
                 >
                   <X className="h-3.5 w-3.5" />
                 </span>

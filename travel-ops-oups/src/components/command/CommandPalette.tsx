@@ -71,15 +71,15 @@ export default function CommandPalette({
         }
       }}
     >
-      <div className="w-full max-w-3xl rounded-[18px] border border-white/20 bg-white/95 p-6 shadow-[0_25px_60px_rgba(15,23,42,0.4)] backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
+      <div className="w-full max-w-3xl rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--token-surface)]/95 p-6 shadow-[0_25px_60px_rgba(15,23,42,0.4)] backdrop-blur">
         <div className="flex items-center gap-3">
-          <span className="shrink-0 text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+          <span className="shrink-0 text-lg font-semibold tracking-tight text-[var(--text)]">
             Command palette
           </span>
           <button
             type="button"
             onClick={close}
-            className="ml-auto rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white"
+            className="ml-auto rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--muted)] transition hover:border-[var(--token-primary)] hover:text-[var(--text)]"
           >
             Esc
           </button>
@@ -91,17 +91,17 @@ export default function CommandPalette({
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={handleInputKeyDown}
             placeholder="Type a command or search..."
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 shadow-sm outline-none transition-colors duration-150 focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-800 dark:bg-slate-900/70 dark:text-white dark:focus-visible:ring-offset-slate-900"
+            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--token-surface-2)] px-4 py-3 text-sm font-medium text-[var(--text)] shadow-sm outline-none transition-colors duration-150 focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]"
           />
         </div>
 
         <div className="mt-5 max-h-[60vh] overflow-y-auto space-y-6">
           {groups.length === 0 ? (
-            <p className="text-sm text-slate-500 dark:text-slate-300">No commands found.</p>
+            <p className="text-sm text-[var(--muted)]">No commands found.</p>
           ) : (
             groups.map((group) => (
               <div key={group.label}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--muted)]">
                   {group.label}
                 </p>
                 <div className="mt-2 flex flex-col gap-2">
@@ -113,13 +113,13 @@ export default function CommandPalette({
                           key={command.id}
                           type="button"
                           onClick={() => selectCommand(command)}
-                          className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 ${
+                          className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] ${
                             isHighlighted
                               ? "bg-primary/10 text-primary shadow-[0_0_0_1px_rgba(59,130,246,0.5)]"
-                              : "bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                              : "bg-[var(--token-surface)] text-[var(--text)] hover:bg-[var(--token-surface-2)]"
                           }`}
                         >
-                          <span className="text-slate-400">{command.icon}</span>
+                          <span className="text-[var(--muted)]">{command.icon}</span>
                           <span>{command.label}</span>
                         </button>
                       );

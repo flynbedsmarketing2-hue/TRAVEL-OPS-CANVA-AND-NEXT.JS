@@ -41,7 +41,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 border-r border-white/70 bg-[linear-gradient(155deg,#f9fbff,#e9eeff)] shadow-[16px_0_36px_rgba(182,193,224,0.35)] backdrop-blur-xl transition-[width,transform,box-shadow,color] duration-300 dark:border-slate-800/70 dark:bg-slate-950/60 lg:static",
+        "fixed inset-y-0 left-0 z-40 flex h-full flex-col border-r border-[var(--border)] bg-[var(--token-surface)] shadow-md transition-[width,transform,box-shadow,color] duration-300 dark:bg-[var(--token-surface)] lg:static",
         widthClass,
         open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}
@@ -50,17 +50,17 @@ export default function Sidebar({ open = false, onClose }: Props) {
         <Link
           href="/"
           className={cn(
-            "inline-flex items-center gap-2 font-heading text-base font-semibold text-slate-800 dark:text-slate-100 transition-opacity duration-200",
+            "inline-flex items-center gap-2 font-heading text-base font-semibold text-[var(--text)] transition-opacity duration-200",
             collapsed ? "justify-center" : ""
           )}
           onClick={() => onClose?.()}
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/70 text-primary shadow-[6px_6px_12px_rgba(182,193,224,0.32),-6px_-6px_12px_rgba(255,255,255,0.9)]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--token-surface-2)] text-primary shadow-sm">
             <Plane className="h-5 w-5" />
           </span>
           <span
             className={cn(
-              "text-sm font-semibold leading-tight text-slate-800 transition-opacity duration-200 dark:text-slate-100",
+              "text-sm font-semibold leading-tight text-[var(--text)] transition-opacity duration-200",
               collapsed ? "opacity-0" : "opacity-100"
             )}
           >
@@ -73,7 +73,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-pressed={collapsed}
           onClick={() => setCollapsed((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/60 text-slate-600 shadow transition hover:bg-white hover:text-primary focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/70"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--token-surface)] text-[var(--muted)] shadow-sm transition hover:text-primary focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/70"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
@@ -84,7 +84,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
           <div key={section.label}>
             <p
               className={cn(
-                "px-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500 transition duration-200 dark:text-slate-400",
+                "px-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)] transition duration-200",
                 collapsed ? "opacity-0" : "opacity-100"
               )}
             >
@@ -103,17 +103,17 @@ export default function Sidebar({ open = false, onClose }: Props) {
                     aria-label={collapsed ? item.label : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative flex items-center gap-3 rounded-2xl text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white border-l-4 border-transparent dark:focus-visible:ring-offset-slate-900",
+                      "relative flex items-center gap-3 rounded-2xl border border-transparent text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
                       collapsed ? "justify-center px-2 py-2" : "px-4 py-2.5",
                       active
-                        ? "border-primary bg-white/80 text-primary shadow-[0_10px_20px_rgba(59,130,246,0.25)]"
-                        : "text-slate-700 hover:bg-white/60 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-slate-900/50"
+                        ? "border-primary/40 bg-[var(--token-surface-2)] text-primary shadow-sm"
+                        : "text-[var(--text)] hover:border-[var(--border)] hover:bg-[var(--token-surface-2)]"
                     )}
                   >
                     <Icon
                       className={cn(
                         "h-5 w-5 transition-transform duration-200",
-                        collapsed ? "text-slate-700" : "text-slate-600",
+                        collapsed ? "text-[var(--text)]" : "text-[var(--muted)]",
                         active ? "scale-110" : "scale-100"
                       )}
                       aria-hidden="true"

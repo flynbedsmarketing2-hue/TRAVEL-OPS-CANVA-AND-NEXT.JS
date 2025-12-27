@@ -170,15 +170,26 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", handler);
   }, [paletteClose, paletteIsOpen, shortcutsOpen]);
 
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSidebarOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [sidebarOpen]);
+
   return (
     <ToastProvider>
-      <div ref={containerRef} className="flex min-h-screen">
+      <div ref={containerRef} className="flex h-screen min-h-screen overflow-hidden">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         {sidebarOpen ? (
           <button
             type="button"
             aria-label="Close menu"
-            className="fixed inset-0 z-30 bg-slate-900/15 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-30 bg-slate-900/40 backdrop-blur-sm lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         ) : null}
@@ -188,7 +199,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <main
             id="main-content"
             role="main"
-            className="flex-1 min-h-0 overflow-y-auto px-6 py-6 lg:px-8"
+            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-6 py-6 lg:px-8"
           >
             <div className="w-full max-w-7xl 2xl:max-w-none">{children}</div>
           </main>

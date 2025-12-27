@@ -62,7 +62,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 const variantClasses: Record<ToastVariant, string> = {
   success: "border-emerald-200 bg-emerald-50 text-emerald-900 dark:bg-emerald-900/80 dark:text-emerald-200",
   error: "border-rose-200 bg-rose-50 text-rose-900 dark:bg-rose-900/80 dark:text-rose-200",
-  info: "border-slate-200 bg-slate-50 text-slate-900 dark:bg-slate-900/70 dark:text-slate-100",
+  info: "border-[var(--border)] bg-[var(--token-surface)] text-[var(--text)]",
 };
 
 function Toaster({
@@ -84,7 +84,7 @@ function Toaster({
         <div
           key={toast.id}
           className={cn(
-            "w-full max-w-sm rounded-2xl border px-4 py-3 shadow-soft transition duration-150 ease-out md:w-80",
+            "w-full max-w-sm rounded-2xl border px-4 py-3 shadow-md transition duration-150 ease-out md:w-80",
             variantClasses[toast.variant]
           )}
         >
@@ -100,7 +100,7 @@ function Toaster({
             <button
               type="button"
               aria-label="Dismiss notification"
-              className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 transition hover:text-slate-900 dark:text-slate-300"
+              className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)] transition hover:text-[var(--text)]"
               onClick={() => onRemove(toast.id)}
             >
               Close

@@ -9,6 +9,7 @@
   --token-surface-2: #f7f9ff;
   --token-border: #e5e9f3;
   --token-muted: #64748b;
+  --token-text: #0f172a;
   --token-primary: #5d87ff;
   --token-primary-strong: #3856e5;
   --token-secondary: #49beff;
@@ -17,16 +18,18 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
+  --radius-2xl: 24px;
   --radius-card: var(--radius-lg);
   --radius-hero: 20px;
   --radius-input: 12px;
-  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.1);
-  --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.12);
+  --shadow-sm: 0 6px 16px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.12);
+  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
   --bg: var(--token-background);
   --surface: var(--token-surface);
   --surface-2: var(--token-surface-2);
   --border: var(--token-border);
-  --text: #0f172a;
+  --text: var(--token-text);
   --muted: var(--token-muted);
   --primary: var(--token-primary);
   --primary-strong: var(--token-primary-strong);
@@ -40,6 +43,7 @@ html.dark {
   --token-surface-2: #111827;
   --token-border: #1f2937;
   --token-muted: #94a3b8;
+  --token-text: #f8fafc;
   --token-primary: #8aa2ff;
   --token-primary-strong: #5c7dff;
   --token-secondary: #5bd1ff;
@@ -48,7 +52,7 @@ html.dark {
   --surface: var(--token-surface);
   --surface-2: var(--token-surface-2);
   --border: var(--token-border);
-  --text: #f8fafc;
+  --text: var(--token-text);
   --muted: var(--token-muted);
 }
 
