@@ -8,15 +8,15 @@ export const buttonBase =
 
 export const buttonVariants: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-end)] text-[var(--token-inverse)] shadow-md hover:from-[var(--accent-start)]/95 hover:to-[var(--accent-end)]/95 active:scale-[0.99]",
+    "bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-end)] text-[var(--token-inverse)] shadow-md hover:opacity-90 active:scale-[0.99]",
   secondary:
-    "border border-[var(--token-border)] bg-[var(--token-surface)] text-[var(--text)] shadow-sm hover:border-[var(--token-primary)]",
+    "border border-[var(--token-border)] bg-[var(--token-surface)] text-[var(--text)] shadow-sm hover:bg-[var(--token-surface-2)]",
   outline:
-    "border border-[var(--token-border)] bg-transparent text-[var(--text)] shadow-sm hover:border-[var(--token-primary)]",
+    "border border-[var(--token-border)] bg-transparent text-[var(--text)] shadow-sm hover:bg-[var(--token-surface-2)]",
   ghost:
-    "text-[var(--text)] hover:bg-[var(--token-surface-2)] hover:text-[var(--token-primary)]",
+    "text-[var(--text)] hover:bg-[var(--token-surface-2)]",
   danger:
-    "bg-[var(--token-danger)] text-[var(--token-inverse)] shadow-sm hover:bg-[var(--token-danger-strong)]",
+    "border border-[var(--token-text)] text-[var(--token-text)] hover:bg-[var(--token-text)] hover:text-[var(--token-inverse)]",
 };
 
 export const buttonSizes: Record<ButtonSize, string> = {

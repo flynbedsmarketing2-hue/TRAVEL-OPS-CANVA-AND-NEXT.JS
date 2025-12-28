@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Noto_Sans } from "next/font/google";
+import { Fragment_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import AppShell from "../components/AppShell";
 import ThemeProvider from "../components/ThemeProvider";
 
-const plusJakarta = Plus_Jakarta_Sans({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-plus-jakarta",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
 });
 
-const notoSans = Noto_Sans({
+const fragmentMono = Fragment_Mono({
   subsets: ["latin"],
-  variable: "--font-noto-sans",
+  weight: ["400"],
+  variable: "--font-fragment-mono",
 });
 
 const themeInitScript = `
@@ -24,6 +26,7 @@ const themeInitScript = `
     const resolved =
       mode === "system" ? (matcher.matches ? "dark" : "light") : mode;
     document.documentElement.classList.toggle("dark", resolved === "dark");
+    document.documentElement.classList.toggle("light", resolved === "light");
   } catch (error) {
     console.error(error);
   }
@@ -42,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className={`${plusJakarta.variable} ${notoSans.variable} min-h-screen transition-colors`}>
+      <body className={`${spaceGrotesk.variable} ${fragmentMono.variable} min-h-screen transition-colors`}>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
           <AppShell>{children}</AppShell>

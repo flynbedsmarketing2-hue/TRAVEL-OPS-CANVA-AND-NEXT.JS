@@ -189,7 +189,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <button
             type="button"
             aria-label="Close menu"
-            className="fixed inset-0 z-30 bg-[var(--token-text)]/40 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         ) : null}
@@ -197,7 +197,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
           <main id="main-content" role="main" className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-            <div className="container py-8">{children}</div>
+            <div className="container py-8 page-fade stagger">{children}</div>
           </main>
         </div>
         <CommandPalette

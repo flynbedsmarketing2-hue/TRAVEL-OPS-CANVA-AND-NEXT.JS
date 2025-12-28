@@ -41,7 +41,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 flex h-full flex-col border-r border-[var(--border)] bg-[var(--token-surface)] shadow-md transition-[width,transform,box-shadow,color] duration-300 dark:bg-[var(--token-surface)] lg:static",
+        "fixed inset-y-0 left-0 z-40 flex h-full flex-col border-r border-[var(--border)] bg-[var(--token-surface)]/80 shadow-md backdrop-blur-xl transition-[width,transform,box-shadow,color] duration-300 lg:static",
         widthClass,
         open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}
@@ -90,8 +90,9 @@ export default function Sidebar({ open = false, onClose }: Props) {
           <div key={section.label}>
             <p
               className={cn(
-                "px-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)] transition duration-200",
-                collapsed ? "opacity-0" : "opacity-100"
+            "px-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)] transition duration-200",
+                collapsed ? "opacity-0" : "opacity-100",
+                "font-mono"
               )}
             >
               {section.label}

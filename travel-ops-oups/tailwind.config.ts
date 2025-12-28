@@ -20,10 +20,11 @@ const config: Config = {
         accent: "var(--token-accent)",
       },
       fontFamily: {
-        sans: ["var(--font-plus-jakarta)", "system-ui", "sans-serif"],
-        heading: ["var(--font-noto-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-plus-jakarta)", "Plus Jakarta Sans", "system-ui", "sans-serif"],
-        body: ["var(--font-plus-jakarta)", "Plus Jakarta Sans", "system-ui", "sans-serif"],
+        sans: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
+        heading: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
+        display: ["var(--font-space-grotesk)", "Space Grotesk", "system-ui", "sans-serif"],
+        body: ["var(--font-space-grotesk)", "Space Grotesk", "system-ui", "sans-serif"],
+        mono: ["var(--font-fragment-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       borderRadius: {
         sm: "var(--radius-sm)",
