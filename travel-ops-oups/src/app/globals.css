@@ -178,3 +178,35 @@ h3 { font-size: 1.2rem; line-height: 1.7rem; font-weight: 600; letter-spacing: -
     transform: none;
   }
 }
+
+.table-row-actions {
+  opacity: 0;
+  transform: translateY(2px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+tr.group:hover .table-row-actions,
+tr:hover .table-row-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.04)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}

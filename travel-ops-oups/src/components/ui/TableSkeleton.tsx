@@ -21,7 +21,7 @@ export default function TableSkeleton({ rows = 8, columns = 6, hasToolbar = fals
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--token-surface)] shadow-sm transition-colors duration-150">
+      <div className="overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--token-surface)]/80 shadow-sm backdrop-blur-lg transition-colors duration-150">
         <div className="overflow-hidden">
           <div className="overflow-x-auto">
             <div className="min-w-[640px] space-y-2 px-4 py-3">

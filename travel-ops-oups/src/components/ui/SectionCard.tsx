@@ -13,7 +13,8 @@ export function SectionCard({ title, description, actions, children, className }
   return (
     <section
       className={cn(
-        "space-y-5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-sm",
+        "relative space-y-5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:shadow-md",
+        "overflow-hidden before:absolute before:inset-x-4 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[var(--token-text)]/30 before:to-transparent",
         className
       )}
     >

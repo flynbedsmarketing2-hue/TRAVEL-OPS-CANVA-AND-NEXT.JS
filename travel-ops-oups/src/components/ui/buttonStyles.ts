@@ -4,19 +4,19 @@ export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "dan
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 export const buttonBase =
-  "inline-flex items-center justify-center gap-2 font-semibold transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] disabled:pointer-events-none disabled:opacity-60 active:translate-y-[1px] rounded-[var(--radius-md)]";
+  "inline-flex items-center justify-center gap-2 font-semibold transition duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-text)]/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)] disabled:pointer-events-none disabled:opacity-60 active:translate-y-[1px] rounded-[var(--radius-md)] hover:-translate-y-[1px]";
 
 export const buttonVariants: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-end)] text-[var(--token-inverse)] shadow-md hover:opacity-90 active:scale-[0.99]",
+    "bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-end)] text-[var(--token-inverse)] shadow-md hover:opacity-95 hover:shadow-md active:scale-[0.99]",
   secondary:
-    "border border-[var(--token-border)] bg-[var(--token-surface)] text-[var(--text)] shadow-sm hover:bg-[var(--token-surface-2)]",
+    "border border-[var(--token-border)] bg-[var(--token-surface)] text-[var(--text)] shadow-sm hover:bg-[var(--token-surface-2)] hover:shadow-md",
   outline:
-    "border border-[var(--token-border)] bg-transparent text-[var(--text)] shadow-sm hover:bg-[var(--token-surface-2)]",
+    "border border-[var(--token-border)] bg-transparent text-[var(--text)] shadow-sm hover:bg-[var(--token-surface-2)] hover:shadow-md",
   ghost:
-    "text-[var(--text)] hover:bg-[var(--token-surface-2)]",
+    "text-[var(--text)] hover:bg-[var(--token-surface-2)] hover:text-[var(--token-primary)]",
   danger:
-    "border border-[var(--token-text)] text-[var(--token-text)] hover:bg-[var(--token-text)] hover:text-[var(--token-inverse)]",
+    "border border-[var(--token-text)] text-[var(--token-text)] hover:bg-[var(--token-text)] hover:text-[var(--token-inverse)] hover:shadow-md",
 };
 
 export const buttonSizes: Record<ButtonSize, string> = {

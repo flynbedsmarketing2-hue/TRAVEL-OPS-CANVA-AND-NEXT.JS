@@ -110,18 +110,18 @@ export default function Sidebar({ open = false, onClose }: Props) {
                     aria-label={collapsed ? item.label : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative flex items-center gap-3 rounded-[var(--radius-md)] border border-transparent text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
+                      "group relative flex items-center gap-3 rounded-[var(--radius-md)] border border-transparent text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:ring-2 focus-visible:ring-[var(--token-text)]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-surface)]",
                       collapsed ? "justify-center px-3 py-2.5" : "px-4 py-3",
                       active
-                        ? "bg-[var(--token-surface-2)] text-[var(--text)] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-1 before:rounded-full before:bg-[var(--token-accent)]"
-                        : "text-[var(--text)] hover:border-[var(--border)] hover:bg-[var(--token-surface-2)]"
+                        ? "bg-[var(--token-surface-2)] text-[var(--text)] shadow-md before:absolute before:left-2 before:top-2 before:bottom-2 before:w-1.5 before:rounded-full before:bg-[var(--token-text)]/80"
+                        : "text-[var(--text)] hover:border-[var(--border)] hover:bg-[var(--token-surface-2)] hover:shadow-md"
                     )}
                   >
                     <Icon
                       className={cn(
                         "h-5 w-5 transition-transform duration-200",
                         collapsed ? "text-[var(--text)]" : "text-[var(--muted)]",
-                        active ? "scale-110" : "scale-100"
+                        active ? "scale-110" : "scale-100 group-hover:scale-105"
                       )}
                       aria-hidden="true"
                     />
@@ -133,6 +133,11 @@ export default function Sidebar({ open = false, onClose }: Props) {
                     >
                       {item.label}
                     </span>
+                    {collapsed ? (
+                      <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-[var(--border)] bg-[var(--token-surface)] px-3 py-1 text-xs font-semibold text-[var(--text)] shadow-soft group-hover:inline-block">
+                        {item.label}
+                      </span>
+                    ) : null}
                   </Link>
                 );
               })}

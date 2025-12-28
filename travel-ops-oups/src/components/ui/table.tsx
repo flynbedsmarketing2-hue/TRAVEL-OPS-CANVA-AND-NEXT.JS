@@ -3,7 +3,7 @@ import { cn } from "./cn";
 
 export function Table({ className, ...props }: React.TableHTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] shadow-sm transition-colors duration-150">
+    <div className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)]/80 shadow-sm backdrop-blur-lg transition-all duration-200 hover:shadow-md">
       <table className={cn("w-full min-w-full text-left text-sm md:text-base", className)} {...props} />
     </div>
   );
@@ -37,7 +37,7 @@ export function TR({ className, ...props }: React.HTMLAttributes<HTMLTableRowEle
   return (
     <tr
       className={cn(
-        "bg-[var(--token-surface)] transition hover:bg-[var(--token-surface-2)]",
+        "group bg-[var(--token-surface)] transition hover:bg-[var(--token-surface-2)] hover:-translate-y-[1px]",
         className
       )}
       {...props}
@@ -46,13 +46,13 @@ export function TR({ className, ...props }: React.HTMLAttributes<HTMLTableRowEle
 }
 
 export function TH({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th className={cn("px-6 py-4", className)} {...props} />;
+  return <th className={cn("px-5 py-3", className)} {...props} />;
 }
 
 export function TD({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return (
     <td
-      className={cn("px-6 py-4 align-top text-[var(--text)]", className)}
+      className={cn("px-5 py-3 align-middle text-[var(--text)] leading-relaxed", className)}
       {...props}
     />
   );
