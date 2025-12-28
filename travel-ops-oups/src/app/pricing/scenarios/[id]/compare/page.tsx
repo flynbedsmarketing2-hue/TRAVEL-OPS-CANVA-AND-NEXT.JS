@@ -1,4 +1,5 @@
 import { calculateScenario } from "@/lib/pricing/calculator";
+import type { CalculationResult, CostLine } from "@/lib/pricing/types";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
@@ -15,6 +16,8 @@ const fetchScenarios = async (ids: string[]) => {
   });
 };
 
+type Scenario = Awaited<ReturnType<typeof fetchScenarios>>[number];
+
 export default async function ComparePage({
   params,
   searchParams,
@@ -24,7 +27,7 @@ export default async function ComparePage({
 }) {
   const ids = (searchParams.ids ?? params.id).split(",").filter(Boolean);
   const scenarios = await fetchScenarios(ids);
-  const calculations = scenarios.map((scenario) => {
+  const calculations = scenarios.map((scenario: Scenario) => {
     const latestRate = scenario.exchangeRates.at(-1);
     return {
       id: scenario.id,
@@ -39,7 +42,7 @@ export default async function ComparePage({
           chdMinus6: scenario.paxBreakdown?.chdMinus6 ?? 0,
           infant: scenario.paxBreakdown?.infant ?? 0,
         },
-        costLines: scenario.costLines.map((line) => ({
+        costLines: scenario.costLines.map((line: CostLine) => ({
           id: line.id,
           label: line.label,
           type: line.type,
@@ -98,7 +101,7 @@ export default async function ComparePage({
             </tr>
           </thead>
           <tbody>
-            {calculations.map(({ id, name, result }) => (
+            {calculations.map(({ id, name, result }: { id: string; name: string; result: CalculationResult }) => (
               <tr key={id} className="border-t">
                 <td className="px-3 py-2 font-semibold">{name}</td>
                 <td className="px-3 py-2">{result.salesTotal.toFixed(0)}</td>

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import ScenarioTable from "@/components/ScenarioTable";
+import type { CostLine } from "@/lib/pricing/types";
 import type { ScenarioView } from "@/types/pricing";
 
 const fetchScenarios = async (): Promise<ScenarioView[]> => {
@@ -13,7 +14,8 @@ const fetchScenarios = async (): Promise<ScenarioView[]> => {
     },
     orderBy: { createdAt: "desc" },
   });
-  return rows.map((scenario) => {
+  type RawScenario = (typeof rows)[number];
+  return rows.map((scenario: RawScenario) => {
     const latestExchange = scenario.exchangeRates.at(-1);
     return {
       id: scenario.id,
@@ -31,13 +33,15 @@ const fetchScenarios = async (): Promise<ScenarioView[]> => {
         infant: scenario.paxBreakdown?.infant ?? 0,
       },
       exchangeRate: latestExchange?.rate ?? 1,
-      costLines: scenario.costLines.map((line) => ({
+      costLines: scenario.costLines.map((line: CostLine) => ({
         id: line.id,
         label: line.label,
+        type: line.type,
         applyRule: line.applyRule,
         amount: line.amount,
         quantity: line.quantity,
         optional: line.optional,
+        appliesTo: line.appliesTo,
       })),
       margin: {
         single: scenario.margin?.single ?? 40000,

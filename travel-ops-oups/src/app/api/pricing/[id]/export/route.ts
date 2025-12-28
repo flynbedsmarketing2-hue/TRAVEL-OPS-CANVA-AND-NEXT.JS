@@ -1,8 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { calculateScenario } from "@/lib/pricing/calculator";
-import { NextResponse } from "next/server";
+import type { CostLine, RoomAllocation } from "@/lib/pricing/types";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(_: Request, { params, url }: { params: { id: string }; url: URL }) {
+export async function GET(
+  request: NextRequest,
+  context: { params: { id: string } | Promise<{ id: string }> }
+) {
+  const params = await context.params;
+  const url = new URL(request.url);
   const format = url.searchParams.get("format") ?? "json";
   const scenario = await prisma.pricingScenario.findUnique({
     where: { id: params.id },
@@ -29,8 +35,8 @@ export async function GET(_: Request, { params, url }: { params: { id: string };
       chdMinus6: scenario.paxBreakdown?.chdMinus6 ?? 0,
       infant: scenario.paxBreakdown?.infant ?? 0,
     },
-    roomAllocation: scenario.paxBreakdown?.roomAllocation ?? undefined,
-    costLines: scenario.costLines.map((line) => ({
+    roomAllocation: (scenario.paxBreakdown?.roomAllocation as RoomAllocation | null) ?? undefined,
+    costLines: scenario.costLines.map((line: CostLine) => ({
       id: line.id,
       label: line.label,
       type: line.type,

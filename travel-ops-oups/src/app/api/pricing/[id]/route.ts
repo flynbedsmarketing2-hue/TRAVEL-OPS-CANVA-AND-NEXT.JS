@@ -1,7 +1,17 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+async function resolveParams(context: {
+  params: { id: string } | Promise<{ id: string }>;
+}) {
+  return await context.params;
+}
+
+export async function GET(
+  _: NextRequest,
+  context: { params: { id: string } | Promise<{ id: string }> }
+) {
+  const params = await resolveParams(context);
   const scenario = await prisma.pricingScenario.findUnique({
     where: { id: params.id },
     include: {
@@ -18,7 +28,11 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   return NextResponse.json(scenario);
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  context: { params: { id: string } | Promise<{ id: string }> }
+) {
+  const params = await resolveParams(context);
   const payload = await request.json();
   await prisma.pricingScenario.update({
     where: { id: params.id },

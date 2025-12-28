@@ -90,12 +90,14 @@ export type CalculationResult = {
   salesTotal: number;
   perPaxPrice: number;
   selectedRate: number;
+  commissionIncluded: boolean;
   lineResults: {
     id: string;
     label: string;
     amountSource: number;
     amountDzd: number;
     optional: boolean;
+    applyRule: ApplyRule;
   }[];
 };
 
@@ -132,6 +134,7 @@ export function calculateScenario({
       amountSource: baseCost,
       amountDzd: baseCost * exchangeRate.rate,
       optional: line.optional,
+      applyRule: line.applyRule,
     };
   });
 
@@ -155,15 +158,16 @@ export function calculateScenario({
   const salesTotal = commission.includeInSales ? baseSales + commissionTotal : baseSales;
   const perPaxPrice = Math.round(salesTotal / Math.max(1, commissionBasePax) / 1000) * 1000;
 
-  return {
-    totalCostSource,
-    totalCostDzd,
-    marginTotal,
-    marginPercent,
-    commissionTotal,
-    salesTotal,
-    perPaxPrice,
-    selectedRate: exchangeRate.rate,
-    lineResults,
-  };
+    return {
+      totalCostSource,
+      totalCostDzd,
+      marginTotal,
+      marginPercent,
+      commissionTotal,
+      salesTotal,
+      perPaxPrice,
+      selectedRate: exchangeRate.rate,
+      commissionIncluded: commission.includeInSales,
+      lineResults,
+    };
 }

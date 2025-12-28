@@ -11,7 +11,7 @@ type StatCardProps = {
   tone?: "primary" | "secondary" | "accent";
 };
 
-const toneStyles: Record<StatCardProps["tone"], string> = {
+const toneStyles: Record<NonNullable<StatCardProps["tone"]>, string> = {
   primary: "text-[var(--primary)] bg-[var(--token-surface-2)] border border-[var(--border)]",
   secondary: "text-[var(--muted)] bg-[var(--token-surface-2)] border border-[var(--border)]",
   accent: "text-[var(--accent)] bg-[var(--token-surface-2)] border border-[var(--border)]",

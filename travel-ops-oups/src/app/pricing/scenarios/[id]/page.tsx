@@ -1,6 +1,6 @@
 import { calculateScenario } from "@/lib/pricing/calculator";
 import { prisma } from "@/lib/prisma";
-import type { PricingScenarioPayload } from "@/lib/pricing/types";
+import type { CostLine, PricingScenarioPayload, RoomAllocation } from "@/lib/pricing/types";
 import Link from "next/link";
 import { DuplicateScenarioButton } from "@/components/DuplicateScenarioButton";
 
@@ -37,7 +37,7 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
       chdMinus6: scenario.paxBreakdown?.chdMinus6 ?? 0,
       infant: scenario.paxBreakdown?.infant ?? 0,
     },
-    costLines: scenario.costLines.map((line) => ({
+    costLines: scenario.costLines.map((line: CostLine) => ({
       id: line.id,
       label: line.label,
       type: line.type,
@@ -84,13 +84,16 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
       chdMinus6: scenario.paxBreakdown?.chdMinus6 ?? 0,
       infant: scenario.paxBreakdown?.infant ?? 0,
     },
-    roomAllocation: scenario.paxBreakdown?.roomAllocation ?? undefined,
+    roomAllocation:
+      typeof scenario.paxBreakdown?.roomAllocation === "object" && scenario.paxBreakdown?.roomAllocation !== null
+        ? (scenario.paxBreakdown?.roomAllocation as RoomAllocation)
+        : undefined,
     exchangeRate: {
       source: latestRate?.source ?? "AUTO",
       rate: latestRate?.rate ?? 1,
       timestamp: latestRate?.timestamp.toISOString() ?? new Date().toISOString(),
     },
-    costLines: scenario.costLines.map((line) => ({
+    costLines: scenario.costLines.map((line: CostLine) => ({
       id: line.id,
       label: line.label,
       type: line.type,
@@ -145,11 +148,14 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Pax breakdown</p>
           <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-            {Object.entries(scenario.paxBreakdown ?? {}).map(([key, value]) => (
-              <p key={key}>
-                <span className="font-semibold capitalize">{key.replace(/([A-Z])/g, " $1")}</span>: {value}
-              </p>
-            ))}
+            {(Object.entries(scenario.paxBreakdown ?? {}) as [string, number | undefined][]).map(
+              ([key, value]) => (
+                <p key={key}>
+                  <span className="font-semibold capitalize">{key.replace(/([A-Z])/g, " $1")}</span>:{" "}
+                  {value}
+                </p>
+              )
+            )}
           </div>
         </div>
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--token-surface)] p-5 shadow-sm">
@@ -174,7 +180,7 @@ export default async function ScenarioDetailPage({ params }: { params: { id: str
               </tr>
             </thead>
             <tbody>
-              {scenario.costLines.map((line) => (
+              {scenario.costLines.map((line: CostLine) => (
                 <tr key={line.id} className="border-t">
                   <td className="px-3 py-2 font-semibold">{line.label}</td>
                   <td className="px-3 py-2">{line.type}</td>

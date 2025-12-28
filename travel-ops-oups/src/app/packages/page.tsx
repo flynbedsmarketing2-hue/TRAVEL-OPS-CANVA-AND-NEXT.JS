@@ -66,7 +66,7 @@ export default function PackagesPage() {
   const { packages, duplicatePackage, deletePackage, importPackages, exportPackages } = usePackageStore();
   const fileRef = useRef<HTMLInputElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const toast = useToast();
+  const { toast } = useToast();
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");

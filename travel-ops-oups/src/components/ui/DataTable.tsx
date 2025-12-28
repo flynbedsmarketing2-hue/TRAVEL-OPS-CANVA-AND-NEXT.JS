@@ -33,11 +33,14 @@ export function DataTable<T>({ columns, data, emptyState }: DataTableProps<T>) {
       <TBody>
         {data.map((row, idx) => (
           <TR key={idx}>
-            {columns.map((col) => (
-              <TD key={col.key as string} className={col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : ""}>
-                {col.render ? col.render(row) : (row as unknown as Record<string, unknown>)[col.key as string]}
-              </TD>
-            ))}
+            {columns.map((col) => {
+              const cellValue = (row as Record<string, ReactNode>)[col.key as string];
+              return (
+                <TD key={col.key as string} className={col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : ""}>
+                  {col.render ? col.render(row) : cellValue}
+                </TD>
+              );
+            })}
           </TR>
         ))}
       </TBody>

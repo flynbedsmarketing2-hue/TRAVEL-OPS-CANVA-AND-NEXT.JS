@@ -1,8 +1,9 @@
 'use client';
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Filter, Plus } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import RowActionsMenu from "../../components/RowActionsMenu";
@@ -155,7 +156,6 @@ export default function TasksPage() {
   const deleteTask = useTaskStore((state) => state.deleteTask);
   const setTaskStatus = useTaskStore((state) => state.setTaskStatus);
 
-  const searchParams = useSearchParams();
   const [tab, setTab] = useState<"mine" | "team">("mine");
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "">("");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "">("");
@@ -166,14 +166,15 @@ export default function TasksPage() {
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
-    const linkType = searchParams.get("linkType");
-    const linkId = searchParams.get("linkId");
+    const params = new URLSearchParams(window.location.search);
+    const linkType = params.get("linkType");
+    const linkId = params.get("linkId");
     if (linkType && linkId) {
       setModalLink({ type: linkType as TaskLink["type"], id: linkId });
       setModalOpen(true);
     }
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [searchParams]);
+  }, []);
 
   const filteredTasks = useMemo(() => {
     const today = new Date();

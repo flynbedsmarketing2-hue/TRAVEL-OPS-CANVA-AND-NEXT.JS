@@ -1,4 +1,4 @@
-import type { CostLine, MarginConfig, CommissionConfig } from "@/lib/pricing/types";
+import type { CostLine, MarginConfig, CommissionConfig, PaxCounts } from "@/lib/pricing/types";
 
 export type ScenarioView = {
   id: string;
@@ -7,7 +7,7 @@ export type ScenarioView = {
   nights: number;
   createdAt: string;
   currency: string;
-  paxCounts: Record<string, number>;
+  paxCounts: PaxCounts;
   exchangeRate: number;
   costLines: CostLine[];
   margin: MarginConfig;

@@ -79,7 +79,7 @@ const defaultBooking = (packageId: string | undefined): BookingDraft => ({
 export default function SalesPage() {
   const { bookings, addBooking, updateBooking, deleteBooking } = useBookingStore();
   const { packages } = usePackageStore();
-  const toast = useToast();
+  const { toast } = useToast();
   const [drawerBooking, setDrawerBooking] = useState<Booking | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 

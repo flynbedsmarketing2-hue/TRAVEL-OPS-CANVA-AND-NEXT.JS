@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { KeyboardEvent } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { Command } from "./types";
 
 export type CommandPaletteState = {
@@ -10,7 +10,7 @@ export type CommandPaletteState = {
   setQuery: (value: string) => void;
   filteredCommands: Command[];
   highlightedIndex: number;
-  handleInputKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
+  handleInputKeyDown: (event: ReactKeyboardEvent<HTMLInputElement>) => void;
   open: () => void;
   close: () => void;
   selectCommand: (command: Command) => void;
@@ -49,7 +49,7 @@ export function useCommandPalette(commands: Command[]): CommandPaletteState {
   }, [filteredCommands]);
 
   useEffect(() => {
-    const handleGlobalKey = (event: KeyboardEvent) => {
+    const handleGlobalKey = (event: globalThis.KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setIsOpen((prev) => !prev);
@@ -64,7 +64,7 @@ export function useCommandPalette(commands: Command[]): CommandPaletteState {
     return () => window.removeEventListener("keydown", handleGlobalKey);
   }, [isOpen]);
 
-  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (!filteredCommands.length) return;
     if (event.key === "ArrowDown") {
       event.preventDefault();

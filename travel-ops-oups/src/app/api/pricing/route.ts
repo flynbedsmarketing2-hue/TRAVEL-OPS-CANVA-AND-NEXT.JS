@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import type { CostLine } from "@/lib/pricing/types";
+import type { CostLine, PaxCategory } from "@/lib/pricing/types";
 
 const paxCategoryEnum = ["SINGLE", "DOUBLE", "TRIPLE", "CHD_PLUS6", "CHD_MINUS6", "INF"] as const;
 
@@ -66,9 +66,11 @@ const scenarioSchema = z.object({
   commission: commissionSchema,
 });
 
-const allCategories = paxCategoryEnum;
+const allCategories: PaxCategory[] = [...paxCategoryEnum];
 
-const normalizeCostLine = (line: z.infer<typeof costLineSchema>): CostLine => {
+type DatabaseCostLine = Omit<CostLine, "appliesTo"> & { appliesTo: PaxCategory[] };
+
+const normalizeCostLine = (line: z.infer<typeof costLineSchema>): DatabaseCostLine => {
   return {
     id: line.id ?? crypto.randomUUID(),
     label: line.label,
@@ -76,7 +78,7 @@ const normalizeCostLine = (line: z.infer<typeof costLineSchema>): CostLine => {
     applyRule: line.applyRule,
     amount: line.amount,
     quantity: line.quantity ?? 1,
-    appliesTo: line.appliesTo === "ALL" ? (allCategories as const) : line.appliesTo,
+    appliesTo: line.appliesTo === "ALL" ? allCategories : line.appliesTo,
     optional: line.optional ?? false,
   };
 };
@@ -99,7 +101,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   const parsed = scenarioSchema.parse(body);
   const normalizedLines = parsed.costLines.map(normalizeCostLine);
-  const data = {
+  const baseData = {
     name: parsed.name,
     destination: parsed.destination,
     notes: parsed.notes,
@@ -107,6 +109,10 @@ export async function POST(request: Request) {
     startDate: parsed.startDate ? new Date(parsed.startDate) : null,
     endDate: parsed.endDate ? new Date(parsed.endDate) : null,
     currency: parsed.currency,
+  };
+
+  const createData = {
+    ...baseData,
     state: "DRAFT" as const,
     paxBreakdown: {
       create: {
@@ -116,7 +122,7 @@ export async function POST(request: Request) {
         chdPlus6: parsed.paxCounts.chdPlus6,
         chdMinus6: parsed.paxCounts.chdMinus6,
         infant: parsed.paxCounts.infant,
-        roomAllocation: parsed.roomAllocation ? parsed.roomAllocation : null,
+        roomAllocation: parsed.roomAllocation ?? undefined,
       },
     },
     exchangeRates: {
@@ -147,12 +153,16 @@ export async function POST(request: Request) {
     },
   };
 
+  const updateData = {
+    ...baseData,
+  };
+
   const scenario = parsed.id
     ? await prisma.pricingScenario.update({
         where: { id: parsed.id },
-        data,
+        data: updateData,
       })
-    : await prisma.pricingScenario.create({ data });
+    : await prisma.pricingScenario.create({ data: createData });
 
   return NextResponse.json(scenario);
 }

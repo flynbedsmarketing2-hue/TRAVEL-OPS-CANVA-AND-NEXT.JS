@@ -3,7 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { calculateScenario } from "@/lib/pricing/calculator";
 import { costTemplates } from "@/lib/pricing/templates";
-import type { CostLine, MarginConfig, CommissionConfig, PaxCounts, PricingScenarioPayload } from "@/lib/pricing/types";
+import type {
+  CostLine,
+  MarginConfig,
+  CommissionConfig,
+  PaxCounts,
+  PricingScenarioPayload,
+  RoomAllocation,
+} from "@/lib/pricing/types";
 
 const defaultPaxCounts: PaxCounts = {
   single: 0,
@@ -61,7 +68,7 @@ export default function PricingWizardPage() {
     currency: "QAR",
     notes: "",
     paxCounts: defaultPaxCounts,
-    roomAllocation: {},
+    roomAllocation: undefined,
     exchangeRate: { source: "AUTO", rate: 44, timestamp: new Date().toISOString() },
     costLines: costTemplates,
     margin: defaultMargin,
@@ -406,7 +413,7 @@ export default function PricingWizardPage() {
                     <input
                       type="number"
                       min={0}
-                      value={value}
+                      value={value as number}
                       onChange={(event) =>
                         updateScenario({
                           commission: {

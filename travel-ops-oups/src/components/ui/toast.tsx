@@ -85,7 +85,7 @@ function Toaster({
           key={toast.id}
           className={cn(
             "w-full max-w-sm rounded-2xl border px-4 py-3 shadow-md transition duration-150 ease-out md:w-80",
-            variantClasses[toast.variant]
+            variantClasses[toast.variant ?? "info"]
           )}
         >
           <div className="flex items-start gap-3">
