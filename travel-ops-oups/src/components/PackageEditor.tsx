@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
@@ -7,7 +7,7 @@ import type { TravelPackage } from "../types";
 import { DEFAULT_RESPONSIBLE_NAME, generateProductCode, todayISO } from "../lib/packageDefaults";
 import { usePackageStore } from "../stores/usePackageStore";
 import { Button } from "./ui/button";
-import { StickyPreview } from "./ui/Stepper";
+import { Stepper, StickyPreview } from "./ui/Stepper";
 
 type Mode = "create" | "edit";
 type EditorStep = "basics" | "itinerary" | "pricing" | "review";
@@ -109,6 +109,11 @@ export function PackageEditor({ mode, initialPackage }: Props) {
   const pricingHasWarnings = selectedPricing.some(
     (row) => !(Number(row.unitPrice) > 0) || !(Number(row.commission) >= 0)
   );
+  const reviewIssues = useMemo(() => validatePackage(form, { intent: "save" }), [form]);
+  const currentStepIndex = stepOrder.indexOf(step);
+  const stepMeta = steps[currentStepIndex];
+  const canGoBack = currentStepIndex > 0;
+  const canGoNext = currentStepIndex < stepOrder.length - 1;
 
   const formatAmount = (value: number) =>
     `${new Intl.NumberFormat("fr-FR").format(Math.round(value || 0))} DZD`;
@@ -189,17 +194,20 @@ export function PackageEditor({ mode, initialPackage }: Props) {
     setForm((prev) => ({ ...prev, general: { ...prev.general, imageUrl: base64 } }));
   };
 
-  const stepTargets: Record<EditorStep, string> = {
-    basics: "package-basics",
-    itinerary: "package-itinerary",
-    pricing: "package-pricing",
-    review: "package-review",
-  };
-
   const jumpToStep = (nextStep: EditorStep) => {
     setStep(nextStep);
-    if (typeof document === "undefined") return;
-    document.getElementById(stepTargets[nextStep])?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goNext = () => {
+    const nextStep = stepOrder[currentStepIndex + 1];
+    if (nextStep) jumpToStep(nextStep);
+  };
+
+  const goBack = () => {
+    const prevStep = stepOrder[currentStepIndex - 1];
+    if (prevStep) jumpToStep(prevStep);
   };
 
   return (
@@ -273,7 +281,21 @@ export function PackageEditor({ mode, initialPackage }: Props) {
 
       <div className="grid gap-4 lg:grid-cols-[2fr,1fr]">
         <div className="space-y-4">
-          <Section title="1. Informations générales">
+          <div className="card p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+              Step {currentStepIndex + 1} of {steps.length}
+            </p>
+            <h2 className="mt-2 font-heading text-xl font-semibold text-[var(--text)]">
+              {stepMeta?.label ?? "Step"}
+            </h2>
+            {stepMeta?.description ? (
+              <p className="text-sm text-[var(--muted)]">{stepMeta.description}</p>
+            ) : null}
+          </div>
+
+          {step === "basics" ? (
+            <>
+            <Section title="1. Informations générales">
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Nom du produit">
                 <input
@@ -350,7 +372,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="2. Vols & séjour">
+            <Section title="2. Vols & séjour">
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Destination principale">
                 <input
@@ -516,7 +538,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="3. Hébergements">
+            <Section title="3. Hébergements">
             <div className="space-y-3">
               {form.accommodations.map((acc, idx) => (
                 <div
@@ -618,7 +640,12 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="4. Tarification">
+            </>
+          ) : null}
+
+          {step === "pricing" ? (
+            <>
+            <Section title="4. Tarification">
             <div className="space-y-3">
               {form.pricing.map((p, idx) => (
                 <div
@@ -733,7 +760,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="5. Commissions agences">
+            <Section title="5. Commissions agences">
             <div className="grid gap-3 md:grid-cols-4">
               <Field label="Adulte 1���5 pax">
                 <input
@@ -812,7 +839,12 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="6. Contenu & excursions">
+            </>
+          ) : null}
+
+          {step === "itinerary" ? (
+            <>
+            <Section title="6. Contenu & excursions">
             <div className="grid gap-4 md:grid-cols-2">
               <LinesField
                 label="Inclus (1 ligne = 1 item)"
@@ -845,7 +877,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="7. Itinéraire">
+            <Section title="7. Itinéraire">
             <label className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] px-4 py-3 text-sm dark:border-[var(--border)]">
               <span className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">Activer le programme</span>
               <input
@@ -964,9 +996,105 @@ export function PackageEditor({ mode, initialPackage }: Props) {
               />
             </Field>
           </Section>
+
+            </>
+          ) : null}
+
+          {step === "review" ? (
+            <Section title="Review">
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="card p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">Package</p>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-[var(--text)]">
+                      <span className="text-[var(--muted)]">Name:</span>{" "}
+                      {form.general.productName || "Untitled"}
+                    </p>
+                    <p className="text-[var(--text)]">
+                      <span className="text-[var(--muted)]">Destination:</span>{" "}
+                      {form.flights.destination || "-"}
+                    </p>
+                    <p className="text-[var(--text)]">
+                      <span className="text-[var(--muted)]">Status:</span> {form.status}
+                    </p>
+                    <p className="text-[var(--text)]">
+                      <span className="text-[var(--muted)]">Stock:</span> {form.general.stock} pax
+                    </p>
+                  </div>
+                </div>
+                <div className="card p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">Counts</p>
+                  <div className="mt-2 space-y-2 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[var(--muted)]">Flights</span>
+                      <span className="font-semibold text-[var(--text)]">{form.flights.flights.length}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[var(--muted)]">Accommodations</span>
+                      <span className="font-semibold text-[var(--text)]">{form.accommodations.length}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[var(--muted)]">Pricing lines</span>
+                      <span className="font-semibold text-[var(--text)]">{form.pricing.length}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[var(--muted)]">Itinerary days</span>
+                      <span className="font-semibold text-[var(--text)]">{form.itinerary.days.length}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--token-surface-2)] p-4 text-sm">
+                <p className="font-semibold text-[var(--text)]">Pricing totals</p>
+                <div className="mt-2 space-y-1 text-[var(--muted)]">
+                  <p>Total displayed price: {formatAmount(totalDisplayedPrice)}</p>
+                  <p>Total commission: {formatAmount(totalCommission)}</p>
+                </div>
+              </div>
+              {reviewIssues.length ? (
+                <div className="mt-4 rounded-xl border border-[var(--token-danger)]/30 bg-[var(--token-danger)]/10 px-4 py-3 text-sm text-[var(--token-danger)]">
+                  <p className="font-semibold">Missing info before publish:</p>
+                  <ul className="list-disc pl-5">
+                    {reviewIssues.map((issue, idx) => (
+                      <li key={idx}>{issue}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--token-surface-2)] p-4 text-sm text-[var(--muted)]">
+                  Everything needed for publish looks ready.
+                </div>
+              )}
+            </Section>
+          ) : null}
+
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--token-surface)] p-4">
+            <Button variant="outline" onClick={goBack} disabled={!canGoBack}>
+              Back
+            </Button>
+            {canGoNext ? (
+              <Button onClick={goNext}>Next</Button>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={() => save("draft")} disabled={saving}>
+                  Save draft
+                </Button>
+                <Button variant="secondary" onClick={() => save()} disabled={saving}>
+                  Save
+                </Button>
+                <Button onClick={() => save("published")} disabled={saving}>
+                  Save & publish
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
 
         <aside className="space-y-4">
+          <StickyPreview title="Wizard" footer={step === "pricing" ? pricingSummary : undefined}>
+            <Stepper steps={steps} current={step} />
+          </StickyPreview>
+
           <div className="card overflow-hidden">
             <div className="aspect-[16/10] w-full bg-[var(--token-surface-2)] dark:bg-[var(--token-surface)]">
               {previewImage ? (
@@ -1088,4 +1216,6 @@ function LinesField({
     </Field>
   );
 }
+
+
 
