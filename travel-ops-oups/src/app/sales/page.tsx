@@ -227,7 +227,7 @@ export default function SalesPage() {
             <div style="color:var(--token-accent, #F28C28);font-weight:800;font-size:12px;">Nouba Plus</div>
             <div style="font-size:20px;font-weight:800;margin-top:4px;">${kind === "invoice" ? "Invoice" : "Confirmation"} - Booking ${booking.id.slice(0, 6)}</div>
             <div style="font-size:12px;color:var(--token-muted, #5B6474);margin-top:4px;">
-                  #{packageMap[drawerBooking.packageId]?.general.productCode ?? "-"}
+                  #${pkg?.general.productCode ?? "-"}
             </div>
           </div>
           <div style="text-align:right;font-size:12px;color:var(--token-muted, #5B6474);">
@@ -361,7 +361,7 @@ export default function SalesPage() {
 
       if (!normalizedSearch) return true;
       const pkg = packageMap[booking.packageId];
-                  #{packageMap[drawerBooking.packageId]?.general.productCode ?? "-"}
+      const haystack = `${booking.id} ${booking.bookingType} ${pkg?.general.productName ?? ""} ${pkg?.general.productCode ?? ""} ${pkg?.flights.destination ?? ""}`;
       return haystack.toLowerCase().includes(normalizedSearch);
     });
 
@@ -717,7 +717,6 @@ export default function SalesPage() {
                 })}
               </TBody>
             </Table>
-          )}
           )}
         </CardContent>
       </Card>

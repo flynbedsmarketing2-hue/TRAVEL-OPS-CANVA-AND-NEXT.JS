@@ -207,13 +207,13 @@ export function PackageEditor({ mode, initialPackage }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm uppercase tracking-[0.08em] text-primary">
-            {isEdit ? "+�dition" : "Cr+�ation"} du package
+            {isEdit ? "Édition" : "Création"} du package
           </p>
           <h1 className="font-heading text-2xl font-semibold text-[var(--text)]">
             {form.general.productName || "Nouveau package"}
           </h1>
           <p className="text-sm text-[var(--muted)]">
-            Sections compl+�tes, persistance localStorage.
+            Sections complètes, persistance localStorage.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -237,7 +237,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 : "border-[var(--border)] text-[var(--text)] dark:border-[var(--border)] dark:text-[var(--muted)]"
             }`}
           >
-            Publi+�
+            Publié
           </button>
           <button
             type="button"
@@ -273,7 +273,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
 
       <div className="grid gap-4 lg:grid-cols-[2fr,1fr]">
         <div className="space-y-4">
-          <Section title="1. Informations g+�n+�rales">
+          <Section title="1. Informations générales">
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Nom du produit">
                 <input
@@ -302,7 +302,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                   className={READONLY_INPUT}
                 />
               </Field>
-              <Field label="Date de cr+�ation">
+              <Field label="Date de création">
                 <input
                   type="date"
                   value={form.general.creationDate}
@@ -350,7 +350,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="2. Vols & s+�jour">
+          <Section title="2. Vols & séjour">
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Destination principale">
                 <input
@@ -359,7 +359,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                   className={INPUT}
                 />
               </Field>
-              <Field label="Villes (s+�par+�es par virgule)">
+              <Field label="Villes (séparées par virgule)">
                 <input
                   value={cityString}
                   onChange={(e) =>
@@ -420,7 +420,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                         className={INPUT}
                       />
                     </Field>
-                    <Field label="Dur+�e (nuits/jours)">
+                    <Field label="Durée (nuits/jours)">
                       <input
                         value={f.duration ?? ""}
                         onChange={(e) =>
@@ -473,7 +473,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                         className={INPUT}
                       />
                     </Field>
-                    <Field label="D+�tails (horaires/confirmation)">
+                    <Field label="Détails (horaires/confirmation)">
                       <textarea
                         value={f.details ?? ""}
                         onChange={(e) =>
@@ -511,12 +511,12 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--token-surface)] px-4 py-2 text-sm font-semibold text-[var(--text)] transition hover:border-primary/40 hover:text-primary dark:border-[var(--border)] dark:bg-[var(--token-surface)]/30 dark:text-[var(--muted)]"
               >
                 <Plus className="h-4 w-4" />
-                Ajouter un autre d+�part
+                Ajouter un autre départ
               </button>
             </div>
           </Section>
 
-          <Section title="3. H+�bergements">
+          <Section title="3. Hébergements">
             <div className="space-y-3">
               {form.accommodations.map((acc, idx) => (
                 <div
@@ -540,7 +540,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                     </Field>
                   </div>
                   <div className="md:col-span-2">
-                    <Field label="Cat+�gorie">
+                    <Field label="Catégorie">
                       <input
                         value={acc.category ?? ""}
                         onChange={(e) =>
@@ -613,7 +613,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--token-surface)] px-4 py-2 text-sm font-semibold text-[var(--text)] transition hover:border-primary/40 hover:text-primary dark:border-[var(--border)] dark:bg-[var(--token-surface)]/30 dark:text-[var(--muted)]"
               >
                 <Plus className="h-4 w-4" />
-                Ajouter un h+�bergement
+                Ajouter un hébergement
               </button>
             </div>
           </Section>
@@ -796,7 +796,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                   className={INPUT}
                 />
               </Field>
-              <Field label="B+�b+� (fixe)">
+              <Field label="Bébé (fixe)">
                 <input
                   type="number"
                   value={form.agencyCommissions.bebe}
@@ -845,7 +845,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
             </div>
           </Section>
 
-          <Section title="7. Itin+�raire">
+          <Section title="7. Itinéraire">
             <label className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] px-4 py-3 text-sm dark:border-[var(--border)]">
               <span className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">Activer le programme</span>
               <input
@@ -974,7 +974,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 <img src={previewImage} alt="Cover" className="h-full w-full object-cover" />
               ) : (
                 <div className="flex h-full items-center justify-center text-sm text-[var(--muted)]">
-                  Aper+�u image
+                  Aperçu image
                 </div>
               )}
             </div>
@@ -990,7 +990,7 @@ export function PackageEditor({ mode, initialPackage }: Props) {
                 Stock: <span className="font-semibold">{form.general.stock}</span> pax
               </p>
               <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
-                +� partir de:{" "}
+                À partir de:{" "}
                 <span className="font-semibold">{lowestPrice !== null ? `${lowestPrice} DZD` : "���"}</span>
               </p>
             </div>
@@ -999,8 +999,8 @@ export function PackageEditor({ mode, initialPackage }: Props) {
           <div className="card p-4 text-sm text-[var(--muted)] dark:text-[var(--muted)]">
             <p className="font-semibold text-[var(--text)] dark:text-[var(--token-inverse)]">Raccourcis</p>
             <ul className="mt-2 list-disc space-y-1 pl-5">
-              <li>Publi+� est bloqu+� si des champs obligatoires manquent.</li>
-              <li>Modifier les vols r+�g+�n+�re les groupes Ops uniquement si la structure change.</li>
+              <li>Publié est bloqué si des champs obligatoires manquent.</li>
+              <li>Modifier les vols régénère les groupes Ops uniquement si la structure change.</li>
               <li>Images: URL ou fichier.</li>
             </ul>
           </div>
@@ -1017,14 +1017,14 @@ function validatePackage(pkg: TravelPackage, opts: { intent: "save" | "publish" 
   if (!pkg.general.productName.trim()) issues.push("Nom du produit requis");
   if (!pkg.general.productCode.trim()) issues.push("Code produit requis");
   if (!pkg.general.responsible.trim()) issues.push("Responsable requis");
-  if (!pkg.general.creationDate) issues.push("Date de cr+�ation requise");
+  if (!pkg.general.creationDate) issues.push("Date de création requise");
   if (!pkg.flights.destination.trim()) issues.push("Destination requise");
-  if (pkg.general.stock < 0) issues.push("Stock doit +�tre positif");
+  if (pkg.general.stock < 0) issues.push("Stock doit être positif");
 
   if (!pkg.flights.flights.length) issues.push("Au moins un vol requis");
   pkg.flights.flights.forEach((f, idx) => {
     if (!f.airline.trim()) issues.push(`Vol ${idx + 1}: compagnie requise`);
-    if (!f.departureDate) issues.push(`Vol ${idx + 1}: date d+�part requise`);
+    if (!f.departureDate) issues.push(`Vol ${idx + 1}: date de départ requise`);
     if (!f.returnDate) issues.push(`Vol ${idx + 1}: date retour requise`);
   });
 
@@ -1034,10 +1034,10 @@ function validatePackage(pkg: TravelPackage, opts: { intent: "save" | "publish" 
     if (strict && (Number(p.unitPrice) || 0) <= 0) issues.push(`Tarif ${idx + 1}: prix > 0 requis`);
   });
 
-  if (!pkg.itinerary.days.length) issues.push("Itin+�raire: ajouter au moins un jour");
+  if (!pkg.itinerary.days.length) issues.push("Itinéraire: ajouter au moins un jour");
   if (strict) {
     pkg.itinerary.days.forEach((d, idx) => {
-      if (!d.description.trim()) issues.push(`Itin+�raire J${idx + 1}: description requise`);
+      if (!d.description.trim()) issues.push(`Itinéraire J${idx + 1}: description requise`);
     });
   }
 
