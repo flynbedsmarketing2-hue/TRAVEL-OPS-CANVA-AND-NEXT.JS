@@ -8,9 +8,9 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--token-surface)] p-8 shadow-soft">
       <div className="max-w-4xl space-y-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--primary)]">Nouba Plus</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--primary)]">TravelOPS</p>
         <h1 className="text-3xl font-extrabold leading-tight text-[var(--text)] md:text-4xl">
-          Nouba Plus backoffice, minimal and fast
+          TravelOPS backoffice, minimal and fast
         </h1>
         <p className="text-lg font-medium text-[var(--muted)]">
           CRM, sales, operations and marketing combined in a single workspace built for lean travel teams.

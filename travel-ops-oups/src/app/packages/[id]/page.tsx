@@ -34,7 +34,15 @@ export default function PackageDetailPage() {
           <PageHeader
             eyebrow="Packages"
             title={pkg.general.productName || "Package"}
-            subtitle={`${pkg.general.productCode || "—"} • ${pkg.flights.destination || "—"} • ${pkg.status}`}
+            subtitle={
+              <>
+                <span className="font-mono">{pkg.general.productCode || "-"}</span>
+                <span> - </span>
+                <span>{pkg.flights.destination || "-"}</span>
+                <span> - </span>
+                <span>{pkg.status}</span>
+              </>
+            }
             actions={
               <>
                 <Link href="/packages" className={buttonClassName({ variant: "outline" })}>

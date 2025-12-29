@@ -8,7 +8,7 @@ export const buttonBase =
 
 export const buttonVariants: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-end)] text-[var(--token-inverse)] shadow-md hover:opacity-95 hover:shadow-md active:scale-[0.99]",
+    "bg-[var(--token-text)] text-[var(--token-inverse)] shadow-md hover:bg-[var(--token-secondary)] active:scale-[0.99]",
   secondary:
     "border border-[var(--token-border)] bg-[var(--token-surface)] text-[var(--text)] shadow-sm hover:bg-[var(--token-surface-2)] hover:shadow-md",
   outline:

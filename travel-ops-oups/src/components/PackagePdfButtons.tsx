@@ -12,12 +12,12 @@ type Props = {
 };
 
 const PDF_COLORS = {
-  text: "#0B1220",
-  muted: "#5B6474",
-  border: "#D9DEE7",
-  surface: "#FFFFFF",
-  surface2: "#F1F3F6",
-  accent: "#F28C28",
+  text: "#000000",
+  muted: "#777777",
+  border: "#e5e5e5",
+  surface: "#ffffff",
+  surface2: "#f7f7f7",
+  accent: "#000000",
 };
 
 const pdfVar = (token: string, fallback: string) => `var(${token}, ${fallback})`;
@@ -73,7 +73,7 @@ export function PackagePdfButtons({ travelPackage }: Props) {
       const h = pdf.internal.pageSize.getHeight();
       pdf.setFontSize(9);
       pdf.setTextColor(100);
-      pdf.text(`Nouba Plus`, 12, h - 10);
+      pdf.text(`TravelOPS`, 12, h - 10);
       pdf.text(`${generatedAt}`, w / 2, h - 10, { align: "center" });
       pdf.text(`Page ${i}/${total}`, w - 12, h - 10, { align: "right" });
     }
@@ -191,7 +191,7 @@ const BrandHeader = ({
           fontSize: 12,
         }}
       >
-        Nouba Plus
+        TravelOPS
       </p>
       <h1
         style={{
@@ -277,7 +277,7 @@ const Cover = ({
           fontSize: 12,
         }}
       >
-        {mode} · Nouba Plus
+        {mode} · TravelOPS
       </p>
       <h2 style={{ margin: "6px 0 6px 0", fontSize: 22 }}>
         {pkg.general.productName}

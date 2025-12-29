@@ -3,34 +3,20 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  /* Monochrome dark palette */
-  --token-background: #000000;
-  --token-surface: rgba(255, 255, 255, 0.04);
-  --token-surface-2: rgba(255, 255, 255, 0.08);
-  --token-border: rgba(255, 255, 255, 0.12);
-  --token-muted: rgba(255, 255, 255, 0.68);
-  --token-text: #ffffff;
-  --token-primary: #ffffff;
-  --token-primary-strong: #ffffff;
-  --token-secondary: rgba(255, 255, 255, 0.82);
-  --token-accent: #ffffff;
-  --accent-start: #ffffff;
-  --accent-end: #ffffff;
-  --token-inverse: #000000;
-  --token-danger: #ffffff;
-  --token-danger-strong: #ffffff;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 22px;
-  --radius-2xl: 28px;
-  --radius-card: var(--radius-xl);
-  --radius-hero: 28px;
-  --radius-input: 14px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
-  --shadow-md: 0 10px 28px rgba(0,0,0,0.35);
-  --shadow-soft: 0 18px 40px rgba(0,0,0,0.32);
+  color-scheme: light;
+  --token-background: #ffffff;
+  --token-surface: #ffffff;
+  --token-surface-2: #f7f7f7;
+  --token-border: #e5e5e5;
+  --token-text: #000000;
+  --token-primary: #000000;
+  --token-primary-strong: #000000;
+  --token-secondary: #444444;
+  --token-muted: #777777;
+  --token-accent: #000000;
+  --token-inverse: #ffffff;
+  --font-sans: var(--font-inter, "Inter"), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono, "IBM Plex Mono"), ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bg: var(--token-background);
   --surface: var(--token-surface);
   --surface-2: var(--token-surface-2);
@@ -39,63 +25,43 @@
   --muted: var(--token-muted);
   --primary: var(--token-primary);
   --primary-strong: var(--token-primary-strong);
-  --accent: var(--token-accent);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
+  --radius-card: var(--radius-xl);
+  --radius-hero: 28px;
+  --radius-input: 14px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.12);
+  --shadow-soft: 0 18px 36px rgba(0, 0, 0, 0.1);
 }
 
+html {
+  font-size: 16px;
+}
+
+html.dark,
 html.light {
   color-scheme: light;
-  --token-background: #ffffff;
-  --token-surface: #ffffff;
-  --token-surface-2: rgba(0, 0, 0, 0.04);
-  --token-border: rgba(0, 0, 0, 0.12);
-  --token-muted: rgba(0, 0, 0, 0.6);
-  --token-text: #000000;
-  --token-primary: #000000;
-  --token-primary-strong: #000000;
-  --token-secondary: rgba(0, 0, 0, 0.82);
-  --token-accent: #000000;
-  --accent-start: #000000;
-  --accent-end: #000000;
-  --token-inverse: #ffffff;
-  --token-danger: #000000;
-  --token-danger-strong: #000000;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
-  --shadow-md: 0 10px 24px rgba(0,0,0,0.18);
-  --shadow-soft: 0 18px 36px rgba(0,0,0,0.14);
-  --bg: var(--token-background);
-  --surface: var(--token-surface);
-  --surface-2: var(--token-surface-2);
-  --border: var(--token-border);
-  --text: var(--token-text);
-  --muted: var(--token-muted);
 }
 
 body {
   @apply antialiased;
-  color: var(--token-text);
-  font-family: var(--font-space-grotesk), system-ui, sans-serif;
-  background-color: var(--token-background);
-  background-image:
-    radial-gradient(circle at 12% 18%, rgba(255,255,255,0.08), transparent 30%),
-    radial-gradient(circle at 80% 12%, rgba(255,255,255,0.04), transparent 28%),
-    linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,1) 60%),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: auto, auto, auto, 120px 120px, 120px 120px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--bg);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
-  font-variation-settings: "wght" 400;
 }
 
-html.light body {
-  background-image:
-    radial-gradient(circle at 15% 20%, rgba(0,0,0,0.06), transparent 30%),
-    radial-gradient(circle at 85% 10%, rgba(0,0,0,0.03), transparent 28%),
-    linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 60%),
-    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(0,0,0,0.04) 1px, transparent 1px);
-  background-size: auto, auto, auto, 120px 120px, 120px 120px;
+p {
+  line-height: 1.5;
 }
 
 a {
@@ -104,15 +70,14 @@ a {
   transition: color 150ms ease;
 }
 
-a:hover {
-  color: color-mix(in srgb, var(--token-accent) 70%, var(--token-primary) 30%);
+a:hover,
+a:focus-visible {
+  color: var(--token-secondary);
 }
 
 .card {
-  @apply rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] shadow-md;
+  @apply rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] shadow-md;
   padding: 1rem;
-  backdrop-filter: blur(6px);
-  background-image: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
 }
 
 .container {
@@ -124,24 +89,62 @@ a:hover {
 }
 
 .section-shell {
-  @apply space-y-6 rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--token-surface)] p-6 shadow-sm;
-  backdrop-filter: blur(8px);
-  background-image: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  @apply space-y-6 rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm;
 }
 
 ::selection {
-  background: rgba(255, 255, 255, 0.2);
-  color: #000000;
+  background: var(--surface-2);
+  color: var(--text);
 }
 
-/* Headings for better hierarchy */
-h1 { font-size: 2.125rem; line-height: 2.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--token-primary); }
-h2 { font-size: 1.625rem; line-height: 2.1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--token-primary); }
-h3 { font-size: 1.2rem; line-height: 1.7rem; font-weight: 600; letter-spacing: -0.01em; color: var(--token-primary); }
+h1 {
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--token-primary);
+}
 
-/* Utility tweaks */
-.muted { color: var(--token-muted); }
-.mono { font-family: var(--font-fragment-mono), ui-monospace, SFMono-Regular, monospace; }
+h2 {
+  font-size: 22px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--token-primary);
+}
+
+h3 {
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--token-primary);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.text-small-ui {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.text-caption {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.muted {
+  color: var(--token-muted);
+}
 
 @keyframes fade-up {
   from {
@@ -162,14 +165,37 @@ h3 { font-size: 1.2rem; line-height: 1.7rem; font-weight: 600; letter-spacing: -
   animation: fade-up 520ms ease-out both;
 }
 
-.stagger > :nth-child(1) { animation-delay: 60ms; }
-.stagger > :nth-child(2) { animation-delay: 120ms; }
-.stagger > :nth-child(3) { animation-delay: 180ms; }
-.stagger > :nth-child(4) { animation-delay: 240ms; }
-.stagger > :nth-child(5) { animation-delay: 300ms; }
-.stagger > :nth-child(6) { animation-delay: 360ms; }
-.stagger > :nth-child(7) { animation-delay: 420ms; }
-.stagger > :nth-child(8) { animation-delay: 480ms; }
+.stagger > :nth-child(1) {
+  animation-delay: 60ms;
+}
+
+.stagger > :nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.stagger > :nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.stagger > :nth-child(4) {
+  animation-delay: 240ms;
+}
+
+.stagger > :nth-child(5) {
+  animation-delay: 300ms;
+}
+
+.stagger > :nth-child(6) {
+  animation-delay: 360ms;
+}
+
+.stagger > :nth-child(7) {
+  animation-delay: 420ms;
+}
+
+.stagger > :nth-child(8) {
+  animation-delay: 480ms;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .page-fade,

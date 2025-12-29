@@ -440,13 +440,13 @@ export default function DashboardPage() {
                   >
                     <div className="min-w-0">
                       <p className="truncate font-semibold text-[var(--text)]">
-                        Booking {b.id.slice(0, 6)} - {b.bookingType}
+                        Booking <span className="font-mono">{b.id.slice(0, 6)}</span> - {b.bookingType}
                       </p>
                       <p className="truncate text-xs text-[var(--muted)]">
                         Pax {b.paxTotal} | Paiement {b.payment.paidAmount}/{b.payment.totalPrice}
                       </p>
                     </div>
-                    <span className="text-xs text-[var(--muted)]">
+                    <span className="text-xs text-[var(--muted)] font-mono">
                       {new Date(b.createdAt).toLocaleDateString()}
                     </span>
                   </div>

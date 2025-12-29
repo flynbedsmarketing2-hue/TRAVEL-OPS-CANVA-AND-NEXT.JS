@@ -67,7 +67,9 @@ export default function VoyagesPage() {
                           {pkg.flights.cities.length ? pkg.flights.cities.join(", ") : "A definir"}
                         </span>
                       </p>
-                      <p className="text-xs text-[var(--muted)]">Code: {pkg.general.productCode || "-"}</p>
+                      <p className="text-xs text-[var(--muted)]">
+                        Code: <span className="font-mono">{pkg.general.productCode || "-"}</span>
+                      </p>
                     </div>
 
                     <Link href="/sales" className={buttonClassName({ variant: "primary" })}>

@@ -324,7 +324,7 @@ export default function PackagesPage() {
                           {pkg.general.productName || "Sans nom"}
                         </p>
                         <p className="truncate text-xs text-[var(--token-inverse)] opacity-80">
-                          {pkg.general.productCode || "-"} - {pkg.flights.destination || "-"}
+                          <span className="font-mono">{pkg.general.productCode || "-"}</span> - {pkg.flights.destination || "-"}
                         </p>
                       </div>
                       <StatusPill status={pkg.status} />

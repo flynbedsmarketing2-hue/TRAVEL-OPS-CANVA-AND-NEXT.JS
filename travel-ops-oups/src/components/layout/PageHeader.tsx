@@ -9,8 +9,8 @@ export type PageHeaderBreadcrumb = {
 export type PageHeaderProps = {
   eyebrow?: string;
   title: string;
-  subtitle?: string;
-  description?: string;
+  subtitle?: ReactNode;
+  description?: ReactNode;
   breadcrumb?: PageHeaderBreadcrumb[];
   actions?: ReactNode;
   tabs?: ReactNode;

@@ -219,31 +219,31 @@ export default function SalesPage() {
     root.style.width = "794px";
     root.style.padding = "20px";
     root.style.fontFamily = "Arial";
-    root.style.color = "var(--token-text, #0B1220)";
+    root.style.color = "var(--token-text, #000000)";
     root.innerHTML = `
-      <div style="border:2px solid var(--token-accent, #F28C28);border-radius:14px;padding:14px;margin-bottom:12px;">
+      <div style="border:2px solid var(--token-border);border-radius:14px;padding:14px;margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
           <div>
-            <div style="color:var(--token-accent, #F28C28);font-weight:800;font-size:12px;">Nouba Plus</div>
+            <div style="color:var(--token-text);font-weight:800;font-size:12px;">TravelOPS</div>
             <div style="font-size:20px;font-weight:800;margin-top:4px;">${kind === "invoice" ? "Invoice" : "Confirmation"} - Booking ${booking.id.slice(0, 6)}</div>
-            <div style="font-size:12px;color:var(--token-muted, #5B6474);margin-top:4px;">
+            <div style="font-size:12px;color:var(--token-muted, #777777);margin-top:4px;">
                   #${pkg?.general.productCode ?? "-"}
             </div>
           </div>
-          <div style="text-align:right;font-size:12px;color:var(--token-muted, #5B6474);">
-            <div>Type: <strong style="color:var(--token-text, #0B1220);">${booking.bookingType}</strong></div>
-            <div>Pax: <strong style="color:var(--token-text, #0B1220);">${booking.paxTotal}</strong></div>
-            <div>Payment: <strong style="color:var(--token-text, #0B1220);">${status.text}</strong></div>
-              ${booking.reservedUntil ? `<div>Hold until <strong style="color:var(--token-text, #0B1220);">${booking.reservedUntil}</strong></div>` : ""}
+          <div style="text-align:right;font-size:12px;color:var(--token-muted, #777777);">
+            <div>Type: <strong style="color:var(--token-text, #000000);">${booking.bookingType}</strong></div>
+            <div>Pax: <strong style="color:var(--token-text, #000000);">${booking.paxTotal}</strong></div>
+            <div>Payment: <strong style="color:var(--token-text, #000000);">${status.text}</strong></div>
+              ${booking.reservedUntil ? `<div>Hold until <strong style="color:var(--token-text, #000000);">${booking.reservedUntil}</strong></div>` : ""}
           </div>
         </div>
       </div>
         ${
           kind === "invoice"
-            ? `<div style="margin-top:10px;font-size:12px;color:var(--token-muted, #5B6474);">
+            ? `<div style="margin-top:10px;font-size:12px;color:var(--token-muted, #777777);">
                  <strong>Invoice</strong> - detailed invoice lines.
                </div>`
-            : `<div style="margin-top:10px;font-size:12px;color:var(--token-muted, #5B6474);">
+            : `<div style="margin-top:10px;font-size:12px;color:var(--token-muted, #777777);">
                  <strong>Confirmation</strong> - booking recap.
                </div>`
         }
@@ -252,8 +252,8 @@ export default function SalesPage() {
         <table style="width:100%;border-collapse:collapse;font-size:12px;">
           <thead>
             <tr>
-              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Chambre</th>
-              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Occupants</th>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #e5e5e5);background:var(--token-surface-2, #f7f7f7);">Chambre</th>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #e5e5e5);background:var(--token-surface-2, #f7f7f7);">Occupants</th>
             </tr>
           </thead>
           <tbody>
@@ -261,8 +261,8 @@ export default function SalesPage() {
               .map((room) => {
                 const occ = room.occupants.map((o) => `${o.type}${o.name ? ` - ${o.name}` : ""}`).join(", ");
                 return `<tr>
-                  <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">${room.roomType}</td>
-                  <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">${occ}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);">${room.roomType}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);">${occ}</td>
                 </tr>`;
               })
               .join("")}
@@ -274,36 +274,36 @@ export default function SalesPage() {
         <table style="width:100%;border-collapse:collapse;font-size:12px;">
           <thead>
             <tr>
-              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Type</th>
-              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Qté</th>
-              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">PU</th>
-              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #D9DEE7);background:var(--token-surface-2, #F1F3F6);">Sous-total</th>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--token-border, #e5e5e5);background:var(--token-surface-2, #f7f7f7);">Type</th>
+              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #e5e5e5);background:var(--token-surface-2, #f7f7f7);">Qté</th>
+              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #e5e5e5);background:var(--token-surface-2, #f7f7f7);">PU</th>
+              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--token-border, #e5e5e5);background:var(--token-surface-2, #f7f7f7);">Sous-total</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">ADL</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${totals.pax.ADL}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pricing.adultUnit)}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pax.ADL * totals.pricing.adultUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);">ADL</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${totals.pax.ADL}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${formatMoney(totals.pricing.adultUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${formatMoney(totals.pax.ADL * totals.pricing.adultUnit)}</td>
             </tr>
             <tr>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">CHD</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${totals.pax.CHD}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pricing.childUnit)}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pax.CHD * totals.pricing.childUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);">CHD</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${totals.pax.CHD}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${formatMoney(totals.pricing.childUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${formatMoney(totals.pax.CHD * totals.pricing.childUnit)}</td>
             </tr>
             <tr>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);">INF</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${totals.pax.INF}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pricing.infantUnit)}</td>
-              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #F1F3F6);text-align:right;">${formatMoney(totals.pax.INF * totals.pricing.infantUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);">INF</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${totals.pax.INF}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${formatMoney(totals.pricing.infantUnit)}</td>
+              <td style="padding:6px 8px;border-bottom:1px solid var(--token-surface-2, #f7f7f7);text-align:right;">${formatMoney(totals.pax.INF * totals.pricing.infantUnit)}</td>
             </tr>
           </tbody>
         </table>
         <div style="display:flex;justify-content:flex-end;margin-top:10px;">
-          <div style="width:320px;border:1px solid var(--token-border, #D9DEE7);border-radius:12px;padding:10px;">
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--token-muted, #5B6474);">
+          <div style="width:320px;border:1px solid var(--token-border, #e5e5e5);border-radius:12px;padding:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--token-muted, #777777);">
               <span>Commission agence</span>
               <span>${formatMoney(totals.commissionTotal)}</span>
             </div>
@@ -311,7 +311,7 @@ export default function SalesPage() {
               <span>Total</span>
               <span>${formatMoney(booking.payment.totalPrice)}</span>
             </div>
-            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--token-muted, #5B6474);">
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--token-muted, #777777);">
               <span>Payé</span>
               <span>${formatMoney(booking.payment.paidAmount)}</span>
             </div>
@@ -343,7 +343,7 @@ export default function SalesPage() {
       const h = pdf.internal.pageSize.getHeight();
       pdf.setFontSize(9);
       pdf.setTextColor(100);
-      pdf.text(`Nouba Plus`, 12, h - 10);
+      pdf.text(`TravelOPS`, 12, h - 10);
       pdf.text(`${generatedAt}`, w / 2, h - 10, { align: "center" });
       pdf.text(`Page ${i}/${total}`, w - 12, h - 10, { align: "right" });
     }
@@ -450,7 +450,7 @@ export default function SalesPage() {
                   id="booking-sort"
                   value={sort}
                   onChange={(e) => setSort(e.target.value as SortKey)}
-                  className="h-10 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm font-semibold text-[var(--text)] shadow-sm outline-none transition focus:border-[var(--token-accent, #F28C28)] focus-visible:ring-2 focus-visible:ring-[var(--token-accent, #F28C28)]/20"
+                  className="h-10 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm font-semibold text-[var(--text)] shadow-sm outline-none transition focus:border-[var(--token-accent)] focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/20"
                 >
                   <option value="recent">Recents</option>
                   <option value="priceAsc">Prix min +</option>
@@ -569,7 +569,7 @@ export default function SalesPage() {
             />
           ) : (
             <Table className="min-w-[720px]">
-              <THead className="sticky top-0 z-10 bg-[var(--token-surface-2, #F1F3F6)]/90 backdrop-blur">
+              <THead className="sticky top-0 z-10 bg-[var(--token-surface-2, #f7f7f7)]/90 backdrop-blur">
                 <TR>
                   {visibleColumns.package ? (
                     <TH className={cn("text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]", compactHeader)}>
@@ -618,16 +618,12 @@ export default function SalesPage() {
                   const pkg = packageMap[booking.packageId];
                   const status = paymentStatus(booking.payment);
                   const statusClass =
-                    status.label === "paid"
-                      ? "border-[var(--token-primary)]/30 bg-[var(--token-surface-2, #F1F3F6)] text-[var(--token-primary)]"
-                      : status.label === "partial"
-                        ? "border-[var(--token-accent, #F28C28)]/30 bg-[var(--token-surface-2, #F1F3F6)] text-[var(--token-accent, #F28C28)]"
-                        : status.label === "overpaid"
-                          ? "border-[var(--token-primary)]/30 bg-[var(--token-surface-2, #F1F3F6)] text-[var(--token-primary)]"
-                          : "border-[var(--border)] bg-[var(--token-surface-2, #F1F3F6)] text-[var(--text)]";
+                    status.label === "paid" || status.label === "overpaid"
+                      ? "border-[var(--token-primary)]/30 bg-[var(--token-surface-2)] text-[var(--token-primary)]"
+                      : "border-[var(--border)] bg-[var(--token-surface-2)] text-[var(--text)]";
 
                   return (
-                    <TR key={booking.id} className="transition-colors duration-150 hover:bg-[var(--token-surface-2, #F1F3F6)]">
+                    <TR key={booking.id} className="transition-colors duration-150 hover:bg-[var(--token-surface-2)]">
                       {visibleColumns.package ? (
                         <TD className={cn("min-w-[220px]", compactCell)}>
                           <div
@@ -647,7 +643,7 @@ export default function SalesPage() {
                               {pkg?.general.productName ?? "Package inconnu"}
                             </p>
                             <p className={cn("truncate text-xs text-[var(--muted)]", density === "compact" && "text-[11px]")}>
-                              {pkg?.general.productCode ?? "-"} - {pkg?.flights.destination ?? "-"}
+                              <span className="font-mono">{pkg?.general.productCode ?? "-"}</span> - {pkg?.flights.destination ?? "-"}
                             </p>
                           </div>
                         </TD>
@@ -683,7 +679,13 @@ export default function SalesPage() {
                       ) : null}
                       {visibleColumns.hold ? (
                         <TD className={compactCell}>
-                          <span className="text-sm text-[var(--muted)]">{booking.reservedUntil || "-"}</span>
+                          <span className="text-sm text-[var(--muted)]">
+                            {booking.reservedUntil ? (
+                              <span className="font-mono">{booking.reservedUntil}</span>
+                            ) : (
+                              "-"
+                            )}
+                          </span>
                         </TD>
                       ) : null}
                       {visibleColumns.actions ? (
@@ -746,9 +748,16 @@ export default function SalesPage() {
                   {packageMap[drawerBooking.packageId]?.general.productName ?? "Package inconnu"}
                 </p>
                 <p className="text-xs text-[var(--muted)]">
-                  #{packageMap[drawerBooking.packageId]?.general.productCode ?? "-"}
+                  <span className="font-mono">#{packageMap[drawerBooking.packageId]?.general.productCode ?? "-"}</span>
                 </p>
               </div>
+            </section>
+
+            <section className="space-y-2 py-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+                Booking ID
+              </p>
+              <p className="text-base font-mono text-[var(--text)]">{drawerBooking.id}</p>
             </section>
 
             <section className="grid gap-3 py-4 text-sm sm:grid-cols-2">
@@ -776,7 +785,13 @@ export default function SalesPage() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
                   Hold until
                 </p>
-                <p className="text-base text-[var(--text)]">{drawerBooking.reservedUntil || "-"}</p>
+                <p className="text-base text-[var(--text)]">
+                  {drawerBooking.reservedUntil ? (
+                    <span className="font-mono">{drawerBooking.reservedUntil}</span>
+                  ) : (
+                    "-"
+                  )}
+                </p>
               </div>
             </section>
 

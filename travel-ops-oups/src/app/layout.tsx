@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Fragment_Mono, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import AppShell from "../components/AppShell";
 import ThemeProvider from "../components/ThemeProvider";
 
-const spaceGrotesk = Space_Grotesk({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
+  weight: ["400", "500", "600"],
+  variable: "--font-inter",
 });
 
-const fragmentMono = Fragment_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-fragment-mono",
+  weight: ["500"],
+  variable: "--font-ibm-plex-mono",
 });
 
 const themeInitScript = `
@@ -34,7 +34,7 @@ const themeInitScript = `
 `;
 
 export const metadata: Metadata = {
-  title: "Nouba Plus",
+  title: "TravelOPS",
   description: "Backoffice voyage Next.js local-only",
 };
 
@@ -45,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className={`${spaceGrotesk.variable} ${fragmentMono.variable} min-h-screen transition-colors`}>
+      <body className={`${inter.variable} ${ibmPlexMono.variable} min-h-screen transition-colors`}>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
           <AppShell>{children}</AppShell>

@@ -33,7 +33,7 @@ export default function Topbar({ onOpenSidebar }: Props) {
             href="/"
             className="hidden text-sm font-semibold uppercase tracking-[0.2em] text-[var(--text)]/80 transition hover:text-primary lg:inline"
           >
-            Nouba Plus
+            TravelOPS
           </Link>
         </div>
 
@@ -47,7 +47,7 @@ export default function Topbar({ onOpenSidebar }: Props) {
             className="rounded-full border border-[var(--border)] bg-[var(--token-surface)] px-3 text-[var(--text)] hover:bg-[var(--token-surface-2)]"
           >
             {resolvedTheme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] font-mono">{themeLabel}</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em]">{themeLabel}</span>
           </Button>
 
           <Link href="/dashboard" className="inline-flex">

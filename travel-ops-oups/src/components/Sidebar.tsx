@@ -70,7 +70,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
               collapsed ? "sr-only" : "opacity-100"
             )}
           >
-            Nouba Plus
+            TravelOPS
           </span>
         </Link>
 
@@ -91,8 +91,7 @@ export default function Sidebar({ open = false, onClose }: Props) {
             <p
               className={cn(
             "px-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)] transition duration-200",
-                collapsed ? "opacity-0" : "opacity-100",
-                "font-mono"
+                collapsed ? "opacity-0" : "opacity-100"
               )}
             >
               {section.label}

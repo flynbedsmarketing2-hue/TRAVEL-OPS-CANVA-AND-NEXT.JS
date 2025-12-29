@@ -221,7 +221,7 @@ export default function OpsPage() {
                             {pkg.general.productName || "Sans nom"}
                           </p>
                           <p className="truncate text-xs text-[var(--muted)] dark:text-[var(--muted)]">
-                            {pkg.general.productCode} • {pkg.flights.destination || "—"}
+                            <span className="font-mono">{pkg.general.productCode}</span> - {pkg.flights.destination || "-"}
                           </p>
                         </div>
                       </TD>
