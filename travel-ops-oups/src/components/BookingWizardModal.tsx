@@ -172,7 +172,7 @@ export default function BookingWizardModal({
         </div>
 
         <div className="grid gap-4 p-6 lg:grid-cols-[1fr,320px]">
-          <div className="space-y-4">
+          <div className="space-y-4 lg:max-h-[70vh] lg:overflow-y-auto">
             <StepTabs step={step} setStep={setStep} />
 
             {step === "package" ? (
@@ -568,7 +568,7 @@ function StepTabs({
   ];
 
   return (
-    <div className="sticky top-4 z-10 space-y-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left">
+    <div className="sticky self-start top-4 z-10 space-y-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left">
       {items.map(({ key, label, description }, index) => {
         const active = step === key;
         return (
