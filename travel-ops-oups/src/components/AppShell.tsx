@@ -24,7 +24,7 @@ import { ToastProvider } from "./ui/toast";
 import { useBookingStore } from "../stores/useBookingStore";
 import { useCrmStore } from "../stores/useCrmStore";
 import { useMarketingStore } from "../stores/useMarketingStore";
-import { usePackageStore } from "../stores/usePackageStore";
+import { useProductStore } from "../stores/useProductStore";
 import { useResolvedTheme } from "../hooks/useResolvedTheme";
 import { useTaskStore } from "../stores/useTaskStore";
 import { useUiStore } from "../stores/useUiStore";
@@ -33,7 +33,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const loadPackages = usePackageStore((state) => state.loadFromServer);
+  const loadProducts = useProductStore((state) => state.loadFromServer);
   const loadBookings = useBookingStore((state) => state.loadFromServer);
   const loadCrm = useCrmStore((state) => state.loadFromServer);
   const loadTasks = useTaskStore((state) => state.loadFromServer);
@@ -125,7 +125,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const paletteClose = palette.close;
 
   useEffect(() => {
-    void loadPackages();
+    void loadProducts();
     void loadBookings();
     void loadCrm();
     void loadTasks();
@@ -148,7 +148,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     const observer = new MutationObserver(syncInertState);
     observer.observe(node, { attributes: true, attributeFilter: ["aria-hidden", "data-aria-hidden"] });
     return () => observer.disconnect();
-  }, [loadBookings, loadPackages, loadCrm, loadTasks, loadMarketing]);
+  }, [loadBookings, loadProducts, loadCrm, loadTasks, loadMarketing]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {

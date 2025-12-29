@@ -12,14 +12,25 @@ import {
   Users,
   WalletCards,
 } from "lucide-react";
-import { usePackageStore } from "../../../../stores/usePackageStore";
-import type { OpsGroup, OpsPaymentStep, OpsTimelineItem, Supplier } from "../../../../types";
+import { useProductStore } from "../../../../stores/useProductStore";
+import { useOpsStatusStore } from "../../../../stores/useOpsStatusStore";
+import type { OpsGroup, OpsPaymentStep, OpsStatus, OpsTimelineItem, Supplier, TravelPackage } from "../../../../types";
 import { daysUntil, groupAlerts, paymentStepStatus, supplierDeadlineStatus } from "../../../../lib/ops";
+import { mapProductToTravelPackage } from "../../../../lib/productAdapter";
 
 type TabKey = "overview" | "air" | "land" | "team";
 
 const tabStorageKey = (packageId: string, groupId: string) =>
   `travelops:ops-tab:${packageId}:${groupId}`;
+
+const applyOpsOverrides = (pkg: TravelPackage, overrides: Record<string, OpsStatus>): TravelPackage => {
+  if (!pkg.opsProject) return pkg;
+  const groups = pkg.opsProject.groups.map((group) => ({
+    ...group,
+    status: overrides[`${pkg.id}:${group.id}`] ?? group.status,
+  }));
+  return { ...pkg, opsProject: { ...pkg.opsProject, groups } };
+};
 
 export default function OpsGroupPage() {
   const params = useParams<{ packageId: string; groupId: string }>();
@@ -28,21 +39,62 @@ export default function OpsGroupPage() {
 
   const canValidate = true;
 
-  const {
-    packages,
-    updateOpsGroupStatus,
-    addSupplier,
-    removeSupplier,
-    addCostStep,
-    updateCostStep,
-    removeCostStep,
-    addTimelineItem,
-    updateTimelineItem,
-    removeTimelineItem,
-  } = usePackageStore();
+  const products = useProductStore((state) => state.products);
+  const statusByKey = useOpsStatusStore((state) => state.statusByKey);
+  const updateOpsGroupStatus = useOpsStatusStore((state) => state.setStatus);
+  const packages = useMemo(
+    () => products.map(mapProductToTravelPackage).map((pkg) => applyOpsOverrides(pkg, statusByKey)),
+    [products, statusByKey]
+  );
 
   const pkg = packages.find((p) => p.id === packageId);
-  const group = pkg?.opsProject?.groups.find((g) => g.id === groupId) as OpsGroup | undefined;
+  const groupFromPackages = pkg?.opsProject?.groups.find((g) => g.id === groupId) as OpsGroup | undefined;
+  const [groupState, setGroupState] = useState<OpsGroup | null>(groupFromPackages ?? null);
+
+  useEffect(() => {
+    setGroupState(groupFromPackages ?? null);
+  }, [groupFromPackages]);
+
+  const activeGroup = groupState ?? groupFromPackages;
+
+  const updateGroupState = (updater: (current: OpsGroup) => OpsGroup) => {
+    setGroupState((prev) => (prev ? updater(prev) : prev));
+  };
+
+  const handleStatusChange = (next: OpsStatus) => {
+    if (!pkg || !activeGroup) return;
+    updateOpsGroupStatus(pkg.id, activeGroup.id, next);
+    updateGroupState((current) => ({ ...current, status: next }));
+  };
+
+  const addSupplier = (supplier: Supplier) =>
+    updateGroupState((current) => ({ ...current, suppliers: [...current.suppliers, supplier] }));
+  const removeSupplier = (idx: number) =>
+    updateGroupState((current) => ({
+      ...current,
+      suppliers: current.suppliers.filter((_, index) => index !== idx),
+    }));
+  const addCostStep = (step: OpsPaymentStep) =>
+    updateGroupState((current) => ({ ...current, costs: [...current.costs, step] }));
+  const updateCostStep = (idx: number, update: Partial<OpsPaymentStep>) =>
+    updateGroupState((current) => ({
+      ...current,
+      costs: current.costs.map((cost, index) => (index === idx ? { ...cost, ...update } : cost)),
+    }));
+  const removeCostStep = (idx: number) =>
+    updateGroupState((current) => ({ ...current, costs: current.costs.filter((_, index) => index !== idx) }));
+  const addTimelineItem = (item: OpsTimelineItem) =>
+    updateGroupState((current) => ({ ...current, timeline: [...current.timeline, item] }));
+  const updateTimelineItem = (idx: number, update: Partial<OpsTimelineItem>) =>
+    updateGroupState((current) => ({
+      ...current,
+      timeline: current.timeline.map((entry, index) => (index === idx ? { ...entry, ...update } : entry)),
+    }));
+  const removeTimelineItem = (idx: number) =>
+    updateGroupState((current) => ({
+      ...current,
+      timeline: current.timeline.filter((_, index) => index !== idx),
+    }));
 
   const localKey = tabStorageKey(packageId, groupId);
   const [tab, setTab] = useState<TabKey>(() => {
@@ -56,11 +108,11 @@ export default function OpsGroupPage() {
     window.localStorage.setItem(localKey, tab);
   }, [localKey, tab]);
 
-  const dday = daysUntil(group?.departureDate);
-  const alerts = group ? groupAlerts(group) : { overdueCosts: 0, overdueSuppliers: 0 };
-  const title = pkg && group ? `${pkg.general.productName} • ${group.flightLabel}` : "Ops group";
+  const dday = daysUntil(activeGroup?.departureDate);
+  const alerts = activeGroup ? groupAlerts(activeGroup) : { overdueCosts: 0, overdueSuppliers: 0 };
+  const title = pkg && activeGroup ? `${pkg.general.productName} ${activeGroup.flightLabel}` : "Ops group";
 
-  if (!pkg || !group) {
+  if (!pkg || !activeGroup) {
     return (
       <div className="section-shell space-y-3">
         <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">Groupe Ops introuvable.</p>
@@ -74,6 +126,8 @@ export default function OpsGroupPage() {
       </div>
     );
   }
+
+  const group = activeGroup;
 
   return (
     <div className="space-y-6">
@@ -106,7 +160,7 @@ export default function OpsGroupPage() {
             {canValidate ? (
               group.status === "validated" ? (
                 <button
-                  onClick={() => updateOpsGroupStatus(pkg.id, group.id, "pending_validation")}
+                  onClick={() => handleStatusChange("pending_validation")}
                   className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--text)] dark:border-[var(--border)] dark:text-[var(--token-inverse)]"
                   type="button"
                 >
@@ -115,7 +169,7 @@ export default function OpsGroupPage() {
                 </button>
               ) : (
                 <button
-                  onClick={() => updateOpsGroupStatus(pkg.id, group.id, "validated")}
+                  onClick={() => handleStatusChange("validated")}
                   className="inline-flex items-center gap-2 rounded-full bg-[var(--token-accent)] px-4 py-2 text-sm font-semibold text-[var(--token-inverse)] shadow-sm"
                   type="button"
                 >
@@ -135,19 +189,19 @@ export default function OpsGroupPage() {
             {tab === "land" ? (
               <LandTab
                 group={group}
-                onAddSupplier={(s) => addSupplier(pkg.id, group.id, s)}
-                onRemoveSupplier={(idx) => removeSupplier(pkg.id, group.id, idx)}
-                onAddCost={(c) => addCostStep(pkg.id, group.id, c)}
-                onUpdateCost={(idx, u) => updateCostStep(pkg.id, group.id, idx, u)}
-                onRemoveCost={(idx) => removeCostStep(pkg.id, group.id, idx)}
+                onAddSupplier={addSupplier}
+                onRemoveSupplier={removeSupplier}
+                onAddCost={addCostStep}
+                onUpdateCost={updateCostStep}
+                onRemoveCost={removeCostStep}
               />
             ) : null}
             {tab === "team" ? (
               <TeamTab
                 group={group}
-                onAddTimeline={(t) => addTimelineItem(pkg.id, group.id, t)}
-                onUpdateTimeline={(idx, u) => updateTimelineItem(pkg.id, group.id, idx, u)}
-                onRemoveTimeline={(idx) => removeTimelineItem(pkg.id, group.id, idx)}
+                onAddTimeline={addTimelineItem}
+                onUpdateTimeline={updateTimelineItem}
+                onRemoveTimeline={removeTimelineItem}
               />
             ) : null}
           </div>
@@ -610,4 +664,7 @@ function TimelineEditor({
     </div>
   );
 }
+
+
+
 

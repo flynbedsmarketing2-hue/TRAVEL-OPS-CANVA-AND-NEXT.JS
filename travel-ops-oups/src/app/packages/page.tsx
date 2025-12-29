@@ -1,390 +1,191 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element */
-
 import Link from "next/link";
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Download, Plus, Upload } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Copy, Plus, Send, Trash2 } from "lucide-react";
 import PageHeader from "../../components/layout/PageHeader";
-import { Button, buttonClassName } from "../../components/ui/button";
+import { buttonClassName } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
-import { cn } from "../../components/ui/cn";
 import TableToolbar from "../../components/tables/TableToolbar";
-import { usePackageStore } from "../../stores/usePackageStore";
-import type { TravelPackage } from "../../types";
-import RowActionsMenu from "../../components/RowActionsMenu";
+import { Table, TBody, TD, THead, TH, TR } from "../../components/ui/table";
+import { useProductStore } from "../../stores/useProductStore";
 import { EmptyState } from "../../components/ui/EmptyState";
-import CardSkeleton from "../../components/ui/CardSkeleton";
-import { useToast } from "../../components/ui/toast";
-
-type StatusFilter = "all" | "published" | "draft";
-type SortKey = "recent" | "priceAsc" | "priceDesc" | "stockDesc";
-
-function minPrice(pkg: TravelPackage): number {
-  return pkg.pricing.reduce((acc, p) => (p.unitPrice > 0 ? Math.min(acc, p.unitPrice) : acc), Infinity);
-}
-
-function avgCommission(pkg: TravelPackage): number {
-  if (!pkg.pricing.length) return 0;
-  return pkg.pricing.reduce((sum, p) => sum + (p.commission ?? 0), 0) / pkg.pricing.length;
-}
-
-function formatMoney(n: number): string {
-  if (!Number.isFinite(n) || n === Infinity) return "-";
-  return `${Math.round(n)} DZD`;
-}
-
-function asPackageArray(value: unknown): TravelPackage[] | null {
-  if (!Array.isArray(value)) return null;
-  return value as TravelPackage[];
-}
-
-function StatusPill({ status }: { status: TravelPackage["status"] }) {
-  const styles =
-    status === "published"
-      ? "border-[var(--token-primary)]/20 bg-[var(--token-surface-2)] text-[var(--token-primary)]"
-      : "border-[var(--token-accent)]/30 bg-[var(--token-surface-2)] text-[var(--token-accent)]";
-  return (
-    <span className={cn("inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold", styles)}>
-      {status === "published" ? "Publie" : "Brouillon"}
-    </span>
-  );
-}
-
-function Kpi({ label, value }: { label: string; value: number }) {
-  return (
-    <Card>
-      <CardContent className="space-y-1 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{label}</p>
-        <p className="font-heading text-2xl font-semibold text-[var(--text)]">{value}</p>
-      </CardContent>
-    </Card>
-  );
-}
+import { cn } from "../../components/ui/cn";
 
 export default function PackagesPage() {
-  const { packages, duplicatePackage, deletePackage, importPackages, exportPackages } = usePackageStore();
-  const fileRef = useRef<HTMLInputElement | null>(null);
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const { toast } = useToast();
-
+  const { products, duplicateDraft, publishProduct, deleteProduct } = useProductStore();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [sort, setSort] = useState<SortKey>("recent");
-  const isLoading = false; // TODO: feed the real loading state from packages store
-
-  const stats = useMemo(() => {
-    const total = packages.length;
-    const published = packages.filter((p) => p.status === "published").length;
-    const draft = packages.filter((p) => p.status === "draft").length;
-    return { total, published, draft };
-  }, [packages]);
+  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return packages
-      .filter((pkg) => (statusFilter === "all" ? true : pkg.status === statusFilter))
-      .filter((pkg) => {
-        if (!q) return true;
-        const haystack = `${pkg.general.productName} ${pkg.general.productCode} ${pkg.flights.destination} ${pkg.general.responsible} ${pkg.flights.cities.join(" ")}`.toLowerCase();
-        return haystack.includes(q);
-      })
-      .sort((a, b) => {
-        if (sort === "recent") return new Date(b.general.creationDate).getTime() - new Date(a.general.creationDate).getTime();
-        if (sort === "priceAsc") return minPrice(a) - minPrice(b);
-        if (sort === "priceDesc") return minPrice(b) - minPrice(a);
-        if (sort === "stockDesc") return b.general.stock - a.general.stock;
-        return 0;
-      });
-  }, [packages, search, sort, statusFilter]);
-
-  const resetPackageFilters = () => {
-    setSearch("");
-    setStatusFilter("all");
-    setSort("recent");
-  };
-
-  const handleExport = () => {
-    const data = exportPackages();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `travelops-packages-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast({
-      title: "Export terminé",
-      description: `${data.length} package(s) téléchargé(s) en JSON.`,
-      variant: "success",
+    return products.filter((product) => {
+      if (statusFilter !== "all" && product.status !== statusFilter) return false;
+      if (!q) return true;
+      const haystack = `${product.name} ${product.productId ?? ""} ${product.partner.name ?? ""}`.toLowerCase();
+      return haystack.includes(q);
     });
-  };
+  }, [products, search, statusFilter]);
 
-  const handleImportFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const text = await file.text();
-    try {
-      const parsed: unknown = JSON.parse(text);
-      const imported = asPackageArray(parsed);
-      if (!imported) {
-        window.alert("JSON invalide: tableau attendu.");
-        toast({
-          title: "Import échoué",
-          description: "JSON invalide: tableau attendu.",
-          variant: "error",
-        });
-        return;
-      }
-      const mode = window.confirm("Replace existing packages? (OK = replace, Cancel = merge)")
-        ? "replace"
-        : "merge";
-      const count = importPackages(imported, mode);
-      window.alert(`Import termine : ${count} package(s).`);
-      toast({
-        title: "Import terminé",
-        description: `${count} package(s) ${mode === "replace" ? "remplacé(s)" : "fusionné(s)"}.`,
-        variant: "success",
-      });
-    } catch {
-      window.alert("JSON invalide.");
-      toast({ title: "Import échoué", description: "JSON invalide.", variant: "error" });
-    } finally {
-      e.currentTarget.value = "";
-    }
-  };
+  const stats = useMemo(() => {
+    const total = products.length;
+    const published = products.filter((p) => p.status === "published").length;
+    const draft = products.filter((p) => p.status === "draft").length;
+    return { total, published, draft };
+  }, [products]);
 
-  const isEmpty = !isLoading && packages.length === 0;
-  const hasNoResults = !isLoading && filtered.length === 0 && packages.length > 0;
-
-  const packageStatusChips = [
+  const statusChips = [
     { label: "Tous", active: statusFilter === "all", onClick: () => setStatusFilter("all") },
     { label: "Publies", active: statusFilter === "published", onClick: () => setStatusFilter("published") },
     { label: "Brouillons", active: statusFilter === "draft", onClick: () => setStatusFilter("draft") },
   ];
 
-  useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      const isEditable =
-        target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
-      if (event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey && !isEditable) {
-        event.preventDefault();
-        searchInputRef.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
-
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Packages"
-        title="Gestion des offres"
-        subtitle="Filtres rapides, import/export JSON, creation en local."
+        eyebrow="Produits"
+        title="Packages produit maison"
+        subtitle="Gestion des produits (brouillons et publies)."
         actions={
-          <>
-            <Button variant="outline" onClick={handleExport}>
-                <Download className="h-4 w-4" />
-                Export JSON
-              </Button>
-
-            <Button variant="outline" onClick={() => fileRef.current?.click()}>
-              <Upload className="h-4 w-4" />
-              Import JSON
-            </Button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="application/json"
-              className="hidden"
-              onChange={handleImportFile}
-            />
-
-            <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
-              <Plus className="h-4 w-4" />
-              Creer
-            </Link>
-          </>
+          <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
+            <Plus className="h-4 w-4" />
+            Creer
+          </Link>
         }
       />
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Kpi label="Total" value={stats.total} />
-          <Kpi label="Publies" value={stats.published} />
-          <Kpi label="Brouillons" value={stats.draft} />
-        </div>
-
+      <div className="grid gap-4 sm:grid-cols-3">
         <Card>
-          <CardContent className="space-y-4 pt-5">
-            <TableToolbar
-              search={{
-                value: search,
-                onChange: (value) => setSearch(value),
-                placeholder: "Rechercher un package",
-                ariaLabel: "Rechercher un package",
-                inputRef: searchInputRef,
-              }}
-              leftActions={
-                <>
-                  <label htmlFor="package-sort" className="sr-only">
-                    Sort packages
-                  </label>
-                  <select
-                    id="package-sort"
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value as SortKey)}
-                    className="h-10 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--token-surface)] px-3 text-sm font-semibold text-[var(--text)] shadow-sm outline-none transition focus:border-[var(--token-accent)] focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]/20"
-                  >
-                    <option value="recent">Recents</option>
-                    <option value="priceAsc">Prix min +</option>
-                    <option value="priceDesc">Prix min -</option>
-                    <option value="stockDesc">Stock -</option>
-                  </select>
-                </>
-              }
-              chips={packageStatusChips}
-              rightActions={
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
-                  {filtered.length} packages
-                </span>
-              }
-            />
+          <CardContent className="space-y-1 py-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Total</p>
+            <p className="text-2xl font-semibold text-[var(--text)]">{stats.total}</p>
           </CardContent>
         </Card>
+        <Card>
+          <CardContent className="space-y-1 py-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Publies</p>
+            <p className="text-2xl font-semibold text-[var(--text)]">{stats.published}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="space-y-1 py-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Brouillons</p>
+            <p className="text-2xl font-semibold text-[var(--text)]">{stats.draft}</p>
+          </CardContent>
+        </Card>
+      </div>
 
-        {isLoading ? (
-          <Card>
-            <CardContent className="space-y-4">
-              <CardSkeleton items={3} />
-            </CardContent>
-          </Card>
-        ) : isEmpty ? (
-          <EmptyState
-            icon={
-              <Download className="h-10 w-10 rounded-full bg-[var(--token-primary)]/10 p-2 text-[var(--token-primary)]" />
-            }
-            title="Aucun package"
-            description="Créez une offre pour suivre vos ventes et vos stocks."
-            primaryAction={
-              <Link href="/packages/new">
-                <Button>
-                  <Plus className="h-4 w-4" />
-                  Créer une offre
-                </Button>
-              </Link>
-            }
-            secondaryAction={
-              <Button variant="outline" onClick={() => fileRef.current?.click()}>
-                Importer JSON
-              </Button>
-            }
-            variant="section"
-            className="mt-3"
-          />
-        ) : hasNoResults ? (
-          <EmptyState
-            icon={
-              <Download className="h-10 w-10 rounded-full bg-[var(--token-primary)]/10 p-2 text-[var(--token-primary)]" />
-            }
-            title="Aucun résultat"
-            description="Aucun package ne correspond aux filtres sélectionnés."
-            primaryAction={
-              <Button variant="ghost" onClick={resetPackageFilters}>
-                Réinitialiser les filtres
-              </Button>
-            }
-            secondaryAction={
-              <Button variant="outline" onClick={() => setSearch("")}>
-                Effacer la recherche
-              </Button>
-            }
-            variant="inline"
-            className="mt-3"
-          />
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2">
-            {filtered.map((pkg) => {
-              const price = minPrice(pkg);
-              const commission = avgCommission(pkg);
-              const image = pkg.general.imageUrl;
-              return (
-                <Card key={pkg.id} className="overflow-hidden">
-                  <div className="relative h-36 bg-[var(--token-surface-2)]">
-                    {image ? (
-                      <img src={image} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="h-full w-full bg-[var(--token-surface-2)]" />
-                    )}
-                    <div className="absolute inset-0 bg-[var(--token-text)]/35" />
-                    <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-[var(--token-inverse)]">
-                          {pkg.general.productName || "Sans nom"}
-                        </p>
-                        <p className="truncate text-xs text-[var(--token-inverse)] opacity-80">
-                          <span className="font-mono">{pkg.general.productCode || "-"}</span> - {pkg.flights.destination || "-"}
-                        </p>
-                      </div>
-                      <StatusPill status={pkg.status} />
-                    </div>
+      <TableToolbar
+        search={{
+          value: search,
+          onChange: setSearch,
+          placeholder: "Rechercher un produit",
+          ariaLabel: "Rechercher un produit",
+        }}
+        chips={statusChips}
+        rightActions={
+          <span className="text-xs text-[var(--muted)]">{filtered.length} resultats</span>
+        }
+      />
+
+      {products.length === 0 ? (
+        <EmptyState
+          title="Aucun produit"
+          description="Commence par creer un produit maison."
+          actionLabel="Creer un produit"
+          onAction={() => (window.location.href = "/packages/new")}
+        />
+      ) : null}
+
+      {products.length > 0 && filtered.length === 0 ? (
+        <EmptyState title="Aucun resultat" description="Aucun produit ne correspond a ces filtres." />
+      ) : null}
+
+      {filtered.length ? (
+        <Table>
+          <THead>
+            <TR>
+              <TH>Nom</TH>
+              <TH>ID produit</TH>
+              <TH>Statut</TH>
+              <TH>Pax</TH>
+              <TH>Mis a jour</TH>
+              <TH className="text-right">Actions</TH>
+            </TR>
+          </THead>
+          <TBody>
+            {filtered.map((product) => (
+              <TR key={product.id}>
+                <TD>
+                  <div className="space-y-1">
+                    <Link href={`/packages/${product.id}`} className="font-semibold hover:underline">
+                      {product.name || "Produit sans nom"}
+                    </Link>
+                    <div className="text-xs text-[var(--muted)]">{product.productType}</div>
                   </div>
-
-                  <CardContent className="space-y-4 pt-5">
-                    <div className="grid gap-2 text-sm text-[var(--text)] sm:grid-cols-3">
-                      <div className="space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-                          Stock
-                        </p>
-                        <p className="font-semibold text-[var(--text)]">{pkg.general.stock} pax</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-                          Prix min
-                        </p>
-                        <p className="font-semibold text-[var(--text)]">{formatMoney(price)}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-                          Commission
-                        </p>
-                        <p className="font-semibold text-[var(--text)]">{formatMoney(commission)}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <Link href={`/packages/${pkg.id}`} className={buttonClassName({ variant: "outline", size: "sm" })}>
-                        Open
-                      </Link>
-                      <RowActionsMenu
-                        actions={[
-                          { label: "Open", href: `/packages/${pkg.id}` },
-                          {
-                            label: "Duplicate",
-                            onClick: () => {
-                              const copyOps = window.confirm("Duplicate with existing ops? (OK = copy, Cancel = regenerate)");
-                              duplicatePackage(pkg.id, { copyOps });
-                            },
-                          },
-                          {
-                            label: "Delete",
-                            tone: "danger",
-                            onClick: () => {
-                              if (!window.confirm("Delete this package?")) return;
-                              deletePackage(pkg.id);
-                            },
-                          },
-                        ]}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
+                </TD>
+                <TD className="font-mono text-xs">
+                  {product.productId || "Brouillon"}
+                </TD>
+                <TD>
+                  <span
+                    className={cn(
+                      "rounded-full border px-3 py-1 text-xs font-semibold",
+                      product.status === "published"
+                        ? "border-[var(--token-primary)]/20 bg-[var(--token-surface-2)] text-[var(--token-primary)]"
+                        : "border-[var(--token-accent)]/30 bg-[var(--token-surface-2)] text-[var(--token-accent)]"
+                    )}
+                  >
+                    {product.status === "published" ? "Publie" : "Brouillon"}
+                  </span>
+                </TD>
+                <TD>{product.paxCount}</TD>
+                <TD>{new Date(product.updatedAt).toLocaleDateString()}</TD>
+                <TD className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Link
+                      href={`/packages/${product.id}`}
+                      className={buttonClassName({ variant: "outline", size: "sm" })}
+                    >
+                      Editer
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => void duplicateDraft(product.id)}
+                      className={buttonClassName({ variant: "outline", size: "sm" })}
+                    >
+                      <Copy className="h-4 w-4" />
+                      Dupliquer
+                    </button>
+                    {product.status === "draft" ? (
+                      <button
+                        type="button"
+                        onClick={() => void publishProduct(product.id)}
+                        className={buttonClassName({ variant: "primary", size: "sm" })}
+                      >
+                        <Send className="h-4 w-4" />
+                        Publier
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm("Supprimer ce produit ?")) {
+                          void deleteProduct(product.id);
+                        }
+                      }}
+                      className={buttonClassName({ variant: "outline", size: "sm" })}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Supprimer
+                    </button>
+                  </div>
+                </TD>
+              </TR>
+            ))}
+          </TBody>
+        </Table>
+      ) : null}
     </div>
   );
 }
-

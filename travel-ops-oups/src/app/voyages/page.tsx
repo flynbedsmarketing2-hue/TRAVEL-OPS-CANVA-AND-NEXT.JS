@@ -7,11 +7,13 @@ import { Plane } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { buttonClassName } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
-import { usePackageStore } from "../../stores/usePackageStore";
+import { useMemo } from "react";
+import { useProductStore } from "../../stores/useProductStore";
+import { mapProductToTravelPackage } from "../../lib/productAdapter";
 
 export default function VoyagesPage() {
-  const { packages } = usePackageStore();
-
+  const products = useProductStore((state) => state.products);
+  const packages = useMemo(() => products.map(mapProductToTravelPackage), [products]);
   const published = packages.filter((pkg) => pkg.status === "published");
 
   return (

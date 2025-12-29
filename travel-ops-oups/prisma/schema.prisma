@@ -44,6 +44,45 @@ enum ScenarioState {
   PUBLISHED
 }
 
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ProductType {
+  MAISON
+  TIERS
+  AUTRE
+}
+
+enum StopMode {
+  ONE_STOP
+  MULTI_STOPS
+}
+
+enum PensionType {
+  RO
+  BB
+  HB
+  FB
+  AI
+  UAI
+}
+
+enum ServiceMode {
+  PACKAGE
+  DETAILS
+}
+
+enum HotelRateCategory {
+  SINGLE
+  DOUBLE
+  TRIPLE
+  BABY
+  CHILD1
+  CHILD2
+}
+
 model PricingScenario {
   id             String                 @id @default(cuid())
   name           String
@@ -136,4 +175,91 @@ model PricingExport {
   payload     Json
   createdAt   DateTime        @default(now())
   scenario    PricingScenario @relation(fields: [scenarioId], references: [id])
+}
+
+model Product {
+  id                      String               @id @default(cuid())
+  productId               String?              @unique
+  status                  ProductStatus        @default(DRAFT)
+  productType             ProductType          @default(MAISON)
+  nights                  Int
+  days                    Int
+  name                    String
+  paxCount                Int
+  stopMode                StopMode             @default(ONE_STOP)
+  commissionAdultDzd      Float                @default(0)
+  commissionChildDzd      Float                @default(0)
+  commissionInfantDzd     Float                @default(0)
+  servicesMode            ServiceMode          @default(PACKAGE)
+  servicesPackagePrice    Float                @default(0)
+  servicesPackageCurrency String               @default("DZD")
+  servicesPackageRate     Float                @default(1)
+  servicesPackageIncludes Json                 @default("[]")
+  servicesOtherIncludes   Json                 @default("[]")
+  excursionsExtra         Json                 @default("[]")
+  programDays             Json                 @default("[]")
+  partnerName             String?
+  partnerPhone            String?
+  partnerWhatsapp         String?
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime             @updatedAt
+  departures              ProductDeparture[]
+  hotels                  ProductHotel[]
+  services                ProductService[]
+}
+
+model ProductDeparture {
+  id               String   @id @default(cuid())
+  productId        String
+  airline          String
+  airlineOther     String?
+  purchasePriceDzd Float    @default(0)
+  pnr              String?
+  documentUrl      String?
+  periodStart      DateTime?
+  periodEnd        DateTime?
+  flightPlan       String?
+  freePaxEnabled   Boolean  @default(false)
+  freePaxCount     Int      @default(0)
+  freePaxTaxesDzd  Float    @default(0)
+  product          Product  @relation(fields: [productId], references: [id])
+}
+
+model ProductHotel {
+  id          String            @id @default(cuid())
+  productId   String
+  city        String
+  name        String
+  mapLink     String?
+  stars       Int?
+  pension     PensionType
+  contractUrl String?
+  product     Product           @relation(fields: [productId], references: [id])
+  rates       ProductHotelRate[]
+}
+
+model ProductHotelRate {
+  id              String            @id @default(cuid())
+  hotelId         String
+  category        HotelRateCategory
+  publicFromPrice Float?
+  purchasePrice   Float             @default(0)
+  currency        String            @default("DZD")
+  exchangeRate    Float             @default(1)
+  salePrice       Float             @default(0)
+  comboLabel      String
+  childAgeMin     Int?
+  childAgeMax     Int?
+  withBed         Boolean?
+  hotel           ProductHotel      @relation(fields: [hotelId], references: [id])
+}
+
+model ProductService {
+  id            String   @id @default(cuid())
+  productId     String
+  name          String
+  purchasePrice Float    @default(0)
+  currency      String   @default("DZD")
+  exchangeRate  Float    @default(1)
+  product       Product  @relation(fields: [productId], references: [id])
 }

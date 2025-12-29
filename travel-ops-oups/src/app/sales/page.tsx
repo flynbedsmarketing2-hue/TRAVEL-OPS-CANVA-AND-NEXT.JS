@@ -10,9 +10,10 @@ import { Card, CardContent } from "../../components/ui/card";
 import { cn } from "../../components/ui/cn";
 import { Table, TBody, TD, THead, TH, TR } from "../../components/ui/table";
 import { useBookingStore } from "../../stores/useBookingStore";
-import { usePackageStore } from "../../stores/usePackageStore";
+import { useProductStore } from "../../stores/useProductStore";
 import type { Booking, TravelPackage } from "../../types";
 import { computeTotals, formatMoney, paymentStatus } from "../../lib/booking";
+import { mapProductToTravelPackage } from "../../lib/productAdapter";
 import RowActionsMenu from "../../components/RowActionsMenu";
 import { EmptyState } from "../../components/ui/EmptyState";
 import TableSkeleton from "../../components/ui/TableSkeleton";
@@ -78,11 +79,12 @@ const defaultBooking = (packageId: string | undefined): BookingDraft => ({
 
 export default function SalesPage() {
   const { bookings, addBooking, updateBooking, deleteBooking } = useBookingStore();
-  const { packages } = usePackageStore();
+  const products = useProductStore((state) => state.products);
   const { toast } = useToast();
   const [drawerBooking, setDrawerBooking] = useState<Booking | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
+  const packages = useMemo(() => products.map(mapProductToTravelPackage), [products]);
   const publishedPackages = packages.filter((p) => p.status === "published");
 
   const [draft, setDraft] = useState<BookingDraft>(defaultBooking(publishedPackages[0]?.id));

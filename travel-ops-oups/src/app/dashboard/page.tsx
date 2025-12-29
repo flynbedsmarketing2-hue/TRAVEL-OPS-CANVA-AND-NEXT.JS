@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import { useMemo } from "react";
 import {
   AlertTriangle,
   Bell,
@@ -21,9 +22,10 @@ import { buttonClassName } from "../../components/ui/button";
 import { useBookingStore } from "../../stores/useBookingStore";
 import { useCrmStore, leadStages } from "../../stores/useCrmStore";
 import { useMarketingStore } from "../../stores/useMarketingStore";
-import { usePackageStore } from "../../stores/usePackageStore";
+import { useProductStore } from "../../stores/useProductStore";
 import { useTaskStore } from "../../stores/useTaskStore";
 import type { ContentStatus, LeadStage } from "../../types";
+import { mapProductToTravelPackage } from "../../lib/productAdapter";
 
 const contentStatusLabels: Record<ContentStatus, string> = {
   idea: "Idea",
@@ -41,7 +43,8 @@ const isSoon = (iso: string | undefined, days = 7) => {
 };
 
 export default function DashboardPage() {
-  const { packages } = usePackageStore();
+  const products = useProductStore((state) => state.products);
+  const packages = useMemo(() => products.map(mapProductToTravelPackage), [products]);
   const { bookings } = useBookingStore();
   const tasks = useTaskStore((state) => state.tasks);
   const campaigns = useMarketingStore((state) => state.campaigns);

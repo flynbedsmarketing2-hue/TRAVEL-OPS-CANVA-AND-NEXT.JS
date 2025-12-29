@@ -10,9 +10,11 @@ import { cn } from "../../components/ui/cn";
 import { Input } from "../../components/ui/input";
 import { Table, TBody, TD, THead, TH, TR } from "../../components/ui/table";
 import { daysUntil, groupAlerts } from "../../lib/ops";
-import { usePackageStore } from "../../stores/usePackageStore";
+import { useProductStore } from "../../stores/useProductStore";
+import { useOpsStatusStore } from "../../stores/useOpsStatusStore";
 import type { OpsGroup, OpsStatus, TravelPackage } from "../../types";
 import RowActionsMenu from "../../components/RowActionsMenu";
+import { mapProductToTravelPackage } from "../../lib/productAdapter";
 
 type StatusFilter = "all" | OpsStatus;
 type JxFilter = "all" | 7 | 15 | 30;
@@ -67,8 +69,23 @@ function ChipButton({
   );
 }
 
+const applyOpsOverrides = (pkg: TravelPackage, overrides: Record<string, OpsStatus>): TravelPackage => {
+  if (!pkg.opsProject) return pkg;
+  const groups = pkg.opsProject.groups.map((group) => ({
+    ...group,
+    status: overrides[`${pkg.id}:${group.id}`] ?? group.status,
+  }));
+  return { ...pkg, opsProject: { ...pkg.opsProject, groups } };
+};
+
 export default function OpsPage() {
-  const { packages, updateOpsGroupStatus } = usePackageStore();
+  const products = useProductStore((state) => state.products);
+  const statusByKey = useOpsStatusStore((state) => state.statusByKey);
+  const updateOpsGroupStatus = useOpsStatusStore((state) => state.setStatus);
+  const packages = useMemo(
+    () => products.map(mapProductToTravelPackage).map((pkg) => applyOpsOverrides(pkg, statusByKey)),
+    [products, statusByKey]
+  );
 
   const canSeeAll = true;
 
