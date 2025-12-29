@@ -82,85 +82,90 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  try {
+    const body = await request.json();
 
-  const product = await prisma.product.create({
-    data: {
-      status: "DRAFT",
-      productType: mapProductType(body.productType),
-      nights: body.nights ?? 0,
-      days: body.days ?? 0,
-      name: body.name ?? "",
-      paxCount: body.paxCount ?? 0,
-      stopMode: mapStopMode(body.stopMode),
-      commissionAdultDzd: body.commission?.adultDzd ?? 0,
-      commissionChildDzd: body.commission?.childDzd ?? 0,
-      commissionInfantDzd: body.commission?.infantDzd ?? 0,
-      servicesMode: mapServiceMode(body.servicesMode),
-      servicesPackagePrice: body.servicesPackage?.purchasePrice ?? 0,
-      servicesPackageCurrency: body.servicesPackage?.currency ?? "DZD",
-      servicesPackageRate: body.servicesPackage?.exchangeRate ?? 1,
-      servicesPackageIncludes: body.servicesPackage?.includes ?? [],
-      servicesOtherIncludes: body.servicesOtherIncludes ?? [],
-      excursionsExtra: body.excursionsExtra ?? [],
-      programDays: body.programDays ?? [],
-      partnerName: body.partner?.name ?? null,
-      partnerPhone: body.partner?.phone ?? null,
-      partnerWhatsapp: body.partner?.whatsapp ?? null,
-      departures: {
-        create: (body.departures ?? []).map((departure: Record<string, unknown>) => ({
-          airline: departure.airline ?? "",
-          airlineOther: departure.airlineOther ?? null,
-          purchasePriceDzd: Number(departure.purchasePriceDzd ?? 0),
-          pnr: departure.pnr ?? null,
-          documentUrl: departure.documentUrl ?? null,
-          periodStart: parseDate(departure.periodStart as string | undefined),
-          periodEnd: parseDate(departure.periodEnd as string | undefined),
-          flightPlan: departure.flightPlan ?? null,
-          freePaxEnabled: Boolean(departure.freePaxEnabled),
-          freePaxCount: Number(departure.freePaxCount ?? 0),
-          freePaxTaxesDzd: Number(departure.freePaxTaxesDzd ?? 0),
-        })),
+    const product = await prisma.product.create({
+      data: {
+        status: "DRAFT",
+        productType: mapProductType(body.productType),
+        nights: body.nights ?? 0,
+        days: body.days ?? 0,
+        name: body.name ?? "",
+        paxCount: body.paxCount ?? 0,
+        stopMode: mapStopMode(body.stopMode),
+        commissionAdultDzd: body.commission?.adultDzd ?? 0,
+        commissionChildDzd: body.commission?.childDzd ?? 0,
+        commissionInfantDzd: body.commission?.infantDzd ?? 0,
+        servicesMode: mapServiceMode(body.servicesMode),
+        servicesPackagePrice: body.servicesPackage?.purchasePrice ?? 0,
+        servicesPackageCurrency: body.servicesPackage?.currency ?? "DZD",
+        servicesPackageRate: body.servicesPackage?.exchangeRate ?? 1,
+        servicesPackageIncludes: body.servicesPackage?.includes ?? [],
+        servicesOtherIncludes: body.servicesOtherIncludes ?? [],
+        excursionsExtra: body.excursionsExtra ?? [],
+        programDays: body.programDays ?? [],
+        partnerName: body.partner?.name ?? null,
+        partnerPhone: body.partner?.phone ?? null,
+        partnerWhatsapp: body.partner?.whatsapp ?? null,
+        departures: {
+          create: (body.departures ?? []).map((departure: Record<string, unknown>) => ({
+            airline: departure.airline ?? "",
+            airlineOther: departure.airlineOther ?? null,
+            purchasePriceDzd: Number(departure.purchasePriceDzd ?? 0),
+            pnr: departure.pnr ?? null,
+            documentUrl: departure.documentUrl ?? null,
+            periodStart: parseDate(departure.periodStart as string | undefined),
+            periodEnd: parseDate(departure.periodEnd as string | undefined),
+            flightPlan: departure.flightPlan ?? null,
+            freePaxEnabled: Boolean(departure.freePaxEnabled),
+            freePaxCount: Number(departure.freePaxCount ?? 0),
+            freePaxTaxesDzd: Number(departure.freePaxTaxesDzd ?? 0),
+          })),
+        },
+        hotels: {
+          create: (body.hotels ?? []).map((hotel: Record<string, unknown>) => ({
+            city: hotel.city ?? "",
+            name: hotel.name ?? "",
+            mapLink: hotel.mapLink ?? null,
+            stars: hotel.stars ?? null,
+            pension: hotel.pension ?? "RO",
+            contractUrl: hotel.contractUrl ?? null,
+            rates: {
+              create: (hotel.rates ?? []).map((rate: Record<string, unknown>) => ({
+                category: mapRateCategory(rate.category as string | undefined),
+                purchasePrice: Number(rate.purchasePrice ?? 0),
+                currency: rate.currency ?? "DZD",
+                exchangeRate: Number(rate.exchangeRate ?? 1),
+                salePrice: Number(rate.salePrice ?? 0),
+                comboLabel: rate.comboLabel ?? "",
+                childAgeMin: rate.childAgeMin ?? null,
+                childAgeMax: rate.childAgeMax ?? null,
+                withBed: rate.withBed ?? null,
+              })),
+            },
+          })),
+        },
+        services: {
+          create: (body.servicesDetails ?? []).map((service: Record<string, unknown>) => ({
+            name: service.name ?? "",
+            purchasePrice: Number(service.purchasePrice ?? 0),
+            currency: service.currency ?? "DZD",
+            exchangeRate: Number(service.exchangeRate ?? 1),
+          })),
+        },
       },
-      hotels: {
-        create: (body.hotels ?? []).map((hotel: Record<string, unknown>) => ({
-          city: hotel.city ?? "",
-          name: hotel.name ?? "",
-          mapLink: hotel.mapLink ?? null,
-          stars: hotel.stars ?? null,
-          pension: hotel.pension ?? "RO",
-          contractUrl: hotel.contractUrl ?? null,
-          rates: {
-            create: (hotel.rates ?? []).map((rate: Record<string, unknown>) => ({
-              category: mapRateCategory(rate.category as string | undefined),
-              publicFromPrice: rate.publicFromPrice ?? null,
-              purchasePrice: Number(rate.purchasePrice ?? 0),
-              currency: rate.currency ?? "DZD",
-              exchangeRate: Number(rate.exchangeRate ?? 1),
-              salePrice: Number(rate.salePrice ?? 0),
-              comboLabel: rate.comboLabel ?? "",
-              childAgeMin: rate.childAgeMin ?? null,
-              childAgeMax: rate.childAgeMax ?? null,
-              withBed: rate.withBed ?? null,
-            })),
-          },
-        })),
+      include: {
+        departures: true,
+        hotels: { include: { rates: true } },
+        services: true,
       },
-      services: {
-        create: (body.servicesDetails ?? []).map((service: Record<string, unknown>) => ({
-          name: service.name ?? "",
-          purchasePrice: Number(service.purchasePrice ?? 0),
-          currency: service.currency ?? "DZD",
-          exchangeRate: Number(service.exchangeRate ?? 1),
-        })),
-      },
-    },
-    include: {
-      departures: true,
-      hotels: { include: { rates: true } },
-      services: true,
-    },
-  });
+    });
 
-  return NextResponse.json(product);
+    return NextResponse.json(product);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unable to create product";
+    console.error("Create product failed", error);
+    return NextResponse.json({ message }, { status: 500 });
+  }
 }

@@ -11,6 +11,22 @@ type ProductStore = {
   deleteProduct: (id: string) => Promise<void>;
   duplicateDraft: (id: string) => Promise<Product | null>;
   publishProduct: (id: string) => Promise<Product | null>;
+  addLocalDrafts: (drafts: Array<Omit<Product, "id" | "productId" | "createdAt" | "updatedAt">>) => void;
+};
+
+const getErrorMessage = async (response: Response, fallback: string) => {
+  try {
+    const text = await response.text();
+    if (!text) return fallback;
+    try {
+      const parsed = JSON.parse(text) as { message?: string };
+      return parsed?.message ?? text;
+    } catch {
+      return text;
+    }
+  } catch {
+    return fallback;
+  }
 };
 
 const normalizeStatus = (value?: string): ProductStatus => {
@@ -88,6 +104,19 @@ const normalizeProduct = (product: Product): Product => ({
   })),
 });
 
+const toLocalProduct = (
+  draft: Omit<Product, "id" | "productId" | "createdAt" | "updatedAt">
+): Product => {
+  const now = new Date().toISOString();
+  return normalizeProduct({
+    ...draft,
+    id: crypto.randomUUID(),
+    productId: undefined,
+    createdAt: now,
+    updatedAt: now,
+  });
+};
+
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   loadFromServer: async () => {
@@ -103,7 +132,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       body: JSON.stringify(draft),
     });
     if (!response.ok) {
-      throw new Error("Unable to create draft");
+      throw new Error(await getErrorMessage(response, "Unable to create draft"));
     }
     const created = normalizeProduct((await response.json()) as Product);
     set({ products: [created, ...get().products] });
@@ -116,7 +145,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       body: JSON.stringify(draft),
     });
     if (!response.ok) {
-      throw new Error("Unable to update draft");
+      throw new Error(await getErrorMessage(response, "Unable to update draft"));
     }
     const updated = normalizeProduct((await response.json()) as Product);
     set({
@@ -127,7 +156,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   deleteProduct: async (id) => {
     const response = await fetch(`${PRODUCTS_ENDPOINT}/${id}`, { method: "DELETE" });
     if (!response.ok) {
-      throw new Error("Unable to delete product");
+      throw new Error(await getErrorMessage(response, "Unable to delete product"));
     }
     set({ products: get().products.filter((product) => product.id !== id) });
   },
@@ -146,12 +175,16 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   publishProduct: async (id) => {
     const response = await fetch(`${PRODUCTS_ENDPOINT}/${id}/publish`, { method: "POST" });
     if (!response.ok) {
-      throw new Error("Unable to publish product");
+      throw new Error(await getErrorMessage(response, "Unable to publish product"));
     }
     const updated = normalizeProduct((await response.json()) as Product);
     set({
       products: get().products.map((product) => (product.id === updated.id ? updated : product)),
     });
     return updated;
+  },
+  addLocalDrafts: (drafts) => {
+    const local = drafts.map(toLocalProduct);
+    set({ products: [...local, ...get().products] });
   },
 }));

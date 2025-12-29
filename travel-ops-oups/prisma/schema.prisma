@@ -242,7 +242,6 @@ model ProductHotelRate {
   id              String            @id @default(cuid())
   hotelId         String
   category        HotelRateCategory
-  publicFromPrice Float?
   purchasePrice   Float             @default(0)
   currency        String            @default("DZD")
   exchangeRate    Float             @default(1)

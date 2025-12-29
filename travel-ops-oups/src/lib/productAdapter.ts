@@ -52,7 +52,7 @@ export const mapProductToTravelPackage = (product: Product): TravelPackage => {
   const pricing = product.hotels.flatMap((hotel) =>
     hotel.rates.map((rate) => ({
       label: `${hotel.name || "Hotel"} ${rateLabel(rate)}`,
-      unitPrice: rate.salePrice || rate.publicFromPrice || 0,
+      unitPrice: rate.salePrice || 0,
       commission: product.commission.adultDzd,
     }))
   );

@@ -70,95 +70,100 @@ const mapRateCategory = (value?: string) => {
 };
 
 export async function PATCH(request: Request, context: { params: { id: string } }) {
-  const body = await request.json();
-  const productId = context.params.id;
+  try {
+    const body = await request.json();
+    const productId = context.params.id;
 
-  const updated = await prisma.$transaction(async (tx) => {
-    await tx.productDeparture.deleteMany({ where: { productId } });
-    await tx.productHotelRate.deleteMany({ where: { hotel: { productId } } });
-    await tx.productHotel.deleteMany({ where: { productId } });
-    await tx.productService.deleteMany({ where: { productId } });
+    const updated = await prisma.$transaction(async (tx) => {
+      await tx.productDeparture.deleteMany({ where: { productId } });
+      await tx.productHotelRate.deleteMany({ where: { hotel: { productId } } });
+      await tx.productHotel.deleteMany({ where: { productId } });
+      await tx.productService.deleteMany({ where: { productId } });
 
-    return tx.product.update({
-      where: { id: productId },
-      data: {
-        productType: mapProductType(body.productType),
-        nights: body.nights ?? 0,
-        days: body.days ?? 0,
-        name: body.name ?? "",
-        paxCount: body.paxCount ?? 0,
-        stopMode: mapStopMode(body.stopMode),
-        commissionAdultDzd: body.commission?.adultDzd ?? 0,
-        commissionChildDzd: body.commission?.childDzd ?? 0,
-        commissionInfantDzd: body.commission?.infantDzd ?? 0,
-        servicesMode: mapServiceMode(body.servicesMode),
-        servicesPackagePrice: body.servicesPackage?.purchasePrice ?? 0,
-        servicesPackageCurrency: body.servicesPackage?.currency ?? "DZD",
-        servicesPackageRate: body.servicesPackage?.exchangeRate ?? 1,
-        servicesPackageIncludes: body.servicesPackage?.includes ?? [],
-        servicesOtherIncludes: body.servicesOtherIncludes ?? [],
-        excursionsExtra: body.excursionsExtra ?? [],
-        programDays: body.programDays ?? [],
-        partnerName: body.partner?.name ?? null,
-        partnerPhone: body.partner?.phone ?? null,
-        partnerWhatsapp: body.partner?.whatsapp ?? null,
-        departures: {
-          create: (body.departures ?? []).map((departure: Record<string, unknown>) => ({
-            airline: departure.airline ?? "",
-            airlineOther: departure.airlineOther ?? null,
-            purchasePriceDzd: Number(departure.purchasePriceDzd ?? 0),
-            pnr: departure.pnr ?? null,
-            documentUrl: departure.documentUrl ?? null,
-            periodStart: parseDate(departure.periodStart as string | undefined),
-            periodEnd: parseDate(departure.periodEnd as string | undefined),
-            flightPlan: departure.flightPlan ?? null,
-            freePaxEnabled: Boolean(departure.freePaxEnabled),
-            freePaxCount: Number(departure.freePaxCount ?? 0),
-            freePaxTaxesDzd: Number(departure.freePaxTaxesDzd ?? 0),
-          })),
+      return tx.product.update({
+        where: { id: productId },
+        data: {
+          productType: mapProductType(body.productType),
+          nights: body.nights ?? 0,
+          days: body.days ?? 0,
+          name: body.name ?? "",
+          paxCount: body.paxCount ?? 0,
+          stopMode: mapStopMode(body.stopMode),
+          commissionAdultDzd: body.commission?.adultDzd ?? 0,
+          commissionChildDzd: body.commission?.childDzd ?? 0,
+          commissionInfantDzd: body.commission?.infantDzd ?? 0,
+          servicesMode: mapServiceMode(body.servicesMode),
+          servicesPackagePrice: body.servicesPackage?.purchasePrice ?? 0,
+          servicesPackageCurrency: body.servicesPackage?.currency ?? "DZD",
+          servicesPackageRate: body.servicesPackage?.exchangeRate ?? 1,
+          servicesPackageIncludes: body.servicesPackage?.includes ?? [],
+          servicesOtherIncludes: body.servicesOtherIncludes ?? [],
+          excursionsExtra: body.excursionsExtra ?? [],
+          programDays: body.programDays ?? [],
+          partnerName: body.partner?.name ?? null,
+          partnerPhone: body.partner?.phone ?? null,
+          partnerWhatsapp: body.partner?.whatsapp ?? null,
+          departures: {
+            create: (body.departures ?? []).map((departure: Record<string, unknown>) => ({
+              airline: departure.airline ?? "",
+              airlineOther: departure.airlineOther ?? null,
+              purchasePriceDzd: Number(departure.purchasePriceDzd ?? 0),
+              pnr: departure.pnr ?? null,
+              documentUrl: departure.documentUrl ?? null,
+              periodStart: parseDate(departure.periodStart as string | undefined),
+              periodEnd: parseDate(departure.periodEnd as string | undefined),
+              flightPlan: departure.flightPlan ?? null,
+              freePaxEnabled: Boolean(departure.freePaxEnabled),
+              freePaxCount: Number(departure.freePaxCount ?? 0),
+              freePaxTaxesDzd: Number(departure.freePaxTaxesDzd ?? 0),
+            })),
+          },
+          hotels: {
+            create: (body.hotels ?? []).map((hotel: Record<string, unknown>) => ({
+              city: hotel.city ?? "",
+              name: hotel.name ?? "",
+              mapLink: hotel.mapLink ?? null,
+              stars: hotel.stars ?? null,
+              pension: hotel.pension ?? "RO",
+              contractUrl: hotel.contractUrl ?? null,
+              rates: {
+                create: (hotel.rates ?? []).map((rate: Record<string, unknown>) => ({
+                  category: mapRateCategory(rate.category as string | undefined),
+                  purchasePrice: Number(rate.purchasePrice ?? 0),
+                  currency: rate.currency ?? "DZD",
+                  exchangeRate: Number(rate.exchangeRate ?? 1),
+                  salePrice: Number(rate.salePrice ?? 0),
+                  comboLabel: rate.comboLabel ?? "",
+                  childAgeMin: rate.childAgeMin ?? null,
+                  childAgeMax: rate.childAgeMax ?? null,
+                  withBed: rate.withBed ?? null,
+                })),
+              },
+            })),
+          },
+          services: {
+            create: (body.servicesDetails ?? []).map((service: Record<string, unknown>) => ({
+              name: service.name ?? "",
+              purchasePrice: Number(service.purchasePrice ?? 0),
+              currency: service.currency ?? "DZD",
+              exchangeRate: Number(service.exchangeRate ?? 1),
+            })),
+          },
         },
-        hotels: {
-          create: (body.hotels ?? []).map((hotel: Record<string, unknown>) => ({
-            city: hotel.city ?? "",
-            name: hotel.name ?? "",
-            mapLink: hotel.mapLink ?? null,
-            stars: hotel.stars ?? null,
-            pension: hotel.pension ?? "RO",
-            contractUrl: hotel.contractUrl ?? null,
-            rates: {
-              create: (hotel.rates ?? []).map((rate: Record<string, unknown>) => ({
-                category: mapRateCategory(rate.category as string | undefined),
-                publicFromPrice: rate.publicFromPrice ?? null,
-                purchasePrice: Number(rate.purchasePrice ?? 0),
-                currency: rate.currency ?? "DZD",
-                exchangeRate: Number(rate.exchangeRate ?? 1),
-                salePrice: Number(rate.salePrice ?? 0),
-                comboLabel: rate.comboLabel ?? "",
-                childAgeMin: rate.childAgeMin ?? null,
-                childAgeMax: rate.childAgeMax ?? null,
-                withBed: rate.withBed ?? null,
-              })),
-            },
-          })),
+        include: {
+          departures: true,
+          hotels: { include: { rates: true } },
+          services: true,
         },
-        services: {
-          create: (body.servicesDetails ?? []).map((service: Record<string, unknown>) => ({
-            name: service.name ?? "",
-            purchasePrice: Number(service.purchasePrice ?? 0),
-            currency: service.currency ?? "DZD",
-            exchangeRate: Number(service.exchangeRate ?? 1),
-          })),
-        },
-      },
-      include: {
-        departures: true,
-        hotels: { include: { rates: true } },
-        services: true,
-      },
+      });
     });
-  });
 
-  return NextResponse.json(updated);
+    return NextResponse.json(updated);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unable to update product";
+    console.error("Update product failed", error);
+    return NextResponse.json({ message }, { status: 500 });
+  }
 }
 
 export async function DELETE(_: Request, context: { params: { id: string } }) {

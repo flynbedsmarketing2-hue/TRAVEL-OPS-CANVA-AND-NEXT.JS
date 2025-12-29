@@ -1,7 +1,7 @@
 ﻿
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Minus, Copy, Upload, CheckCircle2, AlertTriangle } from "lucide-react";
 import type {
@@ -40,6 +40,8 @@ const STEP_LABELS = [
   "Programme",
   "Partenaire local",
 ];
+
+const CURRENCY_OPTIONS = ["DZD", "EUR", "USD", "SAR", "TRY", "Autre"];
 
 const createDefaultDraft = (): DraftProduct => ({
   status: "draft",
@@ -115,7 +117,6 @@ function createRate(
   return {
     id: crypto.randomUUID(),
     category,
-    publicFromPrice: 0,
     purchasePrice: 0,
     currency: "DZD",
     exchangeRate: 1,
@@ -183,6 +184,33 @@ const validationSummary = (draft: DraftProduct) => {
         warnings.push(`Hotel ${index + 1}: vente < achat pour ${rate.category}.`);
       }
     });
+
+    const child1 = hotel.rates.find((rate) => rate.category === "child1");
+    const child2 = hotel.rates.find((rate) => rate.category === "child2");
+    if (child1 && child1.childAgeMin !== undefined && child1.childAgeMax !== undefined) {
+      if (child1.childAgeMin >= child1.childAgeMax) {
+        errors.push(`Hotel ${index + 1}: ages CHILD1 invalides.`);
+      }
+    }
+    if (child2 && child2.childAgeMin !== undefined && child2.childAgeMax !== undefined) {
+      if (child2.childAgeMin >= child2.childAgeMax) {
+        errors.push(`Hotel ${index + 1}: ages CHILD2 invalides.`);
+      }
+    }
+    if (
+      child1 &&
+      child2 &&
+      child1.childAgeMin !== undefined &&
+      child1.childAgeMax !== undefined &&
+      child2.childAgeMin !== undefined &&
+      child2.childAgeMax !== undefined
+    ) {
+      const overlap =
+        child1.childAgeMin <= child2.childAgeMax && child2.childAgeMin <= child1.childAgeMax;
+      if (overlap) {
+        errors.push(`Hotel ${index + 1}: plages CHILD1/CHILD2 se chevauchent.`);
+      }
+    }
   });
 
   if (draft.servicesMode === "package" && draft.servicesPackage.currency !== "DZD" && draft.servicesPackage.exchangeRate <= 0) {
@@ -201,6 +229,7 @@ export default function ProductWizard({ initialProduct }: Props) {
   const { createDraft, updateDraft, publishProduct } = useProductStore();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [draftId, setDraftId] = useState(initialProduct?.id ?? "");
   const [draft, setDraft] = useState<DraftProduct>(() =>
     initialProduct
@@ -211,6 +240,19 @@ export default function ProductWizard({ initialProduct }: Props) {
         }
       : createDefaultDraft()
   );
+  const [servicesIncludesText, setServicesIncludesText] = useState(
+    initialProduct?.servicesPackage?.includes.join("\n") ?? ""
+  );
+  const [servicesOtherText, setServicesOtherText] = useState(initialProduct?.servicesOtherIncludes.join("\n") ?? "");
+  const [excursionsText, setExcursionsText] = useState(initialProduct?.excursionsExtra.join("\n") ?? "");
+  const [programText, setProgramText] = useState(initialProduct?.programDays.join("\n") ?? "");
+
+  useEffect(() => {
+    setServicesIncludesText(draft.servicesPackage.includes.join("\n"));
+    setServicesOtherText(draft.servicesOtherIncludes.join("\n"));
+    setExcursionsText(draft.excursionsExtra.join("\n"));
+    setProgramText(draft.programDays.join("\n"));
+  }, [draftId]);
 
   const { errors, warnings } = useMemo(() => validationSummary(draft), [draft]);
 
@@ -255,6 +297,13 @@ export default function ProductWizard({ initialProduct }: Props) {
         ...prev,
         departures: [...prev.departures, { ...last, id: crypto.randomUUID() }],
       };
+    });
+  };
+
+  const removeDeparture = (index: number) => {
+    setDraft((prev) => {
+      if (prev.departures.length <= 1) return prev;
+      return { ...prev, departures: prev.departures.filter((_, idx) => idx !== index) };
     });
   };
 
@@ -320,6 +369,13 @@ export default function ProductWizard({ initialProduct }: Props) {
     });
   };
 
+  const removeHotel = (index: number) => {
+    setDraft((prev) => {
+      if (prev.hotels.length <= 1) return prev;
+      return { ...prev, hotels: prev.hotels.filter((_, idx) => idx !== index) };
+    });
+  };
+
   const addService = () => {
     setDraft((prev) => ({
       ...prev,
@@ -344,11 +400,58 @@ export default function ProductWizard({ initialProduct }: Props) {
     });
   };
 
-  const updateBulletList = (value: string) =>
+  const removeService = (index: number) => {
+    setDraft((prev) => ({
+      ...prev,
+      servicesDetails: prev.servicesDetails.filter((_, idx) => idx !== index),
+    }));
+  };
+
+  const parseBulletList = (value: string) =>
     value
       .split("\n")
       .map((line) => line.trim())
       .filter(Boolean);
+
+  const buildPayload = () => {
+    const nextDraft: DraftProduct = {
+      ...draft,
+      servicesPackage: {
+        ...draft.servicesPackage,
+        includes: parseBulletList(servicesIncludesText),
+      },
+      servicesOtherIncludes: parseBulletList(servicesOtherText),
+      excursionsExtra: parseBulletList(excursionsText),
+      programDays: parseBulletList(programText),
+    };
+    return stripDraft(nextDraft);
+  };
+
+  const handleBulletKey = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+    value: string,
+    setter: (next: string) => void
+  ) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    const start = event.currentTarget.selectionStart ?? value.length;
+    const end = event.currentTarget.selectionEnd ?? value.length;
+    const insert = "\n• ";
+    const next = value.slice(0, start) + insert + value.slice(end);
+    setter(next);
+    const target = event.currentTarget;
+    requestAnimationFrame(() => {
+      if (!target) return;
+      target.selectionStart = target.selectionEnd = start + insert.length;
+    });
+  };
+
+  const ensureBulletPrefix = (value: string) => {
+    const trimmed = value.trimStart();
+    if (!trimmed) return "• ";
+    const firstLine = trimmed.split("\n")[0] ?? "";
+    return firstLine.startsWith("•") ? value : `• ${value}`;
+  };
 
   const handleFileUpload = (file: File | undefined, cb: (url: string) => void) => {
     if (!file) return;
@@ -360,14 +463,18 @@ export default function ProductWizard({ initialProduct }: Props) {
 
   const saveDraft = async () => {
     setSaving(true);
+    setActionError(null);
     try {
       if (!draftId) {
-        const created = await createDraft(stripDraft(draft));
+        const created = await createDraft(buildPayload());
         setDraftId(created.id);
         router.replace(`/packages/${created.id}`);
       } else {
-        await updateDraft(draftId, stripDraft(draft));
+        await updateDraft(draftId, buildPayload());
       }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Impossible de sauvegarder.";
+      setActionError(message);
     } finally {
       setSaving(false);
     }
@@ -376,16 +483,25 @@ export default function ProductWizard({ initialProduct }: Props) {
   const handlePublish = async () => {
     if (errors.length) return;
     setSaving(true);
+    setActionError(null);
     try {
-      if (!draftId) {
-        const created = await createDraft(stripDraft(draft));
-        setDraftId(created.id);
-        await publishProduct(created.id);
-        router.replace(`/packages/${created.id}`);
+      let id = draftId;
+      if (id) {
+        await updateDraft(id, buildPayload());
       } else {
-        await updateDraft(draftId, stripDraft(draft));
-        await publishProduct(draftId);
+        const created = await createDraft(buildPayload());
+        id = created.id;
+        setDraftId(created.id);
+        router.replace(`/packages/${created.id}`);
       }
+      if (id) {
+        await publishProduct(id);
+        router.replace(`/packages/${id}`);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Impossible de publier. Verifie les champs puis reessaie.";
+      setActionError(message);
     } finally {
       setSaving(false);
     }
@@ -486,6 +602,15 @@ export default function ProductWizard({ initialProduct }: Props) {
                 Cette version ne prend en charge que Produit Maison.
               </p>
             ) : null}
+          </div>
+        ) : null}
+        {actionError ? (
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4 text-sm text-[var(--text)]">
+            <div className="flex items-center gap-2 font-semibold">
+              <AlertTriangle className="h-4 w-4" />
+              Action impossible
+            </div>
+            <p className="mt-2 text-xs text-[var(--muted)]">{actionError}</p>
           </div>
         ) : null}
 
@@ -681,6 +806,19 @@ export default function ProductWizard({ initialProduct }: Props) {
                 <Copy className="h-4 w-4" />
                 Dupliquer precedent
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (draft.departures.length <= 1) return;
+                  if (window.confirm("Supprimer ce depart ?")) {
+                    removeDeparture(draft.departures.length - 1);
+                  }
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold"
+                disabled={draft.departures.length <= 1}
+              >
+                Supprimer
+              </button>
             </div>
           </div>
         ) : null}
@@ -734,12 +872,20 @@ export default function ProductWizard({ initialProduct }: Props) {
                   </label>
                   <label className="text-sm font-semibold">
                     Etoiles
-                    <input
-                      type="number"
-                      value={hotel.stars ?? ""}
-                      onChange={(event) => updateHotel(index, { stars: Number(event.target.value) || undefined })}
+                    <select
+                      value={hotel.stars ? String(hotel.stars) : ""}
+                      onChange={(event) =>
+                        updateHotel(index, { stars: event.target.value ? Number(event.target.value) : undefined })
+                      }
                       className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                    />
+                    >
+                      <option value="">Optionnel</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
                   </label>
                   <label className="text-sm font-semibold">
                     Pension
@@ -773,24 +919,12 @@ export default function ProductWizard({ initialProduct }: Props) {
 
                 <div className="space-y-3">
                   <p className="text-sm font-semibold">Tarification</p>
+                  {/* TODO: A enrichir dans une prochaine version avec CombPack / patterns de prix repetitifs. */}
                   {hotel.rates.map((rate, rateIndex) => (
                     <div key={rate.id} className="rounded-xl border border-[var(--border)] p-3">
                       <div className="grid gap-3 md:grid-cols-3">
                         <label className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">
                           {rate.category}
-                        </label>
-                        <label className="text-sm font-semibold">
-                          Tarif public a partir
-                          <input
-                            type="number"
-                            value={rate.publicFromPrice ?? 0}
-                            onChange={(event) =>
-                              updateHotelRate(index, rateIndex, {
-                                publicFromPrice: Number(event.target.value),
-                              })
-                            }
-                            className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                          />
                         </label>
                         <label className="text-sm font-semibold">
                           Prix achat
@@ -807,11 +941,17 @@ export default function ProductWizard({ initialProduct }: Props) {
                         </label>
                         <label className="text-sm font-semibold">
                           Devise
-                          <input
+                          <select
                             value={rate.currency}
                             onChange={(event) => updateHotelRate(index, rateIndex, { currency: event.target.value })}
                             className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                          />
+                          >
+                            {CURRENCY_OPTIONS.map((code) => (
+                              <option key={code} value={code}>
+                                {code}
+                              </option>
+                            ))}
+                          </select>
                         </label>
                         <label className="text-sm font-semibold">
                           Taux change
@@ -909,6 +1049,19 @@ export default function ProductWizard({ initialProduct }: Props) {
                 <Copy className="h-4 w-4" />
                 Dupliquer precedent
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (draft.hotels.length <= 1) return;
+                  if (window.confirm("Supprimer cet hotel ?")) {
+                    removeHotel(draft.hotels.length - 1);
+                  }
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold"
+                disabled={draft.hotels.length <= 1}
+              >
+                Supprimer
+              </button>
             </div>
           </div>
         ) : null}
@@ -1002,7 +1155,7 @@ export default function ProductWizard({ initialProduct }: Props) {
                   </label>
                   <label className="text-sm font-semibold">
                     Devise
-                    <input
+                    <select
                       value={draft.servicesPackage.currency}
                       onChange={(event) =>
                         setDraft((prev) => ({
@@ -1011,7 +1164,13 @@ export default function ProductWizard({ initialProduct }: Props) {
                         }))
                       }
                       className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                    />
+                    >
+                      {CURRENCY_OPTIONS.map((code) => (
+                        <option key={code} value={code}>
+                          {code}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                   <label className="text-sm font-semibold">
                     Taux change
@@ -1031,18 +1190,11 @@ export default function ProductWizard({ initialProduct }: Props) {
                 <label className="text-sm font-semibold">
                   Ce qui est inclus (liste)
                   <textarea
-                    value={draft.servicesPackage.includes.join("\n")}
-                    onChange={(event) =>
-                      setDraft((prev) => ({
-                        ...prev,
-                        servicesPackage: {
-                          ...prev.servicesPackage,
-                          includes: updateBulletList(event.target.value),
-                        },
-                      }))
-                    }
+                    value={servicesIncludesText}
+                    onChange={(event) => setServicesIncludesText(ensureBulletPrefix(event.target.value))}
+                    onKeyDown={(event) => handleBulletKey(event, servicesIncludesText, setServicesIncludesText)}
                     className="mt-1 min-h-[120px] w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                    placeholder="Un element par ligne"
+                    placeholder="• Un element par ligne"
                   />
                 </label>
               </div>
@@ -1070,11 +1222,17 @@ export default function ProductWizard({ initialProduct }: Props) {
                       </label>
                       <label className="text-sm font-semibold">
                         Devise
-                        <input
+                        <select
                           value={service.currency}
                           onChange={(event) => updateService(index, { currency: event.target.value })}
                           className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                        />
+                        >
+                          {CURRENCY_OPTIONS.map((code) => (
+                            <option key={code} value={code}>
+                              {code}
+                            </option>
+                          ))}
+                        </select>
                       </label>
                       <label className="text-sm font-semibold">
                         Taux change
@@ -1096,21 +1254,30 @@ export default function ProductWizard({ initialProduct }: Props) {
                   <Plus className="h-4 w-4" />
                   Ajouter service
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (draft.servicesDetails.length <= 0) return;
+                    if (window.confirm("Supprimer ce service ?")) {
+                      removeService(draft.servicesDetails.length - 1);
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold"
+                  disabled={draft.servicesDetails.length === 0}
+                >
+                  Supprimer
+                </button>
               </div>
             )}
 
             <label className="text-sm font-semibold">
               Autres services inclus
               <textarea
-                value={draft.servicesOtherIncludes.join("\n")}
-                onChange={(event) =>
-                  setDraft((prev) => ({
-                    ...prev,
-                    servicesOtherIncludes: updateBulletList(event.target.value),
-                  }))
-                }
+                value={servicesOtherText}
+                onChange={(event) => setServicesOtherText(ensureBulletPrefix(event.target.value))}
+                onKeyDown={(event) => handleBulletKey(event, servicesOtherText, setServicesOtherText)}
                 className="mt-1 min-h-[120px] w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-                placeholder="Un element par ligne"
+                placeholder="• Un element par ligne"
               />
             </label>
           </div>
@@ -1120,12 +1287,11 @@ export default function ProductWizard({ initialProduct }: Props) {
           <div className="section-shell space-y-3">
             <h2 className="text-lg font-semibold text-[var(--text)]">Excursions en extra</h2>
             <textarea
-              value={draft.excursionsExtra.join("\n")}
-              onChange={(event) =>
-                setDraft((prev) => ({ ...prev, excursionsExtra: updateBulletList(event.target.value) }))
-              }
+              value={excursionsText}
+              onChange={(event) => setExcursionsText(ensureBulletPrefix(event.target.value))}
+              onKeyDown={(event) => handleBulletKey(event, excursionsText, setExcursionsText)}
               className="min-h-[140px] w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-              placeholder="Un element par ligne"
+              placeholder="• Un element par ligne"
             />
           </div>
         ) : null}
@@ -1134,12 +1300,11 @@ export default function ProductWizard({ initialProduct }: Props) {
           <div className="section-shell space-y-3">
             <h2 className="text-lg font-semibold text-[var(--text)]">Programme jour par jour</h2>
             <textarea
-              value={draft.programDays.join("\n")}
-              onChange={(event) =>
-                setDraft((prev) => ({ ...prev, programDays: updateBulletList(event.target.value) }))
-              }
+              value={programText}
+              onChange={(event) => setProgramText(ensureBulletPrefix(event.target.value))}
+              onKeyDown={(event) => handleBulletKey(event, programText, setProgramText)}
               className="min-h-[160px] w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-              placeholder="Un element par ligne"
+              placeholder="• Un element par ligne"
             />
           </div>
         ) : null}
@@ -1205,11 +1370,19 @@ export default function ProductWizard({ initialProduct }: Props) {
           </div>
           <button
             type="button"
-            onClick={() => setStep((prev) => Math.min(STEP_LABELS.length - 1, prev + 1))}
+            onClick={() =>
+              step === STEP_LABELS.length - 1
+                ? handlePublish()
+                : setStep((prev) => Math.min(STEP_LABELS.length - 1, prev + 1))
+            }
             className="rounded-full bg-[var(--token-text)] px-4 py-2 text-sm font-semibold text-[var(--token-inverse)]"
-            disabled={step === STEP_LABELS.length - 1 || stepDisabled}
+            disabled={
+              step === STEP_LABELS.length - 1
+                ? saving || errors.length > 0 || stepDisabled
+                : stepDisabled
+            }
           >
-            Suivant
+            {step === STEP_LABELS.length - 1 ? "Publier" : "Suivant"}
           </button>
         </footer>
       </section>

@@ -34,7 +34,6 @@ export interface ProductDeparture {
 export interface ProductHotelRate {
   id: string;
   category: HotelRateCategory;
-  publicFromPrice?: number;
   purchasePrice: number;
   currency: string;
   exchangeRate: number;
