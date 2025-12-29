@@ -559,29 +559,51 @@ function StepTabs({
   step: Step;
   setStep: (s: Step) => void;
 }) {
-  const items: { key: Step; label: string }[] = [
-    { key: "package", label: "Package" },
-    { key: "rooming", label: "Rooming" },
-    { key: "uploads", label: "Uploads" },
-    { key: "payment", label: "Paiement" },
-    { key: "confirm", label: "Confirmation" },
+  const items: { key: Step; label: string; description: string }[] = [
+    { key: "package", label: "Basics", description: "General info, flights, stay" },
+    { key: "rooming", label: "Itinerary", description: "Content, program, notes" },
+    { key: "uploads", label: "Uploads", description: "Documents & references" },
+    { key: "payment", label: "Pricing", description: "Combos, commissions" },
+    { key: "confirm", label: "Review", description: "Final check" },
   ];
+
   return (
-    <div className="flex flex-wrap gap-2">
-      {items.map((it) => (
-        <button
-          key={it.key}
-          type="button"
-          onClick={() => setStep(it.key)}
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            step === it.key
-              ? "bg-[var(--token-accent)]/10 text-[var(--token-accent)] border border-[var(--token-accent)]/30"
-              : "bg-[var(--token-surface-2)] text-[var(--text)]"
-          }`}
-        >
-          {it.label}
-        </button>
-      ))}
+    <div className="sticky top-4 z-10 space-y-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left">
+      {items.map(({ key, label, description }, index) => {
+        const active = step === key;
+        return (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setStep(key)}
+            className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left transition ${
+              active
+                ? "border-[var(--token-accent)]/40 bg-[var(--token-accent)]/10 shadow-sm"
+                : "border-[var(--border)] bg-[var(--surface-2)] hover:border-[var(--token-accent)]/40"
+            }`}
+          >
+            <span
+              className={`flex h-8 w-8 items-center justify-center rounded-full border font-mono text-sm ${
+                active
+                  ? "border-[var(--token-accent)] bg-[var(--token-text)] text-[var(--token-inverse)]"
+                  : "border-[var(--border)] bg-[var(--surface)] text-[var(--text)]"
+              }`}
+            >
+              {index + 1}
+            </span>
+            <div className="flex-1">
+              <p
+                className={`text-sm font-semibold ${
+                  active ? "text-[var(--token-primary)]" : "text-[var(--text)]"
+                }`}
+              >
+                {label}
+              </p>
+              <p className="text-xs text-[var(--muted)]">{description}</p>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }
