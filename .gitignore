@@ -1,3 +1,4 @@
 node_modules
 .next/
 *.log
+travel-ops-oups/shared-data
