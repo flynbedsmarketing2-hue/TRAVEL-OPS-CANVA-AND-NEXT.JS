@@ -1,5 +1,5 @@
 @echo off
-pushd "%~dp0\travel-ops-oups"
+pushd "%~dp0"
 if not exist node_modules (
   npm install
 )
