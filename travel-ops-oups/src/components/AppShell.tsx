@@ -29,7 +29,19 @@ import { useResolvedTheme } from "../hooks/useResolvedTheme";
 import { useTaskStore } from "../stores/useTaskStore";
 import { useUiStore } from "../stores/useUiStore";
 
-export default function AppShell({ children }: { children: React.ReactNode }) {
+export type StartupAlert = {
+  title: string;
+  description: string;
+  docsUrl: string;
+};
+
+export default function AppShell({
+  children,
+  startupAlert,
+}: {
+  children: React.ReactNode;
+  startupAlert?: StartupAlert;
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -197,7 +209,23 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
           <main id="main-content" role="main" className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-            <div className="container py-8 page-fade stagger">{children}</div>
+            <div className="container py-8 page-fade stagger">
+              {startupAlert ? (
+                <div className="relative mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900 shadow-sm">
+                  <p className="text-sm font-semibold">{startupAlert.title}</p>
+                  <p className="mt-1 text-xs leading-relaxed">{startupAlert.description}</p>
+                  <a
+                    className="mt-2 inline-flex text-xs font-medium text-red-700 underline underline-offset-2 transition-colors hover:text-red-900"
+                    href={startupAlert.docsUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Review the Prisma setup docs
+                  </a>
+                </div>
+              ) : null}
+              {children}
+            </div>
           </main>
         </div>
         <CommandPalette

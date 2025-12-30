@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import AppShell from "../components/AppShell";
+import AppShell, { StartupAlert } from "../components/AppShell";
 import ThemeProvider from "../components/ThemeProvider";
 
 const inter = Inter({
@@ -43,12 +43,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const prismaDocsUrl =
+    "https://github.com/travel-ops/TRAVEL-OPS-CANVA-AND-NEXT.JS/blob/main/travel-ops-oups/prisma/README.md";
+  const startupAlert: StartupAlert | undefined = !process.env.DATABASE_URL
+    ? {
+        title: "DATABASE_URL is not configured",
+        description:
+          "Products/pricing routes rely on Prisma. Set DATABASE_URL and run npm run db:push before loading the app; the Prisma docs explain the Postgres setup.",
+        docsUrl: prismaDocsUrl,
+      }
+    : undefined;
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className={`${inter.variable} ${ibmPlexMono.variable} min-h-screen transition-colors`}>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
-          <AppShell>{children}</AppShell>
+          <AppShell startupAlert={startupAlert}>{children}</AppShell>
         </ThemeProvider>
       </body>
     </html>
