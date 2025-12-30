@@ -38,6 +38,9 @@ yarn-error.log*
 dev-err.log
 dev-out.log
 
+# runtime storage
+/shared-data
+
 # vercel
 .vercel
 
