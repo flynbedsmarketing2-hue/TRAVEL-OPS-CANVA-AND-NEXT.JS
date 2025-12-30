@@ -100,6 +100,7 @@ export async function PATCH(request: Request, context: { params: { id: string } 
           servicesOtherIncludes: body.servicesOtherIncludes ?? [],
           excursionsExtra: body.excursionsExtra ?? [],
           programDays: body.programDays ?? [],
+          maisonScenario1: body.maisonScenario1 ?? undefined,
           partnerName: body.partner?.name ?? null,
           partnerPhone: body.partner?.phone ?? null,
           partnerWhatsapp: body.partner?.whatsapp ?? null,

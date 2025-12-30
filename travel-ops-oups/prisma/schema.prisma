@@ -198,6 +198,7 @@ model Product {
   servicesOtherIncludes   Json                 @default("[]")
   excursionsExtra         Json                 @default("[]")
   programDays             Json                 @default("[]")
+  maisonScenario1         Json?
   partnerName             String?
   partnerPhone            String?
   partnerWhatsapp         String?
