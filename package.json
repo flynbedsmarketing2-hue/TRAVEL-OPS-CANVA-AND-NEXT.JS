@@ -6,10 +6,11 @@
     "travel-ops-oups"
   ],
   "scripts": {
-    "dev": "cd travel-ops-oups && npm run dev",
-    "build": "cd travel-ops-oups && npm run build",
-    "lint": "cd travel-ops-oups && npm run lint",
-    "test": "cd travel-ops-oups && npm run test"
+    "dev": "npm -w travel-ops-oups run dev",
+    "build": "npm -w travel-ops-oups run build",
+    "lint": "npm -w travel-ops-oups run lint",
+    "test": "npm -w travel-ops-oups run test",
+    "typecheck": "npm -w travel-ops-oups run typecheck"
   },
   "dependencies": {
     "vibe-kanban-web-companion": "^0.0.5"
