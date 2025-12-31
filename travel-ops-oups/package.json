@@ -10,9 +10,13 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "npm run lint",
-    "prisma:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "prisma:env-check": "node scripts/prisma-env-check.js",
+    "prisma:generate": "npm run prisma:env-check && prisma generate",
+    "db:push": "npm run prisma:env-check && prisma db push",
+    "db:studio": "npm run prisma:env-check && prisma studio"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "^5.10.0",

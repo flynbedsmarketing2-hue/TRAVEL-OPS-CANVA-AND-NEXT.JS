@@ -10,9 +10,25 @@
     "build": "npm -w travel-ops-oups run build",
     "lint": "npm -w travel-ops-oups run lint",
     "test": "npm -w travel-ops-oups run test",
-    "typecheck": "npm -w travel-ops-oups run typecheck"
+    "typecheck": "npm -w travel-ops-oups run typecheck",
+    "prisma:validate": "npm run -w travel-ops-oups prisma:env-check && env-cmd -f travel-ops-oups/.env npx prisma validate",
+    "prisma:pull": "npm run -w travel-ops-oups prisma:env-check && env-cmd -f travel-ops-oups/.env npx prisma db pull",
+    "prisma:push": "npm run -w travel-ops-oups prisma:env-check && env-cmd -f travel-ops-oups/.env npx prisma db push",
+    "prisma:studio": "npm run -w travel-ops-oups prisma:env-check && env-cmd -f travel-ops-oups/.env npx prisma studio",
+    "db:sync-env": "node scripts/sync-db-env.js",
+    "db:diagnose": "node scripts/diagnose-postgres.js",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d"
+  },
+  "prisma": {
+    "schema": "travel-ops-oups/prisma/schema.prisma"
   },
   "dependencies": {
     "vibe-kanban-web-companion": "^0.0.5"
+  },
+  "devDependencies": {
+    "env-cmd": "^11.0.0",
+    "yaml": "^2.8.2"
   }
 }

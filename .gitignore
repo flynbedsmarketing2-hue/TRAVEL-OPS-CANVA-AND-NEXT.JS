@@ -2,3 +2,5 @@ node_modules
 .next/
 *.log
 travel-ops-oups/shared-data
+travel-ops-oups/.env
+travel-ops-oups/.env.local

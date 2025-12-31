@@ -27,7 +27,14 @@ Modern Next.js back-office for TravelOps built with the App Router, Tailwind CSS
    npm run dev
    ```
 
-   The app will be available at [http://localhost:3000](http://localhost:3000).
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+## Environment files
+
+- Prisma CLI reads `./.env` and the newly added `npm run prisma:env-check` guard script runs before `prisma:generate`, `db:push`, and `db:studio` to ensure `DATABASE_URL` is defined. Copy `.env.example` to `.env` and update it before running Prisma commands.
+- Next.js prefers `.env.local` for developer overrides, so continue using it for browser-safe values even though Prisma reads `.env`.
+- PowerShell’s `$env:` assignments only last for the current shell session, so persist settings by editing `.env` instead of relying on session-scoped values.
+- Running Postgres in Docker? From the repo root run `npm run db:sync-env` to pull the container’s `POSTGRES_*` values into `travel-ops-oups/.env` before hitting Prisma so the CLI always uses correct credentials.
 
 ## Available scripts
 
