@@ -1,5 +1,9 @@
 # TRAVEL-OPS-CANVA-AND-NEXT.JS
 
+## Baseline checkpoint v0-stable
+
+Refer to [STABILITY_BASELINE.md](STABILITY_BASELINE.md) for the known working state of the project; do not change infrastructure during the stabilization phase unless something is clearly broken.
+
 ## Golden path
 
 ```bash
