@@ -11,7 +11,7 @@
     "lint": "npm -w travel-ops-oups run lint",
     "test": "npm -w travel-ops-oups run test",
     "typecheck": "npm -w travel-ops-oups run typecheck",
-    "deps:reinstall": "rmdir /s /q node_modules 2>nul & rmdir /s /q travel-ops-oups\\\\node_modules 2>nul & rmdir /s /q .next 2>nul & rmdir /s /q travel-ops-oups\\\\.next 2>nul & npm install & node scripts/link-workspace-deps.js",
+    "deps:reinstall": "rmdir /s /q node_modules 2>nul & rmdir /s /q travel-ops-oups\\\\node_modules 2>nul & rmdir /s /q .next 2>nul & rmdir /s /q travel-ops-oups\\\\.next 2>nul & npm install && node scripts/link-workspace-deps.js",
     "prisma:validate": "npm run -w travel-ops-oups prisma:env-check && env-cmd -f travel-ops-oups/.env npx prisma validate",
     "prisma:pull": "npm run -w travel-ops-oups prisma:env-check && env-cmd -f travel-ops-oups/.env npx prisma db pull",
     "prisma:push": "npm run -w travel-ops-oups prisma:env-check && env-cmd -f travel-ops-oups/.env npx prisma db push",
@@ -29,6 +29,7 @@
     "vibe-kanban-web-companion": "^0.0.5"
   },
   "devDependencies": {
+    "@types/node": "^20",
     "env-cmd": "^11.0.0",
     "yaml": "^2.8.2"
   }

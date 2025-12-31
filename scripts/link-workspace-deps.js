@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.resolve(__dirname, "..");
-const modulesToLink = ["react", "react-dom", "picocolors"];
+const modulesToLink = ["react", "react-dom", "picocolors", "@types/node"];
 const targetNodeModules = path.join(root, "node_modules");
 const appNodeModules = path.join(root, "travel-ops-oups", "node_modules");
 
