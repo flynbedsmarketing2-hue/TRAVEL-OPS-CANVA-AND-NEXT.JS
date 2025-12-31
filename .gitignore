@@ -4,3 +4,6 @@ node_modules
 travel-ops-oups/shared-data
 travel-ops-oups/.env
 travel-ops-oups/.env.local
+travel-ops-oups/package-lock.json
+travel-ops-oups/yarn.lock
+travel-ops-oups/pnpm-lock.yaml
