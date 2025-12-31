@@ -11,6 +11,15 @@ npm install
 npm run dev
 ```
 
+## Fix missing react/react-dom/picocolors
+
+If Next.js reports missing `react`, `react-dom`, `react/jsx-runtime`, or `picocolors` during `npm run dev`, run a clean reinstall (wiping both `node_modules` folders and `.next`, then reinstalling dependencies):
+
+```
+npm run deps:reinstall
+npm run dev
+```
+
 ## Prisma – one-command usage (Windows friendly)
 
 Run every Prisma command from the repo root so the shared schema path and `.env` file run together. The root scripts validate that `travel-ops-oups/.env` exists with `DATABASE_URL`, then execute Prisma with `env-cmd` pointed at that file, so you never have to `cd` before running Prisma.
@@ -52,3 +61,4 @@ npm run db:reset
 npm run db:sync-env
 npm run prisma:pull
 ```
+
