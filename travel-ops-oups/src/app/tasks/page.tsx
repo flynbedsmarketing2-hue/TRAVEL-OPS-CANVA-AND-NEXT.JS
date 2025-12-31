@@ -11,6 +11,7 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Table, TBody, TD, THead, TH, TR } from "../../components/ui/table";
 import { taskPriorities, taskStatuses, useTaskStore } from "../../stores/useTaskStore";
+import { EmptyState } from "../../components/ui/EmptyState";
 import type { Task, TaskLink, TaskPriority, TaskStatus } from "../../types";
 
 type TaskForm = Omit<Task, "id" | "createdAt" | "updatedAt">;
@@ -210,6 +211,12 @@ export default function TasksPage() {
     setModalLink(null);
   };
 
+  const resetFilters = () => {
+    setStatusFilter("");
+    setPriorityFilter("");
+    setDueFilter("all");
+  };
+
   const handleSave = (payload: TaskForm) => {
     if (modalTask) {
       updateTask(modalTask.id, payload);
@@ -240,7 +247,7 @@ export default function TasksPage() {
       <PageHeader
         eyebrow="Tasks"
         title="Tasks"
-        subtitle="Track priorities across leads, packages, and bookings."
+        subtitle="Track priorities across leads, packages, and bookings, then turn them into actionable next steps with filters and one-click creation."
         actions={
           <Button variant="primary" onClick={() => openModal()}>
             <Plus className="h-4 w-4" />
@@ -334,7 +341,22 @@ export default function TasksPage() {
         </CardHeader>
         <CardContent className="overflow-x-auto">
           {filteredTasks.length === 0 ? (
-            <div className="py-8 text-center text-sm text-[var(--muted)]">No tasks for this filter.</div>
+            <div className="py-10">
+              <EmptyState
+                title="No tasks to show"
+                description="Reset filters or create a task to keep packages, CRM, and ops moving."
+                primaryAction={{
+                  label: "Create task",
+                  onClick: () => openModal(),
+                }}
+                secondaryAction={{
+                  label: "Reset filters",
+                  onClick: resetFilters,
+                  variant: "ghost",
+                }}
+                className="p-8"
+              />
+            </div>
           ) : (
             <Table>
               <THead>

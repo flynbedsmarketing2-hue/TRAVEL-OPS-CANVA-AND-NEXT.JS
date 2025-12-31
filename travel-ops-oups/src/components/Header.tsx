@@ -1,44 +1,10 @@
 'use client';
 
-import type { ComponentType } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Briefcase, Plane, ShoppingCart, Telescope, Moon, Sun } from "lucide-react";
+import { Moon, Plane, Sun } from "lucide-react";
+import { primaryNavItems } from "./navigation";
 import { useUiStore } from "../stores/useUiStore";
-
-type NavItem = {
-  label: string;
-  href: string;
-  icon: ComponentType<{ className?: string }>;
-};
-
-const navItems: NavItem[] = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Packages",
-    href: "/packages",
-    icon: Briefcase,
-  },
-  {
-    label: "Voyages",
-    href: "/voyages",
-    icon: Plane,
-  },
-  {
-    label: "Sales",
-    href: "/sales",
-    icon: ShoppingCart,
-  },
-  {
-    label: "Ops",
-    href: "/ops",
-    icon: Telescope,
-  },
-];
 
 const isActive = (pathname: string, href: string) =>
   pathname === href || (href !== "/" && pathname.startsWith(href));
@@ -56,7 +22,7 @@ export default function Header() {
         </Link>
 
         <nav className="flex items-center gap-2">
-          {navItems.map((item) => {
+          {primaryNavItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(pathname, item.href);
             return (

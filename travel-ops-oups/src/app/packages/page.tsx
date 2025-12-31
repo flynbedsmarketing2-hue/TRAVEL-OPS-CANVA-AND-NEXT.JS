@@ -154,7 +154,7 @@ export default function PackagesPage() {
       <PageHeader
         eyebrow="Produits"
         title="Packages produit maison"
-        subtitle="Gestion des produits (brouillons et publies)."
+        subtitle="Centralisez les brouillons et offres publies, puis envoyez-les vers la tarification et les taches. Utilisez les filtres pour isoler les brouillons ou identifier les packages avec du stock."
         actions={
           <>
             <button
@@ -167,7 +167,7 @@ export default function PackagesPage() {
             </button>
             <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
               <Plus className="h-4 w-4" />
-              Creer
+              Create product
             </Link>
           </>
         }

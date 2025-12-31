@@ -3,20 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ChevronLeft, ChevronRight, Plane } from "lucide-react";
-import { isActive, navItems } from "./navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { isActive, navSections } from "./navigation";
 import { cn } from "./ui/cn";
 
 type Props = {
   open?: boolean;
   onClose?: () => void;
 };
-
-const navSections = [
-  { label: "Workspace", items: navItems.slice(0, 3) },
-  { label: "Management", items: navItems.slice(3, 6) },
-  { label: "Admin", items: navItems.slice(6) },
-];
 
 export default function Sidebar({ open = false, onClose }: Props) {
   const pathname = usePathname();

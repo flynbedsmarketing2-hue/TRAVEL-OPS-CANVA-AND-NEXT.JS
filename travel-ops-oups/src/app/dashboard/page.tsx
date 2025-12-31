@@ -171,18 +171,33 @@ export default function DashboardPage() {
       <PageHeader
         eyebrow="Dashboard"
         title="Today overview"
-        subtitle="Compact snapshot of sales, ops, and marketing."
+        subtitle="Stitch the happy path: create a product, price it, and keep tasks + ops aligned. Use this page to surface what landing leads, bookings, and alerts need next."
         actions={
           <>
             <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
-              New package
+              Create product
             </Link>
-            <Link href="/sales" className={buttonClassName({ variant: "outline" })}>
-              Sales
+            <Link href="/pricing" className={buttonClassName({ variant: "outline" })}>
+              Open pricing
             </Link>
           </>
         }
       />
+
+      <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--token-surface)] px-5 py-4 shadow-sm transition-colors duration-150">
+        <p className="text-sm font-semibold text-[var(--text)]">Happy path</p>
+        <p className="text-sm text-[var(--muted)]">
+          Start by creating a new product, price it with the wizard, then let the CRM/tasks/ops cards below keep the delivery moving.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link href="/packages/new" className={buttonClassName({ variant: "primary" })}>
+            Create product
+          </Link>
+          <Link href="/pricing" className={buttonClassName({ variant: "ghost" })}>
+            Go to pricing
+          </Link>
+        </div>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard

@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import {
   Briefcase,
+  Calculator,
   LayoutDashboard,
   ListChecks,
   Megaphone,
@@ -16,31 +17,39 @@ export type NavItem = {
   icon: ComponentType<{ className?: string }>;
 };
 
-export const navItems: NavItem[] = [
+export const primaryNavItems: NavItem[] = [
   {
     label: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    label: "CRM",
-    href: "/crm/leads",
-    icon: Users,
+    label: "Packages",
+    href: "/packages",
+    icon: Briefcase,
+  },
+  {
+    label: "Pricing",
+    href: "/pricing",
+    icon: Calculator,
   },
   {
     label: "Tasks",
     href: "/tasks",
     icon: ListChecks,
   },
+];
+
+export const secondaryNavItems: NavItem[] = [
+  {
+    label: "CRM",
+    href: "/crm/leads",
+    icon: Users,
+  },
   {
     label: "Marketing",
     href: "/marketing/campaigns",
     icon: Megaphone,
-  },
-  {
-    label: "Packages",
-    href: "/packages",
-    icon: Briefcase,
   },
   {
     label: "Voyages",
@@ -56,6 +65,22 @@ export const navItems: NavItem[] = [
     label: "Ops",
     href: "/ops",
     icon: Telescope,
+  },
+];
+
+export type NavSection = {
+  label: string;
+  items: NavItem[];
+};
+
+export const navSections: NavSection[] = [
+  {
+    label: "Primary",
+    items: primaryNavItems,
+  },
+  {
+    label: "More tools",
+    items: secondaryNavItems,
   },
 ];
 

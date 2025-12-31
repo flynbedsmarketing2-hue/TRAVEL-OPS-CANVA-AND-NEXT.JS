@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { calculateScenario } from "@/lib/pricing/calculator";
 import { costTemplates } from "@/lib/pricing/templates";
 import type {
@@ -11,6 +12,8 @@ import type {
   PricingScenarioPayload,
   RoomAllocation,
 } from "@/lib/pricing/types";
+import PageHeader from "../../components/PageHeader";
+import { buttonClassName } from "../../components/ui/button";
 
 const defaultPaxCounts: PaxCounts = {
   single: 0,
@@ -515,15 +518,19 @@ export default function PricingWizardPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-10 sm:px-6 lg:px-0">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-[var(--token-primary)]">Pricing module</p>
-          <h1 className="text-3xl font-semibold text-[var(--text)]">Adaptive pricing wizard</h1>
-        </div>
-        <div className="text-sm text-gray-500">
-          Autosaving scenario {scenarioId ? `(${scenarioId})` : "(draft)"}...
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Pricing"
+        title="Adaptive pricing wizard"
+        subtitle="Build a scenario from scratch, confirm costs/margins, then export the quote that matches the package you're selling."
+        actions={
+          <Link href="/packages" className={buttonClassName({ variant: "outline" })}>
+            Back to packages
+          </Link>
+        }
+      />
+      <p className="text-sm text-[var(--muted)]">
+        Autosaving scenario {scenarioId ? `(${scenarioId})` : "(draft)"}...
+      </p>
       <div className="grid gap-3 md:grid-cols-3">
         {wizardSteps.map((step) => (
           <button
